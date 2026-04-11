@@ -1,0 +1,841 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Constitution JSON Builder - Persistent Editor</title>
+        <style>
+            body {
+                font-family: Arial;
+                margin: 20px;
+            }
+            .box {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin: 10px 0;
+                position: relative;
+            }
+            button {
+                margin: 5px 0;
+                cursor: pointer;
+            }
+            textarea {
+                width: 100%;
+                height: 200px;
+            }
+            .toolbar {
+                background: #f0f0f0;
+                padding: 10px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+            }
+            .status {
+                color: green;
+                margin-left: 10px;
+            }
+            .remove-btn {
+                background-color: #ff4444;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 3px;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+            .remove-btn:hover {
+                background-color: #cc0000;
+            }
+            .header-with-remove {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+            }
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .collapse-btn {
+                background: #e6e6e6;
+                border: 1px solid #bbb;
+                border-radius: 4px;
+                width: 24px;
+                height: 24px;
+                line-height: 20px;
+                padding: 0;
+                font-weight: bold;
+            }
+            .collapse-btn:hover {
+                background: #d6d6d6;
+            }
+            .section-collapsed > .section-body {
+                display: none;
+            }
+            hr {
+                margin: 20px 0;
+            }
+            .auto-number {
+                background-color: #f0f0f0;
+                font-family: monospace;
+                font-weight: bold;
+            }
+            .reorder-btn {
+                background-color: #2196f3;
+                color: white;
+                border: none;
+                padding: 2px 8px;
+                border-radius: 3px;
+                cursor: pointer;
+                margin: 0 2px;
+                font-size: 12px;
+            }
+            .reorder-btn:hover {
+                background-color: #0b7dda;
+            }
+            .explanation-box,
+            .provision-box {
+                background-color: #f9f9e0;
+                border-left: 3px solid #ffaa00;
+                padding: 8px;
+                margin-top: 8px;
+                margin-bottom: 8px;
+            }
+            .provision-box {
+                background-color: #e8f4f8;
+                border-left: 3px solid #2196f3;
+            }
+            .add-btn {
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                padding: 3px 8px;
+                border-radius: 3px;
+                margin-left: 5px;
+                font-size: 11px;
+            }
+            .add-btn:hover {
+                background-color: #45a049;
+            }
+            label {
+                font-weight: bold;
+                display: inline-block;
+                width: 120px;
+                vertical-align: top;
+            }
+            .inline-label {
+                display: inline-block;
+                width: auto;
+                margin-right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Constitution Builder - With Explanations & Provisions</h2>
+
+        <div class="toolbar">
+            <button onclick="loadFromFile()">📂 Load JSON File</button>
+            <button onclick="saveToFile()">💾 Save to File</button>
+            <button onclick="loadFromLocalStorage()">
+                🔄 Load Last Session
+            </button>
+            <button onclick="clearAll()">🗑️ Clear All</button>
+            <span id="status" class="status"></span>
+        </div>
+
+        <div class="box">
+            <h3>Document</h3>
+            Title: <input id="title" style="width: 80%" /><br /><br />
+            Year (NP): <input id="year_np" type="number" /><br /><br />
+            Year (EN): <input id="year_en" type="number" /><br />
+        </div>
+
+        <div id="parts"></div>
+
+        <button onclick="addPart()">+ Add Part</button>
+        <button onclick="generateAndSave()">Generate & Save JSON</button>
+        <button onclick="renumberAll()">🔄 Renumber All</button>
+
+        <h3>Output (Editable JSON)</h3>
+        <textarea id="output" placeholder="JSON will appear here..."></textarea>
+        <button onclick="loadFromTextarea()">📖 Load from JSON above</button>
+
+        <script>
+            let partCount = 0;
+            let isRenderingData = false;
+
+            function showStatus(msg, isError = false) {
+                const status = document.getElementById("status");
+                status.textContent = msg;
+                status.style.color = isError ? "red" : "green";
+                setTimeout(() => {
+                    if (status.textContent === msg) status.textContent = "";
+                }, 3000);
+            }
+
+            function removeElement(element) {
+                if (confirm("Remove this item?")) {
+                    element.remove();
+                    renumberAll();
+                    showStatus("✓ Item removed & renumbered");
+                }
+            }
+
+            function moveElement(element, direction) {
+                const parent = element.parentElement;
+                const siblings = Array.from(parent.children);
+                const index = siblings.indexOf(element);
+                if (direction === "up" && index > 0) {
+                    parent.insertBefore(element, siblings[index - 1]);
+                } else if (
+                    direction === "down" &&
+                    index < siblings.length - 1
+                ) {
+                    parent.insertBefore(element, siblings[index + 1]);
+                }
+                renumberAll();
+            }
+
+            function addExplanation(parentElement, existingText = "") {
+                const existingBox =
+                    parentElement.querySelector(".explanation-box");
+                if (existingBox) return;
+
+                const div = document.createElement("div");
+                div.className = "explanation-box";
+                div.innerHTML = `
+                    <label>📝 Explanation:</label>
+                    <button class="add-btn" onclick="removeExplanation(this)" style="background-color:#ff9800;">✗ Remove</button><br>
+                    <textarea class="explanation-text" rows="3" style="width: 95%;" placeholder="Add explanation here...">${escapeHtml(existingText)}</textarea>
+                `;
+                parentElement.appendChild(div);
+                showStatus("✓ Explanation added");
+            }
+
+            function removeExplanation(btn) {
+                const box = btn.parentElement;
+                box.remove();
+                showStatus("✓ Explanation removed");
+            }
+
+            function addProvision(parentElement, existingText = "") {
+                const existingBox =
+                    parentElement.querySelector(".provision-box");
+                if (existingBox) return;
+
+                const div = document.createElement("div");
+                div.className = "provision-box";
+                div.innerHTML = `
+                    <label>⚖️ Provision/Proviso:</label>
+                    <button class="add-btn" onclick="removeProvision(this)" style="background-color:#ff9800;">✗ Remove</button><br>
+                    <textarea class="provision-text" rows="3" style="width: 95%;" placeholder="Add provision or proviso here...">${escapeHtml(existingText)}</textarea>
+                `;
+                parentElement.appendChild(div);
+                showStatus("✓ Provision added");
+            }
+
+            function removeProvision(btn) {
+                const box = btn.parentElement;
+                box.remove();
+                showStatus("✓ Provision removed");
+            }
+
+            function toggleSection(btn) {
+                const box = btn.closest(".box");
+                if (!box) return;
+
+                box.classList.toggle("section-collapsed");
+                const isCollapsed = box.classList.contains("section-collapsed");
+                btn.textContent = isCollapsed ? "▸" : "▾";
+                btn.setAttribute(
+                    "aria-expanded",
+                    isCollapsed ? "false" : "true",
+                );
+            }
+
+            function renumberAll() {
+                document
+                    .querySelectorAll("#parts > .box")
+                    .forEach((partEl, partIdx) => {
+                        const partNoInput = partEl.querySelector(".part_no");
+                        if (partNoInput) partNoInput.value = partIdx + 1;
+
+                        partEl
+                            .querySelectorAll(".articles > .box")
+                            .forEach((articleEl, articleIdx) => {
+                                const articleNoInput =
+                                    articleEl.querySelector(".article_no");
+                                if (articleNoInput)
+                                    articleNoInput.value = articleIdx + 1;
+
+                                articleEl
+                                    .querySelectorAll(".clauses > .box")
+                                    .forEach((clauseEl, clauseIdx) => {
+                                        const clauseNoInput =
+                                            clauseEl.querySelector(
+                                                ".clause_no",
+                                            );
+                                        if (clauseNoInput)
+                                            clauseNoInput.value = clauseIdx + 1;
+
+                                        clauseEl
+                                            .querySelectorAll(
+                                                ".subclauses > .box",
+                                            )
+                                            .forEach((subEl, subIdx) => {
+                                                const letterInput =
+                                                    subEl.querySelector(
+                                                        ".letter",
+                                                    );
+                                                if (letterInput) {
+                                                    letterInput.value =
+                                                        String.fromCharCode(
+                                                            97 + subIdx,
+                                                        );
+                                                }
+                                            });
+                                    });
+                            });
+                    });
+                showStatus("✓ All numbers and letters updated");
+            }
+
+            function addPart(data = null) {
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+                    <div class="header-with-remove">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true" title="Expand/Collapse">▾</button>
+                            <h3 style="margin:0">Part</h3>
+                        </div>
+                        <div>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'up')">↑</button>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'down')">↓</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">✗ Remove Part</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                    Part No: <input class="part_no auto-number" style="background:#f0f0f0; width:60px;" value="${data && data.part_no != null ? escapeHtml(String(data.part_no)) : ""}"><br><br>
+                    Title: <input class="part_title" style="width: 90%;" value="${escapeHtml(data ? data.part_title || "" : "")}" placeholder="Part Title"><br>
+                    <br>Part Description: <input class="part_description" style="width: 90%;" value="${escapeHtml(data ? data.part_description || "" : "")}" placeholder="Part Description"><br>
+                    <div class="part-extra"></div>
+                    <div style="margin: 10px 0;">
+                        <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.part-extra'))">+ Add Explanation</button>
+                        <button class="add-btn" onclick="addProvision(this.parentElement.parentElement.querySelector('.part-extra'))">+ Add Provision</button>
+                    </div>
+                    <div class="articles"></div>
+                    <button onclick="addArticle(this)">+ Article</button>
+                    </div>
+                `;
+                document.getElementById("parts").appendChild(div);
+
+                const extraContainer = div.querySelector(".part-extra");
+                if (data) {
+                    if (data.explanation)
+                        addExplanation(extraContainer, data.explanation);
+                    if (data.provision)
+                        addProvision(extraContainer, data.provision);
+                    if (data.articles) {
+                        const articlesContainer =
+                            div.querySelector(".articles");
+                        data.articles.forEach((articleData) => {
+                            addArticleToContainer(
+                                articlesContainer,
+                                articleData,
+                            );
+                        });
+                    }
+                }
+                if (!isRenderingData) renumberAll();
+            }
+
+            function addArticle(btn, data = null) {
+                const container = btn.parentElement.querySelector(".articles");
+                addArticleToContainer(container, data);
+                renumberAll();
+            }
+
+            function addArticleToContainer(container, data = null) {
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+                    <div class="header-with-remove">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true" title="Expand/Collapse">▾</button>
+                            <h4 style="margin:0">Article</h4>
+                        </div>
+                        <div>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'up')">↑</button>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'down')">↓</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">✗ Remove Article</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                    Article No: <input class="article_no auto-number" style="background:#f0f0f0; width:60px;" value="${data && data.article_no != null ? escapeHtml(String(data.article_no)) : ""}"><br><br>
+                    Title: <input class="article_title" style="width: 90%;" value="${escapeHtml(data ? data.title || "" : "")}" placeholder="Article Title"><br>
+                    <div class="article-extra"></div>
+                    <div style="margin: 10px 0;">
+                        <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.article-extra'))">+ Add Explanation</button>
+                        <button class="add-btn" onclick="addProvision(this.parentElement.parentElement.querySelector('.article-extra'))">+ Add Provision</button>
+                    </div>
+                    <div class="clauses"></div>
+                    <button onclick="addClause(this)">+ Clause</button>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                const extraContainer = div.querySelector(".article-extra");
+                if (data) {
+                    if (data.explanation)
+                        addExplanation(extraContainer, data.explanation);
+                    if (data.provision)
+                        addProvision(extraContainer, data.provision);
+                    if (data.clauses) {
+                        const clausesContainer = div.querySelector(".clauses");
+                        data.clauses.forEach((clauseData) => {
+                            addClauseToContainer(clausesContainer, clauseData);
+                        });
+                    }
+                }
+                if (!isRenderingData) renumberAll();
+            }
+
+            function addClause(btn, data = null) {
+                const container = btn.parentElement.querySelector(".clauses");
+                addClauseToContainer(container, data);
+                renumberAll();
+            }
+
+            function addClauseToContainer(container, data = null) {
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+                    <div class="header-with-remove">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true" title="Expand/Collapse">▾</button>
+                            <h5 style="margin:0">Clause</h5>
+                        </div>
+                        <div>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'up')">↑</button>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'down')">↓</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">✗ Remove Clause</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                    Clause No: <input class="clause_no auto-number" style="background:#f0f0f0; width:60px;" value="${data && data.clause_no != null ? escapeHtml(String(data.clause_no)) : ""}"><br><br>
+                    Text: <textarea class="clause_text" rows="2" style="width: 95%;" placeholder="Clause text...">${escapeHtml(data ? data.text || "" : "")}</textarea><br>
+                    <div class="clause-extra"></div>
+                    <div style="margin: 10px 0;">
+                        <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.clause-extra'))">+ Add Explanation</button>
+                        <button class="add-btn" onclick="addProvision(this.parentElement.parentElement.querySelector('.clause-extra'))">+ Add Provision</button>
+                    </div>
+                    <div class="subclauses"></div>
+                    <button onclick="addSubClause(this)">+ Sub-Clause</button>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                const extraContainer = div.querySelector(".clause-extra");
+                if (data) {
+                    if (data.explanation)
+                        addExplanation(extraContainer, data.explanation);
+                    if (data.provision)
+                        addProvision(extraContainer, data.provision);
+                    if (data.sub_clauses) {
+                        const subContainer = div.querySelector(".subclauses");
+                        data.sub_clauses.forEach((subData) => {
+                            addSubClauseToContainer(subContainer, subData);
+                        });
+                    }
+                }
+                if (!isRenderingData) renumberAll();
+            }
+
+            function addSubClause(btn, data = null) {
+                const container =
+                    btn.parentElement.querySelector(".subclauses");
+                addSubClauseToContainer(container, data);
+                renumberAll();
+            }
+
+            function addSubClauseToContainer(container, data = null) {
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+                    <div class="header-with-remove">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true" title="Expand/Collapse">▾</button>
+                            <span style="font-weight:bold">Sub-Clause</span>
+                        </div>
+                        <div>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'up')">↑</button>
+                            <button class="reorder-btn" onclick="moveElement(this.parentElement.parentElement.parentElement, 'down')">↓</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">✗ Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                    Letter: <input class="letter auto-number" style="background:#f0f0f0; width:60px;" value="${escapeHtml(data && data.letter ? data.letter : "")}"><br><br>
+                    Freedom: <textarea class="freedom" rows="2" style="width: 95%;" placeholder="Freedom description...">${escapeHtml(data ? data.freedom || "" : "")}</textarea><br>
+                    <div class="subclause-extra"></div>
+                    <div style="margin: 10px 0;">
+                        <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.subclause-extra'))">+ Add Explanation</button>
+                        <button class="add-btn" onclick="addProvision(this.parentElement.parentElement.querySelector('.subclause-extra'))">+ Add Provision</button>
+                    </div>
+                    </div>
+                `;
+                container.appendChild(div);
+
+                const extraContainer = div.querySelector(".subclause-extra");
+                if (data) {
+                    if (data.explanation)
+                        addExplanation(extraContainer, data.explanation);
+                    if (data.provision)
+                        addProvision(extraContainer, data.provision);
+                }
+                if (!isRenderingData) renumberAll();
+            }
+
+            function escapeHtml(str) {
+                if (!str) return "";
+                return str.replace(/[&<>]/g, function (m) {
+                    if (m === "&") return "&amp;";
+                    if (m === "<") return "&lt;";
+                    if (m === ">") return "&gt;";
+                    return m;
+                });
+            }
+
+            function collectData() {
+                const data = {
+                    document: {
+                        title: document.getElementById("title").value,
+                        year_np:
+                            Number(document.getElementById("year_np").value) ||
+                            0,
+                        year_en:
+                            Number(document.getElementById("year_en").value) ||
+                            0,
+                    },
+                    parts: [],
+                };
+
+                document.querySelectorAll("#parts > .box").forEach((partEl) => {
+                    const partTitle = partEl.querySelector(".part_title").value;
+                    if (!partTitle) return;
+
+                    const part = {
+                        part_no:
+                            Number(partEl.querySelector(".part_no").value) || 0,
+                        part_title: partTitle,
+                        articles: [],
+                    };
+
+                    const partDescription =
+                        partEl.querySelector(".part_description")?.value;
+                    if (partDescription) {
+                        part.part_description = partDescription;
+                    }
+
+                    const partExplanation = partEl.querySelector(
+                        ".part-extra .explanation-text",
+                    )?.value;
+                    if (partExplanation) part.explanation = partExplanation;
+
+                    const partProvision = partEl.querySelector(
+                        ".part-extra .provision-text",
+                    )?.value;
+                    if (partProvision) part.provision = partProvision;
+
+                    partEl
+                        .querySelectorAll(".articles > .box")
+                        .forEach((articleEl) => {
+                            const articleTitle =
+                                articleEl.querySelector(".article_title").value;
+                            if (!articleTitle) return;
+
+                            const article = {
+                                article_no:
+                                    Number(
+                                        articleEl.querySelector(".article_no")
+                                            .value,
+                                    ) || 0,
+                                title: articleTitle,
+                                clauses: [],
+                            };
+
+                            const articleExplanation = articleEl.querySelector(
+                                ".article-extra .explanation-text",
+                            )?.value;
+                            if (articleExplanation)
+                                article.explanation = articleExplanation;
+
+                            const articleProvision = articleEl.querySelector(
+                                ".article-extra .provision-text",
+                            )?.value;
+                            if (articleProvision)
+                                article.provision = articleProvision;
+
+                            articleEl
+                                .querySelectorAll(".clauses > .box")
+                                .forEach((clauseEl) => {
+                                    const clauseText =
+                                        clauseEl.querySelector(
+                                            ".clause_text",
+                                        ).value;
+                                    if (!clauseText) return;
+
+                                    const clause = {
+                                        clause_no:
+                                            Number(
+                                                clauseEl.querySelector(
+                                                    ".clause_no",
+                                                ).value,
+                                            ) || 0,
+                                        text: clauseText,
+                                    };
+
+                                    const clauseExplanation =
+                                        clauseEl.querySelector(
+                                            ".clause-extra .explanation-text",
+                                        )?.value;
+                                    if (clauseExplanation)
+                                        clause.explanation = clauseExplanation;
+
+                                    const clauseProvision =
+                                        clauseEl.querySelector(
+                                            ".clause-extra .provision-text",
+                                        )?.value;
+                                    if (clauseProvision)
+                                        clause.provision = clauseProvision;
+
+                                    const subClauses = [];
+                                    clauseEl
+                                        .querySelectorAll(".subclauses > .box")
+                                        .forEach((subEl) => {
+                                            const freedom =
+                                                subEl.querySelector(
+                                                    ".freedom",
+                                                ).value;
+                                            if (!freedom) return;
+
+                                            const subClause = {
+                                                letter: subEl.querySelector(
+                                                    ".letter",
+                                                ).value,
+                                                freedom: freedom,
+                                            };
+
+                                            const subExplanation =
+                                                subEl.querySelector(
+                                                    ".subclause-extra .explanation-text",
+                                                )?.value;
+                                            if (subExplanation)
+                                                subClause.explanation =
+                                                    subExplanation;
+
+                                            const subProvision =
+                                                subEl.querySelector(
+                                                    ".subclause-extra .provision-text",
+                                                )?.value;
+                                            if (subProvision)
+                                                subClause.provision =
+                                                    subProvision;
+
+                                            subClauses.push(subClause);
+                                        });
+
+                                    if (subClauses.length > 0) {
+                                        clause.sub_clauses = subClauses;
+                                    }
+
+                                    article.clauses.push(clause);
+                                });
+
+                            if (article.clauses.length > 0) {
+                                part.articles.push(article);
+                            }
+                        });
+
+                    if (part.articles.length > 0) {
+                        data.parts.push(part);
+                    }
+                });
+
+                return data;
+            }
+
+            function renderData(data) {
+                isRenderingData = true;
+                document.getElementById("title").value =
+                    data.document?.title || "";
+                document.getElementById("year_np").value =
+                    data.document?.year_np || "";
+                document.getElementById("year_en").value =
+                    data.document?.year_en || "";
+
+                const partsContainer = document.getElementById("parts");
+                partsContainer.innerHTML = "";
+                partCount = 0;
+
+                if (data.parts && data.parts.length) {
+                    data.parts.forEach((partData) => {
+                        addPart(partData);
+                    });
+                }
+
+                isRenderingData = false;
+                document.getElementById("output").value = JSON.stringify(
+                    data,
+                    null,
+                    2,
+                );
+                localStorage.setItem("constitutionData", JSON.stringify(data));
+                showStatus("✓ Data loaded & saved to localStorage");
+            }
+
+            function generateAndSave() {
+                // renumberAll();
+                const data = collectData();
+                const jsonStr = JSON.stringify(data, null, 2);
+                document.getElementById("output").value = jsonStr;
+                localStorage.setItem("constitutionData", jsonStr);
+
+                const partCount = data.parts.length;
+                const articleCount = data.parts.reduce(
+                    (sum, p) => sum + p.articles.length,
+                    0,
+                );
+                const clauseCount = data.parts.reduce(
+                    (sum, p) =>
+                        sum +
+                        p.articles.reduce((s, a) => s + a.clauses.length, 0),
+                    0,
+                );
+
+                showStatus(
+                    `✓ Saved: ${partCount} part(s), ${articleCount} article(s), ${clauseCount} clause(s)`,
+                );
+            }
+
+            function loadFromTextarea() {
+                try {
+                    const jsonText = document.getElementById("output").value;
+                    if (!jsonText.trim()) {
+                        showStatus("✗ Nothing to load", true);
+                        return;
+                    }
+                    const data = JSON.parse(jsonText);
+                    renderData(data);
+                    showStatus("✓ Loaded from textarea");
+                } catch (e) {
+                    showStatus("✗ Invalid JSON: " + e.message, true);
+                }
+            }
+
+            function loadFromLocalStorage() {
+                const saved = localStorage.getItem("constitutionData");
+                if (saved) {
+                    try {
+                        const data = JSON.parse(saved);
+                        renderData(data);
+                        showStatus(
+                            "✓ Loaded last session from browser storage",
+                        );
+                    } catch (e) {
+                        showStatus("✗ Error loading saved data", true);
+                    }
+                } else {
+                    showStatus(
+                        "No saved data found. Start by adding a Part.",
+                        true,
+                    );
+                }
+            }
+
+            function validateNumbering() {
+                let issues = [];
+                document
+                    .querySelectorAll("#parts > .box")
+                    .forEach((partEl, idx) => {
+                        const partNo = partEl.querySelector(".part_no").value;
+                        if (partNo && partNo != idx + 1) {
+                            issues.push(
+                                `Part ${partNo} is at position ${idx + 1}`,
+                            );
+                        }
+                    });
+                if (issues.length > 0) {
+                    console.warn("Numbering inconsistencies:", issues);
+                    showStatus(
+                        `⚠️ ${issues.length} numbering issue(s) found`,
+                        false,
+                    );
+                }
+            }
+
+            function saveToFile() {
+                // renumberAll();
+                const data = collectData();
+                if (data.parts.length === 0) {
+                    showStatus(
+                        "⚠️ Nothing to save - add at least one Part with content",
+                        true,
+                    );
+                    return;
+                }
+
+                validateNumbering();
+                const jsonStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                const timestamp = new Date()
+                    .toISOString()
+                    .slice(0, 19)
+                    .replace(/:/g, "-");
+                a.download = `constitution_${timestamp}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showStatus("✓ File saved");
+            }
+
+            function loadFromFile() {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "application/json";
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            renderData(data);
+                            showStatus(`✓ Loaded from file: ${file.name}`);
+                        } catch (err) {
+                            showStatus("✗ Invalid JSON file", true);
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+
+            function clearAll() {
+                if (confirm("Clear everything? Unsaved data will be lost.")) {
+                    document.getElementById("title").value = "";
+                    document.getElementById("year_np").value = "";
+                    document.getElementById("year_en").value = "";
+                    document.getElementById("parts").innerHTML = "";
+                    document.getElementById("output").value = "";
+                    partCount = 0;
+                    localStorage.removeItem("constitutionData");
+                    showStatus("✓ Cleared all data");
+                }
+            }
+
+            window.addEventListener("DOMContentLoaded", () => {
+                loadFromLocalStorage();
+            });
+        </script>
+    </body>
+</html>

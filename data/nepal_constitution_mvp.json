@@ -1,0 +1,168 @@
+{
+    "document": {
+        "title": "Constitution of Nepal, 2072 (2015)",
+        "year_np": 2072,
+        "year_en": 2015
+    },
+    "parts": [
+        {
+            "part_no": 3,
+            "part_title": "Fundamental Rights and Duties",
+            "part_description": "",
+            "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law.",
+            "articles": [
+                {
+                    "article_no": 16,
+                    "title": "Right to live with dignity",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "Every person shall have the right to live with dignity. "
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "No law shall be made providing for the death penalty to anyone. "
+                        }
+                    ]
+                },
+                {
+                    "article_no": 17,
+                    "title": "Right to freedom",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "No person shall be deprived of his or her personal liberty except in accordance with law. "
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "Every citizen shall have the following freedoms: ",
+                            "sub_clauses": [
+                                {
+                                    "letter": "a",
+                                    "freedom": "freedom of opinion and expression"
+                                },
+                                {
+                                    "letter": "b",
+                                    "freedom": "freedom to assemble peaceably and without arms,"
+                                },
+                                {
+                                    "letter": "c",
+                                    "freedom": "freedom to form political parties,"
+                                },
+                                {
+                                    "letter": "d",
+                                    "freedom": "freedom to form unions and associations"
+                                },
+                                {
+                                    "letter": "e",
+                                    "freedom": "freedom to move and reside in any part of Nepal"
+                                },
+                                {
+                                    "letter": "f",
+                                    "freedom": "freedom to practice any profession, carry on any occupation, and establish and operate any industry, trade and business in any part of Nepal. "
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "article_no": 18,
+                    "title": "Right to equality",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "All citizens shall be equal before law. No person shall be  denied the equal protection of law"
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "No discrimination shall be made in the application of general  laws on grounds of origin, religion, race, caste, tribe, sex, physical condition,  condition of health,  marital status, pregnancy, economic condition, language  or region, ideology or on similar other grounds.  "
+                        },
+                        {
+                            "clause_no": 3,
+                            "text": "The State shall not discriminate citizens on grounds of origin,  religion, race, caste, tribe, sex, economic condition, language, region, ideology or on similar other grounds.",
+                            "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law.",
+                            "provision": "Provided that nothing shall be deemed to prevent the making of special provisions by law for the protection, empowerment or development of the citizens including the socially or culturally backward women, Dalit, indigenous people, indigenous nationalities, Madhesi, Tharu, Muslim, oppressed class, Pichhada class, minorities, the marginalized, farmers, labours, youths, children,  senior citizens, gender and sexual minorities, persons with disabilities, persons in pregnancy, incapacitated or helpless, backward region and indigent Khas Arya."
+                        },
+                        {
+                            "clause_no": 4,
+                            "text": "No discrimination shall be made on the ground of gender with  regard to remuneration and social security for the same work."
+                        },
+                        {
+                            "clause_no": 5,
+                            "text": "All offspring shall have the equal right to the ancestral property  without discrimination on the ground of gender."
+                        }
+                    ]
+                },
+                {
+                    "article_no": 19,
+                    "title": "Right to communication",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "No publication and broadcasting or dissemination or printing of any news item, editorial, feature article or other reading, audio and audio-visual material through any means whatsoever including electronic publication, broadcasting and printing shall be censored",
+                            "provision": "Provided that nothing shall be deemed to prevent the making of Acts to impose reasonable restrictions on any act which may undermine the sovereignty, territorial integrity, nationality of Nepal or the harmonious relations between the Federal Units or the harmonious relations between various castes, tribes, religions or communities, or on any act of sedition, defamation or contempt of court or incitement to an offence, or on any act which may be contrary to public decency or morality, on any act of hatred to labour and on any act of incitement to caste-based untouchability as well as gender discrimination. "
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "No radio, television, on-line or other form of digital or electronic equipment, press or other means of communication publishing, broadcasting or printing any news item, feature, editorial, article, information or other material shall be closed or seized nor shall registration thereof be cancelled nor shall such material be seized by the reason of publication, broadcasting or printing of such material through any audio, audio-visual or electronic equipment. ",
+                            "provision": "Provided that nothing contained in this clause shall be deemed to prevent the making of an Act to regulate radio, television, online or any other form of digital or electronic equipment, press or other means of communication"
+                        },
+                        {
+                            "clause_no": 3,
+                            "text": "No means of communication including the press, electronic broadcasting and telephone shall be interrupted except in accordance with law. "
+                        }
+                    ]
+                },
+                {
+                    "article_no": 20,
+                    "title": "Rights relating to justice",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "No person shall be detained in custody without informing him or her of the ground for his or her arrest."
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "Any person who is arrested shall have the right to consult a legal practitioner of his or her choice from the time of such arrest and to be defended by such legal practitioner. Any consultation made by such person with, and advice given by, his or her legal practitioner shall be confidential. ",
+                            "explanation": "For the purpose of this clause, \"legal practitioner\" means any person who is authorized by law to represent any person in any court. ",
+                            "provision": "Provided this clause shall not apply to a citizen of an enemy state."
+                        },
+                        {
+                            "clause_no": 3,
+                            "text": "Any person who is arrested shall be produced before the adjudicating authority within a period of twenty-four hours of such arrest, excluding the time necessary for the journey from the place of arrest to such authority; and any such person shall not be detained in custody except on the order of such authority. ",
+                            "provision": "Provided that this clause shall not apply to a person held in preventive detention and to a citizen of an enemy state. "
+                        },
+                        {
+                            "clause_no": 4,
+                            "text": "No person shall be liable for punishment for an act which was not punishable by the law in force when the act was committed nor shall any person be subjected to a punishment greater than that prescribed by the law in force at the time of the commission of the offence. "
+                        },
+                        {
+                            "clause_no": 5,
+                            "text": "Every person charged with an offence shall be presumed innocent until proved guilty of the offence"
+                        },
+                        {
+                            "clause_no": 6,
+                            "text": "No person shall be tried and punished for the same offence in a court more than once."
+                        },
+                        {
+                            "clause_no": 7,
+                            "text": "No person charged with an offence shall be compelled to testify against himself or herself."
+                        },
+                        {
+                            "clause_no": 8,
+                            "text": "Every person shall have the right to be informed of any proceedings taken against him or her."
+                        },
+                        {
+                            "clause_no": 9,
+                            "text": "Every person shall have the right to a fair trial by an independent, impartial and competent court or judicial body."
+                        },
+                        {
+                            "clause_no": 10,
+                            "text": "Any indigent party shall have the right to free legal aid in accordance with law"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

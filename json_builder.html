@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Constitution JSON Builder</title>
+        <style>
+            body {
+                font-family: Arial;
+                margin: 20px;
+            }
+            .box {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin: 10px 0;
+            }
+            button {
+                margin: 5px 0;
+            }
+            textarea {
+                width: 100%;
+                height: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Constitution Builder</h2>
+
+        <div class="box">
+            <h3>Document</h3>
+            Title: <input id="title" /><br />
+            Year (NP): <input id="year_np" type="number" /><br />
+            Year (EN): <input id="year_en" type="number" /><br />
+        </div>
+
+        <div id="parts"></div>
+
+        <button onclick="addPart()">+ Add Part</button>
+        <button onclick="generateJSON()">Generate JSON</button>
+
+        <h3>Output</h3>
+        <textarea id="output"></textarea>
+
+        <script>
+            let partCount = 0;
+
+            function addPart() {
+                const id = partCount++;
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+    <h3>Part</h3>
+    Part No: <input class="part_no"><br>
+    Title: <input class="part_title"><br>
+    <div class="articles"></div>
+    <button onclick="addArticle(this)">+ Article</button>
+  `;
+                document.getElementById("parts").appendChild(div);
+            }
+
+            function addArticle(btn) {
+                const container = btn.parentElement.querySelector(".articles");
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+    <h4>Article</h4>
+    Article No: <input class="article_no"><br>
+    Title: <input class="article_title"><br>
+    <div class="clauses"></div>
+    <button onclick="addClause(this)">+ Clause</button>
+  `;
+                container.appendChild(div);
+            }
+
+            function addClause(btn) {
+                const container = btn.parentElement.querySelector(".clauses");
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+    <h5>Clause</h5>
+    Clause No: <input class="clause_no"><br>
+    Text: <input class="clause_text"><br>
+    <div class="subclauses"></div>
+    <button onclick="addSubClause(this)">+ Sub-Clause</button>
+  `;
+                container.appendChild(div);
+            }
+
+            function addSubClause(btn) {
+                const container =
+                    btn.parentElement.querySelector(".subclauses");
+                const div = document.createElement("div");
+                div.className = "box";
+                div.innerHTML = `
+    Letter: <input class="letter"><br>
+    Freedom: <input class="freedom"><br>
+    Proviso: <input class="proviso"><br>
+  `;
+                container.appendChild(div);
+            }
+
+            function generateJSON() {
+                const data = {
+                    document: {
+                        title: document.getElementById("title").value,
+                        year_np: Number(
+                            document.getElementById("year_np").value,
+                        ),
+                        year_en: Number(
+                            document.getElementById("year_en").value,
+                        ),
+                    },
+                    parts: [],
+                };
+
+                document.querySelectorAll("#parts > .box").forEach((partEl) => {
+                    const part = {
+                        part_no: Number(partEl.querySelector(".part_no").value),
+                        part_title: partEl.querySelector(".part_title").value,
+                        articles: [],
+                    };
+
+                    partEl
+                        .querySelectorAll(".articles > .box")
+                        .forEach((articleEl) => {
+                            const article = {
+                                article_no: Number(
+                                    articleEl.querySelector(".article_no")
+                                        .value,
+                                ),
+                                title: articleEl.querySelector(".article_title")
+                                    .value,
+                                clauses: [],
+                                explanation: null,
+                                references: [],
+                            };
+
+                            articleEl
+                                .querySelectorAll(".clauses > .box")
+                                .forEach((clauseEl) => {
+                                    const clause = {
+                                        clause_no: Number(
+                                            clauseEl.querySelector(".clause_no")
+                                                .value,
+                                        ),
+                                        text: clauseEl.querySelector(
+                                            ".clause_text",
+                                        ).value,
+                                    };
+
+                                    const subClauses = [];
+                                    clauseEl
+                                        .querySelectorAll(".subclauses > .box")
+                                        .forEach((subEl) => {
+                                            subClauses.push({
+                                                letter: subEl.querySelector(
+                                                    ".letter",
+                                                ).value,
+                                                freedom:
+                                                    subEl.querySelector(
+                                                        ".freedom",
+                                                    ).value,
+                                                proviso:
+                                                    subEl.querySelector(
+                                                        ".proviso",
+                                                    ).value,
+                                            });
+                                        });
+
+                                    if (subClauses.length > 0) {
+                                        clause.sub_clauses = subClauses;
+                                    }
+
+                                    article.clauses.push(clause);
+                                });
+
+                            part.articles.push(article);
+                        });
+
+                    data.parts.push(part);
+                });
+
+                document.getElementById("output").value = JSON.stringify(
+                    data,
+                    null,
+                    2,
+                );
+            }
+        </script>
+    </body>
+</html>
