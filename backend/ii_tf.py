@@ -2,10 +2,10 @@
 
 import json
 import re
-
-
-
 import math
+
+from backend.bm25 import BM25 as BM25Model
+from backend.bm25 import search_bm25_with_boost as ranked_search
 
 class BM25:
     def __init__(self, documents, k1=1.5, b=0.75):
@@ -106,8 +106,6 @@ def boolean_search(query, index, docs):
     return results
 
 
-import math
-
 def score_documents(query, index, docs):
     tokens = tokenize(query)
     total_docs = len(docs)
@@ -200,7 +198,7 @@ def search_bm25_with_boost(query, bm25_instance, documents, title_boost=5.0, top
 
 def main():
     # Load documents once
-    with open("data/flattened_articles.json", "r", encoding="utf-8") as f:
+    with open("data/flattened_constitution.json", "r", encoding="utf-8") as f:
         documents = json.load(f)
     
     # Build inverted index (for TF-IDF or boolean, optional)
@@ -208,11 +206,11 @@ def main():
     
     # Initialize BM25 once (this builds its internal index)
     print("Initializing BM25 index...")
-    bm25 = BM25(documents)
+    bm25 = BM25Model(documents)
     print(f"Indexed {len(documents)} documents. Avg doc length: {bm25.avgdl:.1f} words.\n")
     
     print("\n" + "="*60)
-    print("   CONSTITUTION OF NEPAL - LEGAL SEARCH ENGINE (MVP)")
+    print("   NEPAL CONSTITUTION ASSISTANT - LEGAL SEARCH ENGINE")
     print("="*60)
     print("Type a query or article number. Type 'exit' to quit.\n")
     
@@ -237,7 +235,7 @@ def main():
             continue
         
         # BM25 Ranked search
-        results = search_bm25_with_boost(query, bm25, documents)
+        results = ranked_search(query, bm25, documents)
         
         if not results:
             print("\n❌ No relevant constitutional provisions found.\n")

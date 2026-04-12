@@ -1,5 +1,5 @@
 
-from ii_tf import tokenize
+from backend.text_processing import tokenize
 
 def flatten_articles(articles):
     documents = []
@@ -43,12 +43,12 @@ def flatten_articles(articles):
 
 def main():
     import json
-    with open("data/part3_combined.json", "r") as f:
+    with open("data/constitution_combined.json", "r") as f:
         articles = json.load(f)
     
     documents = flatten_articles(articles)
     
-    with open("data/flattened_articles.json", "w") as f:
+    with open("data/flattened_constitution.json", "w") as f:
         json.dump(documents, f, indent=2)
 
 if __name__ == "__main__":
