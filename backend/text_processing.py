@@ -1,30 +1,7 @@
 import re
 
 
-STOPWORDS = {
-    'she', 'thereby', 'government', 'it', 'except', 'made', 'provide', 'case',
-    'authority', 'tribunals', 'accordance', 'schedule', 'could', 'prescribe',
-    'person', 'why', 'be', 'a', 'entities', 'judge', 'may', 'wherein', 'any',
-    'schedules', 'of', 'and', 'their', 'court', 'where', 'article', 'clause',
-    'them', 'will', 'provision', 'subsection', 'whereupon', 'paragraph',
-    'thereinbefore', 'your', 'judges', 'statute', 'provides', 'not', 'no',
-    'apply', 'including', 'are', 'we', 'party', 'same', 'herein', 'union',
-    'was', 'prescribed', 'this', 'other', 'laws', 'whereafter', 'stipulations',
-    'with', 'code', 'provisions', 'deemed', 'rules', 'my', 'shall', 'neither',
-    'if', 'thereafter', 'provided', 'consistent', 'noting', 'his', 'thereof',
-    'who', 'another', 'noted', 'chapter', 'include', 'can', 'whereby', 'or',
-    'each', 'is', 'he', 'state', 'therewith', 'hereunder', 'either', 'deem',
-    'section', 'at', 'notwithstanding', 'how', 'therein', 'jurisdiction',
-    'acts', 'in', 'part', 'entity', 'persons', 'what', 'such', 'its', 'whereof',
-    'wherewith', 'amendments', 'stipulation', 'statutes', 'all', 'have', 'but',
-    'must', 'to', 'includes', 'her', 'cases', 'the', 'inconsistent', 'every',
-    'should', 'act', 'by', 'hereto', 'as', 'do', 'on', 'they', 'pursuant',
-    'subject', 'authorities', 'constitutional', 'our', 'from', 'law', 'hereby',
-    'hereafter', 'that', 'applies', 'which', 'for', 'amendment', 'constitution',
-    'regulations', 'an', 'when', 'thereunder', 'herewith', 'has', 'courts',
-    'parties', 'states', 'tribunal', 'would', 'whereas', 'thereupon',
-    'whereinbefore', 'suchlike', 'thereinbefore', 'thereby', 'whereupon'
-}
+from .src.constants import STOPWORDS
 
 
 def tokenize(text):

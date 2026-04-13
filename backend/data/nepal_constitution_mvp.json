@@ -6,10 +6,132 @@
     },
     "parts": [
         {
+            "part_no": 1,
+            "part_title": "Preliminary",
+            "articles": [
+                {
+                    "article_no": 1,
+                    "title": "Constitution as the fundamental law",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "This Constitution is the fundamental\nlaw of Nepal. Any law inconsistent with this Constitution shall, to the extent of\nsuch inconsistency, be void."
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "It shall be the duty of every person to observe this Constitution"
+                        }
+                    ]
+                },
+                {
+                    "article_no": 2,
+                    "title": "Sovereignty and state authority",
+                    "text": "The sovereignty and state authority of Nepal\nshall be vested in the Nepalese people. It shall be exercised in accordance with\nthe provisions set forth in this Constitution."
+                },
+                {
+                    "article_no": 3,
+                    "title": "Nation",
+                    "text": "All the Nepalese people, with multiethnic, multilingual, multi-religious,\nmulticultural characteristics and in geographical diversities, and having\ncommon aspirations and being united by a bond of allegiance to national\nindependence, territorial integrity, national interest and prosperity of Nepal,\ncollectively constitute the nation"
+                },
+                {
+                    "article_no": 4,
+                    "title": "State of Nepal",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "Nepal is an independent, indivisible, sovereign, secular,\ninclusive, democratic, socialism-oriented, federal democratic republican state",
+                            "explanation": "For the purposes of this Article, \"secular\" means religious,\ncultural freedoms, including protection of religion, culture handed down from\nthe time immemorial."
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "The territory of Nepal shall comprise:",
+                            "sub_clauses": [
+                                {
+                                    "letter": "a",
+                                    "freedom": "the territory existing at the time of commencement of this\nConstitution"
+                                },
+                                {
+                                    "letter": "b",
+                                    "freedom": "such other territory as may be acquired after the\ncommencement of this Constitution"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "article_no": 5,
+                    "title": "National interest",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "Safeguarding of the freedom, sovereignty, territorial\nintegrity, nationality, independence and dignity of Nepal, the rights of the Nepalese people, border security, economic wellbeing and prosperity shall be the basic elements of the national interest of Nepal."
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "Any conduct and act contrary to the national interest shall be\npunishable by the Federal law."
+                        }
+                    ]
+                },
+                {
+                    "article_no": 6,
+                    "title": "Languages of the nation",
+                    "text": "All languages spoken as the mother tongues in Nepal\nare the languages of the nation."
+                },
+                {
+                    "article_no": 7,
+                    "title": "Official language",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "The Nepali language in the Devnagari script shall be the\nofficial language of Nepal."
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "A State may, by a State law, determine one or more than one\nlanguages of the nation spoken by a majority of people within the State as its\nofficial language(s), in addition to the Nepali language"
+                        },
+                        {
+                            "clause_no": 3,
+                            "text": "Other matters relating to language shall be as decided by the\nGovernment of Nepal, on recommendation of the Language Commission"
+                        }
+                    ]
+                },
+                {
+                    "article_no": 8,
+                    "title": "National flag",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "The national flag of Nepal consists of two juxtaposed\ntriangular figures with a crimson-coloured base and deep blue borders, there\nbeing a white emblem of the crescent moon with eight rays visible out of\nsixteen in the upper part and a white emblem of a twelve rayed sun in the lower\npart"
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "The method of drawing out the flag and other particulars relating\nthereto shall be as set forth in Schedule-1"
+                        }
+                    ]
+                },
+                {
+                    "article_no": 9,
+                    "title": "National anthem etc",
+                    "clauses": [
+                        {
+                            "clause_no": 1,
+                            "text": "The national anthem of Nepal shall be as set forth in\nSchedule-2"
+                        },
+                        {
+                            "clause_no": 2,
+                            "text": "The coat-of-arms of Nepal shall be as set forth in Schedule-3."
+                        },
+                        {
+                            "clause_no": 3,
+                            "text": "The Rhododendron Arboreum shall be the national flower,\nCrimson Colour shall be the national colour, the Cow shall be the national\nanimal and the Lophophorus shall be the national bird of Nepal."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "part_no": 3,
             "part_title": "Fundamental Rights and Duties",
-            "part_description": "",
-            "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law.",
             "articles": [
                 {
                     "article_no": 16,
@@ -162,7 +284,8 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law."
         }
     ]
 }

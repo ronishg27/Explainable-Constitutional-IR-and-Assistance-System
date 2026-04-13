@@ -18,7 +18,9 @@
                 cursor: pointer;
             }
             textarea {
-                width: 100%;
+                width: 70%;
+            }
+            #output {
                 height: 200px;
             }
             .toolbar {
@@ -152,7 +154,7 @@
 
         <button onclick="addPart()">+ Add Part</button>
         <button onclick="generateAndSave()">Generate & Save JSON</button>
-        <button onclick="renumberAll()">🔄 Renumber All</button>
+        <!-- <button onclick="renumberAll()">🔄 Renumber All</button> -->
 
         <h3>Output (Editable JSON)</h3>
         <textarea id="output" placeholder="JSON will appear here..."></textarea>
@@ -174,8 +176,8 @@
             function removeElement(element) {
                 if (confirm("Remove this item?")) {
                     element.remove();
-                    renumberAll();
-                    showStatus("✓ Item removed & renumbered");
+                    // renumberAll();
+                    // showStatus("✓ Item removed & renumbered");
                 }
             }
 
@@ -191,7 +193,7 @@
                 ) {
                     parent.insertBefore(element, siblings[index + 1]);
                 }
-                renumberAll();
+                // renumberAll();
             }
 
             function addExplanation(parentElement, existingText = "") {
@@ -204,7 +206,7 @@
                 div.innerHTML = `
                     <label>📝 Explanation:</label>
                     <button class="add-btn" onclick="removeExplanation(this)" style="background-color:#ff9800;">✗ Remove</button><br>
-                    <textarea class="explanation-text" rows="3" style="width: 95%;" placeholder="Add explanation here...">${escapeHtml(existingText)}</textarea>
+                    <textarea class="explanation-text" rows="1" style="width: 70%;" placeholder="Add explanation here...">${escapeHtml(existingText)}</textarea>
                 `;
                 parentElement.appendChild(div);
                 showStatus("✓ Explanation added");
@@ -226,7 +228,7 @@
                 div.innerHTML = `
                     <label>⚖️ Provision/Proviso:</label>
                     <button class="add-btn" onclick="removeProvision(this)" style="background-color:#ff9800;">✗ Remove</button><br>
-                    <textarea class="provision-text" rows="3" style="width: 95%;" placeholder="Add provision or proviso here...">${escapeHtml(existingText)}</textarea>
+                    <textarea class="provision-text" rows="1" style="width: 70%;" placeholder="Add provision or proviso here...">${escapeHtml(existingText)}</textarea>
                 `;
                 parentElement.appendChild(div);
                 showStatus("✓ Provision added");
@@ -251,52 +253,52 @@
                 );
             }
 
-            function renumberAll() {
-                document
-                    .querySelectorAll("#parts > .box")
-                    .forEach((partEl, partIdx) => {
-                        const partNoInput = partEl.querySelector(".part_no");
-                        if (partNoInput) partNoInput.value = partIdx + 1;
+            // function renumberAll() {
+            //     document
+            //         .querySelectorAll("#parts > .box")
+            //         .forEach((partEl, partIdx) => {
+            //             const partNoInput = partEl.querySelector(".part_no");
+            //             if (partNoInput) partNoInput.value = partIdx + 1;
 
-                        partEl
-                            .querySelectorAll(".articles > .box")
-                            .forEach((articleEl, articleIdx) => {
-                                const articleNoInput =
-                                    articleEl.querySelector(".article_no");
-                                if (articleNoInput)
-                                    articleNoInput.value = articleIdx + 1;
+            //             partEl
+            //                 .querySelectorAll(".articles > .box")
+            //                 .forEach((articleEl, articleIdx) => {
+            //                     const articleNoInput =
+            //                         articleEl.querySelector(".article_no");
+            //                     if (articleNoInput)
+            //                         articleNoInput.value = articleIdx + 1;
 
-                                articleEl
-                                    .querySelectorAll(".clauses > .box")
-                                    .forEach((clauseEl, clauseIdx) => {
-                                        const clauseNoInput =
-                                            clauseEl.querySelector(
-                                                ".clause_no",
-                                            );
-                                        if (clauseNoInput)
-                                            clauseNoInput.value = clauseIdx + 1;
+            //                     articleEl
+            //                         .querySelectorAll(".clauses > .box")
+            //                         .forEach((clauseEl, clauseIdx) => {
+            //                             const clauseNoInput =
+            //                                 clauseEl.querySelector(
+            //                                     ".clause_no",
+            //                                 );
+            //                             if (clauseNoInput)
+            //                                 clauseNoInput.value = clauseIdx + 1;
 
-                                        clauseEl
-                                            .querySelectorAll(
-                                                ".subclauses > .box",
-                                            )
-                                            .forEach((subEl, subIdx) => {
-                                                const letterInput =
-                                                    subEl.querySelector(
-                                                        ".letter",
-                                                    );
-                                                if (letterInput) {
-                                                    letterInput.value =
-                                                        String.fromCharCode(
-                                                            97 + subIdx,
-                                                        );
-                                                }
-                                            });
-                                    });
-                            });
-                    });
-                showStatus("✓ All numbers and letters updated");
-            }
+            //                             clauseEl
+            //                                 .querySelectorAll(
+            //                                     ".subclauses > .box",
+            //                                 )
+            //                                 .forEach((subEl, subIdx) => {
+            //                                     const letterInput =
+            //                                         subEl.querySelector(
+            //                                             ".letter",
+            //                                         );
+            //                                     if (letterInput) {
+            //                                         letterInput.value =
+            //                                             String.fromCharCode(
+            //                                                 97 + subIdx,
+            //                                             );
+            //                                     }
+            //                                 });
+            //                         });
+            //                 });
+            //         });
+            //     showStatus("✓ All numbers and letters updated");
+            // }
 
             function addPart(data = null) {
                 const div = document.createElement("div");
@@ -345,13 +347,14 @@
                         });
                     }
                 }
-                if (!isRenderingData) renumberAll();
+                // if (!isRenderingData)
+                // renumberAll();
             }
 
             function addArticle(btn, data = null) {
                 const container = btn.parentElement.querySelector(".articles");
                 addArticleToContainer(container, data);
-                renumberAll();
+                // renumberAll();
             }
 
             function addArticleToContainer(container, data = null) {
@@ -372,6 +375,7 @@
                     <div class="section-body">
                     Article No: <input class="article_no auto-number" style="background:#f0f0f0; width:60px;" value="${data && data.article_no != null ? escapeHtml(String(data.article_no)) : ""}"><br><br>
                     Title: <input class="article_title" style="width: 90%;" value="${escapeHtml(data ? data.title || "" : "")}" placeholder="Article Title"><br>
+                    Direct Text: <textarea class="article_text" rows="1" style="width: 70%;" placeholder="Use this when the article has direct text and no clauses...">${escapeHtml(data ? data.text || "" : "")}</textarea><br>
                     <div class="article-extra"></div>
                     <div style="margin: 10px 0;">
                         <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.article-extra'))">+ Add Explanation</button>
@@ -396,13 +400,13 @@
                         });
                     }
                 }
-                if (!isRenderingData) renumberAll();
+                // if (!isRenderingData) // renumberAll();
             }
 
             function addClause(btn, data = null) {
                 const container = btn.parentElement.querySelector(".clauses");
                 addClauseToContainer(container, data);
-                renumberAll();
+                // renumberAll();
             }
 
             function addClauseToContainer(container, data = null) {
@@ -422,7 +426,7 @@
                     </div>
                     <div class="section-body">
                     Clause No: <input class="clause_no auto-number" style="background:#f0f0f0; width:60px;" value="${data && data.clause_no != null ? escapeHtml(String(data.clause_no)) : ""}"><br><br>
-                    Text: <textarea class="clause_text" rows="2" style="width: 95%;" placeholder="Clause text...">${escapeHtml(data ? data.text || "" : "")}</textarea><br>
+                    Text: <textarea class="clause_text" rows="1" style="width: 70%;" placeholder="Clause text...">${escapeHtml(data ? data.text || "" : "")}</textarea><br>
                     <div class="clause-extra"></div>
                     <div style="margin: 10px 0;">
                         <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.clause-extra'))">+ Add Explanation</button>
@@ -447,14 +451,14 @@
                         });
                     }
                 }
-                if (!isRenderingData) renumberAll();
+                // if (!isRenderingData) renumberAll();
             }
 
             function addSubClause(btn, data = null) {
                 const container =
                     btn.parentElement.querySelector(".subclauses");
                 addSubClauseToContainer(container, data);
-                renumberAll();
+                // renumberAll();
             }
 
             function addSubClauseToContainer(container, data = null) {
@@ -474,7 +478,7 @@
                     </div>
                     <div class="section-body">
                     Letter: <input class="letter auto-number" style="background:#f0f0f0; width:60px;" value="${escapeHtml(data && data.letter ? data.letter : "")}"><br><br>
-                    Freedom: <textarea class="freedom" rows="2" style="width: 95%;" placeholder="Freedom description...">${escapeHtml(data ? data.freedom || "" : "")}</textarea><br>
+                    Freedom: <textarea class="freedom" rows="1" style="width: 70%;" placeholder="Freedom description...">${escapeHtml(data ? data.freedom || "" : "")}</textarea><br>
                     <div class="subclause-extra"></div>
                     <div style="margin: 10px 0;">
                         <button class="add-btn" onclick="addExplanation(this.parentElement.parentElement.querySelector('.subclause-extra'))">+ Add Explanation</button>
@@ -491,7 +495,7 @@
                     if (data.provision)
                         addProvision(extraContainer, data.provision);
                 }
-                if (!isRenderingData) renumberAll();
+                // if (!isRenderingData) renumberAll();
             }
 
             function escapeHtml(str) {
@@ -559,8 +563,15 @@
                                             .value,
                                     ) || 0,
                                 title: articleTitle,
-                                clauses: [],
                             };
+
+                            const articleDirectText =
+                                articleEl.querySelector(".article_text")?.value;
+                            if (articleDirectText) {
+                                article.text = articleDirectText;
+                            }
+
+                            article.clauses = [];
 
                             const articleExplanation = articleEl.querySelector(
                                 ".article-extra .explanation-text",
@@ -652,6 +663,9 @@
 
                             if (article.clauses.length > 0) {
                                 part.articles.push(article);
+                            } else if (article.text) {
+                                delete article.clauses;
+                                part.articles.push(article);
                             }
                         });
 
@@ -707,12 +721,24 @@
                 const clauseCount = data.parts.reduce(
                     (sum, p) =>
                         sum +
-                        p.articles.reduce((s, a) => s + a.clauses.length, 0),
+                        p.articles.reduce(
+                            (s, a) => s + ((a.clauses || []).length || 0),
+                            0,
+                        ),
+                    0,
+                );
+                const directTextArticleCount = data.parts.reduce(
+                    (sum, p) =>
+                        sum +
+                        p.articles.reduce(
+                            (s, a) => s + (a.text && !a.clauses ? 1 : 0),
+                            0,
+                        ),
                     0,
                 );
 
                 showStatus(
-                    `✓ Saved: ${partCount} part(s), ${articleCount} article(s), ${clauseCount} clause(s)`,
+                    `✓ Saved: ${partCount} part(s), ${articleCount} article(s), ${clauseCount} clause(s), ${directTextArticleCount} direct-text article(s)`,
                 );
             }
 

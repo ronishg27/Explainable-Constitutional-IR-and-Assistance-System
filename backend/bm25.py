@@ -1,6 +1,6 @@
 import math
 
-from backend.text_processing import tokenize
+from text_processing import tokenize
 
 
 class BM25:

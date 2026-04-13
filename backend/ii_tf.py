@@ -4,8 +4,8 @@ import json
 import re
 import math
 
-from backend.bm25 import BM25 as BM25Model
-from backend.bm25 import search_bm25_with_boost as ranked_search
+from bm25 import BM25 as BM25Model
+from bm25 import search_bm25_with_boost as ranked_search
 
 class BM25:
     def __init__(self, documents, k1=1.5, b=0.75):
