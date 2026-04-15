@@ -1,0 +1,5 @@
+$kind: http-request
+version: v3
+url: '{{base_url}}/api/v1/health'
+method: GET
+order: 2000
