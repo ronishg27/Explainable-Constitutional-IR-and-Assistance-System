@@ -1,291 +1,1631 @@
 {
-    "document": {
-        "title": "Constitution of Nepal, 2072 (2015)",
-        "year_np": 2072,
-        "year_en": 2015
-    },
-    "parts": [
+  "document": {
+    "title": "Constitution of Nepal, 2072 (2015)",
+    "year_np": 2072,
+    "year_en": 2015
+  },
+  "parts": [
+    {
+      "part_no": 1,
+      "part_title": "Preliminary",
+      "articles": [
         {
-            "part_no": 1,
-            "part_title": "Preliminary",
-            "articles": [
-                {
-                    "article_no": 1,
-                    "title": "Constitution as the fundamental law",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "This Constitution is the fundamental\nlaw of Nepal. Any law inconsistent with this Constitution shall, to the extent of\nsuch inconsistency, be void."
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "It shall be the duty of every person to observe this Constitution"
-                        }
-                    ]
-                },
-                {
-                    "article_no": 2,
-                    "title": "Sovereignty and state authority",
-                    "text": "The sovereignty and state authority of Nepal\nshall be vested in the Nepalese people. It shall be exercised in accordance with\nthe provisions set forth in this Constitution."
-                },
-                {
-                    "article_no": 3,
-                    "title": "Nation",
-                    "text": "All the Nepalese people, with multiethnic, multilingual, multi-religious,\nmulticultural characteristics and in geographical diversities, and having\ncommon aspirations and being united by a bond of allegiance to national\nindependence, territorial integrity, national interest and prosperity of Nepal,\ncollectively constitute the nation"
-                },
-                {
-                    "article_no": 4,
-                    "title": "State of Nepal",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "Nepal is an independent, indivisible, sovereign, secular,\ninclusive, democratic, socialism-oriented, federal democratic republican state",
-                            "explanation": "For the purposes of this Article, \"secular\" means religious,\ncultural freedoms, including protection of religion, culture handed down from\nthe time immemorial."
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "The territory of Nepal shall comprise:",
-                            "sub_clauses": [
-                                {
-                                    "letter": "a",
-                                    "freedom": "the territory existing at the time of commencement of this\nConstitution"
-                                },
-                                {
-                                    "letter": "b",
-                                    "freedom": "such other territory as may be acquired after the\ncommencement of this Constitution"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "article_no": 5,
-                    "title": "National interest",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "Safeguarding of the freedom, sovereignty, territorial\nintegrity, nationality, independence and dignity of Nepal, the rights of the Nepalese people, border security, economic wellbeing and prosperity shall be the basic elements of the national interest of Nepal."
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "Any conduct and act contrary to the national interest shall be\npunishable by the Federal law."
-                        }
-                    ]
-                },
-                {
-                    "article_no": 6,
-                    "title": "Languages of the nation",
-                    "text": "All languages spoken as the mother tongues in Nepal\nare the languages of the nation."
-                },
-                {
-                    "article_no": 7,
-                    "title": "Official language",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "The Nepali language in the Devnagari script shall be the\nofficial language of Nepal."
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "A State may, by a State law, determine one or more than one\nlanguages of the nation spoken by a majority of people within the State as its\nofficial language(s), in addition to the Nepali language"
-                        },
-                        {
-                            "clause_no": 3,
-                            "text": "Other matters relating to language shall be as decided by the\nGovernment of Nepal, on recommendation of the Language Commission"
-                        }
-                    ]
-                },
-                {
-                    "article_no": 8,
-                    "title": "National flag",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "The national flag of Nepal consists of two juxtaposed\ntriangular figures with a crimson-coloured base and deep blue borders, there\nbeing a white emblem of the crescent moon with eight rays visible out of\nsixteen in the upper part and a white emblem of a twelve rayed sun in the lower\npart"
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "The method of drawing out the flag and other particulars relating\nthereto shall be as set forth in Schedule-1"
-                        }
-                    ]
-                },
-                {
-                    "article_no": 9,
-                    "title": "National anthem etc",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "The national anthem of Nepal shall be as set forth in\nSchedule-2"
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "The coat-of-arms of Nepal shall be as set forth in Schedule-3."
-                        },
-                        {
-                            "clause_no": 3,
-                            "text": "The Rhododendron Arboreum shall be the national flower,\nCrimson Colour shall be the national colour, the Cow shall be the national\nanimal and the Lophophorus shall be the national bird of Nepal."
-                        }
-                    ]
-                }
-            ]
+          "article_no": 1,
+          "title": "Constitution as the fundamental law",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "This Constitution is the fundamental\nlaw of Nepal. Any law inconsistent with this Constitution shall, to the extent of\nsuch inconsistency, be void."
+            },
+            {
+              "clause_no": 2,
+              "text": "It shall be the duty of every person to observe this Constitution"
+            }
+          ]
         },
         {
-            "part_no": 3,
-            "part_title": "Fundamental Rights and Duties",
-            "articles": [
+          "article_no": 2,
+          "title": "Sovereignty and state authority",
+          "text": "The sovereignty and state authority of Nepal\nshall be vested in the Nepalese people. It shall be exercised in accordance with\nthe provisions set forth in this Constitution."
+        },
+        {
+          "article_no": 3,
+          "title": "Nation",
+          "text": "All the Nepalese people, with multiethnic, multilingual, multi-religious,\nmulticultural characteristics and in geographical diversities, and having\ncommon aspirations and being united by a bond of allegiance to national\nindependence, territorial integrity, national interest and prosperity of Nepal,\ncollectively constitute the nation"
+        },
+        {
+          "article_no": 4,
+          "title": "State of Nepal",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Nepal is an independent, indivisible, sovereign, secular,\ninclusive, democratic, socialism-oriented, federal democratic republican state",
+              "explanation": "For the purposes of this Article, \"secular\" means religious,\ncultural freedoms, including protection of religion, culture handed down from\nthe time immemorial."
+            },
+            {
+              "clause_no": 2,
+              "text": "The territory of Nepal shall comprise:",
+              "sub_clauses": [
                 {
-                    "article_no": 16,
-                    "title": "Right to live with dignity",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "Every person shall have the right to live with dignity. "
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "No law shall be made providing for the death penalty to anyone. "
-                        }
-                    ]
+                  "letter": "a",
+                  "freedom": "the territory existing at the time of commencement of this\nConstitution"
                 },
                 {
-                    "article_no": 17,
-                    "title": "Right to freedom",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "No person shall be deprived of his or her personal liberty except in accordance with law. "
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "Every citizen shall have the following freedoms: ",
-                            "sub_clauses": [
-                                {
-                                    "letter": "a",
-                                    "freedom": "freedom of opinion and expression"
-                                },
-                                {
-                                    "letter": "b",
-                                    "freedom": "freedom to assemble peaceably and without arms,"
-                                },
-                                {
-                                    "letter": "c",
-                                    "freedom": "freedom to form political parties,"
-                                },
-                                {
-                                    "letter": "d",
-                                    "freedom": "freedom to form unions and associations"
-                                },
-                                {
-                                    "letter": "e",
-                                    "freedom": "freedom to move and reside in any part of Nepal"
-                                },
-                                {
-                                    "letter": "f",
-                                    "freedom": "freedom to practice any profession, carry on any occupation, and establish and operate any industry, trade and business in any part of Nepal. "
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "article_no": 18,
-                    "title": "Right to equality",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "All citizens shall be equal before law. No person shall be  denied the equal protection of law"
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "No discrimination shall be made in the application of general  laws on grounds of origin, religion, race, caste, tribe, sex, physical condition,  condition of health,  marital status, pregnancy, economic condition, language  or region, ideology or on similar other grounds.  "
-                        },
-                        {
-                            "clause_no": 3,
-                            "text": "The State shall not discriminate citizens on grounds of origin,  religion, race, caste, tribe, sex, economic condition, language, region, ideology or on similar other grounds.",
-                            "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law.",
-                            "provision": "Provided that nothing shall be deemed to prevent the making of special provisions by law for the protection, empowerment or development of the citizens including the socially or culturally backward women, Dalit, indigenous people, indigenous nationalities, Madhesi, Tharu, Muslim, oppressed class, Pichhada class, minorities, the marginalized, farmers, labours, youths, children,  senior citizens, gender and sexual minorities, persons with disabilities, persons in pregnancy, incapacitated or helpless, backward region and indigent Khas Arya."
-                        },
-                        {
-                            "clause_no": 4,
-                            "text": "No discrimination shall be made on the ground of gender with  regard to remuneration and social security for the same work."
-                        },
-                        {
-                            "clause_no": 5,
-                            "text": "All offspring shall have the equal right to the ancestral property  without discrimination on the ground of gender."
-                        }
-                    ]
-                },
-                {
-                    "article_no": 19,
-                    "title": "Right to communication",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "No publication and broadcasting or dissemination or printing of any news item, editorial, feature article or other reading, audio and audio-visual material through any means whatsoever including electronic publication, broadcasting and printing shall be censored",
-                            "provision": "Provided that nothing shall be deemed to prevent the making of Acts to impose reasonable restrictions on any act which may undermine the sovereignty, territorial integrity, nationality of Nepal or the harmonious relations between the Federal Units or the harmonious relations between various castes, tribes, religions or communities, or on any act of sedition, defamation or contempt of court or incitement to an offence, or on any act which may be contrary to public decency or morality, on any act of hatred to labour and on any act of incitement to caste-based untouchability as well as gender discrimination. "
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "No radio, television, on-line or other form of digital or electronic equipment, press or other means of communication publishing, broadcasting or printing any news item, feature, editorial, article, information or other material shall be closed or seized nor shall registration thereof be cancelled nor shall such material be seized by the reason of publication, broadcasting or printing of such material through any audio, audio-visual or electronic equipment. ",
-                            "provision": "Provided that nothing contained in this clause shall be deemed to prevent the making of an Act to regulate radio, television, online or any other form of digital or electronic equipment, press or other means of communication"
-                        },
-                        {
-                            "clause_no": 3,
-                            "text": "No means of communication including the press, electronic broadcasting and telephone shall be interrupted except in accordance with law. "
-                        }
-                    ]
-                },
-                {
-                    "article_no": 20,
-                    "title": "Rights relating to justice",
-                    "clauses": [
-                        {
-                            "clause_no": 1,
-                            "text": "No person shall be detained in custody without informing him or her of the ground for his or her arrest."
-                        },
-                        {
-                            "clause_no": 2,
-                            "text": "Any person who is arrested shall have the right to consult a legal practitioner of his or her choice from the time of such arrest and to be defended by such legal practitioner. Any consultation made by such person with, and advice given by, his or her legal practitioner shall be confidential. ",
-                            "explanation": "For the purpose of this clause, \"legal practitioner\" means any person who is authorized by law to represent any person in any court. ",
-                            "provision": "Provided this clause shall not apply to a citizen of an enemy state."
-                        },
-                        {
-                            "clause_no": 3,
-                            "text": "Any person who is arrested shall be produced before the adjudicating authority within a period of twenty-four hours of such arrest, excluding the time necessary for the journey from the place of arrest to such authority; and any such person shall not be detained in custody except on the order of such authority. ",
-                            "provision": "Provided that this clause shall not apply to a person held in preventive detention and to a citizen of an enemy state. "
-                        },
-                        {
-                            "clause_no": 4,
-                            "text": "No person shall be liable for punishment for an act which was not punishable by the law in force when the act was committed nor shall any person be subjected to a punishment greater than that prescribed by the law in force at the time of the commission of the offence. "
-                        },
-                        {
-                            "clause_no": 5,
-                            "text": "Every person charged with an offence shall be presumed innocent until proved guilty of the offence"
-                        },
-                        {
-                            "clause_no": 6,
-                            "text": "No person shall be tried and punished for the same offence in a court more than once."
-                        },
-                        {
-                            "clause_no": 7,
-                            "text": "No person charged with an offence shall be compelled to testify against himself or herself."
-                        },
-                        {
-                            "clause_no": 8,
-                            "text": "Every person shall have the right to be informed of any proceedings taken against him or her."
-                        },
-                        {
-                            "clause_no": 9,
-                            "text": "Every person shall have the right to a fair trial by an independent, impartial and competent court or judicial body."
-                        },
-                        {
-                            "clause_no": 10,
-                            "text": "Any indigent party shall have the right to free legal aid in accordance with law"
-                        }
-                    ]
+                  "letter": "b",
+                  "freedom": "such other territory as may be acquired after the\ncommencement of this Constitution"
                 }
-            ],
-            "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law."
+              ]
+            }
+          ]
+        },
+        {
+          "article_no": 5,
+          "title": "National interest",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Safeguarding of the freedom, sovereignty, territorial\nintegrity, nationality, independence and dignity of Nepal, the rights of the Nepalese people, border security, economic wellbeing and prosperity shall be the basic elements of the national interest of Nepal."
+            },
+            {
+              "clause_no": 2,
+              "text": "Any conduct and act contrary to the national interest shall be\npunishable by the Federal law."
+            }
+          ]
+        },
+        {
+          "article_no": 6,
+          "title": "Languages of the nation",
+          "text": "All languages spoken as the mother tongues in Nepal\nare the languages of the nation."
+        },
+        {
+          "article_no": 7,
+          "title": "Official language",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The Nepali language in the Devnagari script shall be the\nofficial language of Nepal."
+            },
+            {
+              "clause_no": 2,
+              "text": "A State may, by a State law, determine one or more than one\nlanguages of the nation spoken by a majority of people within the State as its\nofficial language(s), in addition to the Nepali language"
+            },
+            {
+              "clause_no": 3,
+              "text": "Other matters relating to language shall be as decided by the\nGovernment of Nepal, on recommendation of the Language Commission"
+            }
+          ]
+        },
+        {
+          "article_no": 8,
+          "title": "National flag",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The national flag of Nepal consists of two juxtaposed\ntriangular figures with a crimson-coloured base and deep blue borders, there\nbeing a white emblem of the crescent moon with eight rays visible out of\nsixteen in the upper part and a white emblem of a twelve rayed sun in the lower\npart"
+            },
+            {
+              "clause_no": 2,
+              "text": "The method of drawing out the flag and other particulars relating\nthereto shall be as set forth in Schedule-1"
+            }
+          ]
+        },
+        {
+          "article_no": 9,
+          "title": "National anthem etc",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The national anthem of Nepal shall be as set forth in\nSchedule-2"
+            },
+            {
+              "clause_no": 2,
+              "text": "The coat-of-arms of Nepal shall be as set forth in Schedule-3."
+            },
+            {
+              "clause_no": 3,
+              "text": "The Rhododendron Arboreum shall be the national flower,\nCrimson Colour shall be the national colour, the Cow shall be the national\nanimal and the Lophophorus shall be the national bird of Nepal."
+            }
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "part_no": 3,
+      "part_title": "Fundamental Rights and Duties",
+      "articles": [
+        {
+          "article_no": 16,
+          "title": "Right to live with dignity",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every person shall have the right to live with dignity. "
+            },
+            {
+              "clause_no": 2,
+              "text": "No law shall be made providing for the death penalty to anyone. "
+            }
+          ]
+        },
+        {
+          "article_no": 17,
+          "title": "Right to freedom",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No person shall be deprived of his or her personal liberty except in accordance with law. "
+            },
+            {
+              "clause_no": 2,
+              "text": "Every citizen shall have the following freedoms: ",
+              "sub_clauses": [
+                {
+                  "letter": "a",
+                  "freedom": "freedom of opinion and expression"
+                },
+                {
+                  "letter": "b",
+                  "freedom": "freedom to assemble peaceably and without arms,"
+                },
+                {
+                  "letter": "c",
+                  "freedom": "freedom to form political parties,"
+                },
+                {
+                  "letter": "d",
+                  "freedom": "freedom to form unions and associations"
+                },
+                {
+                  "letter": "e",
+                  "freedom": "freedom to move and reside in any part of Nepal"
+                },
+                {
+                  "letter": "f",
+                  "freedom": "freedom to practice any profession, carry on any occupation, and establish and operate any industry, trade and business in any part of Nepal. "
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "article_no": 18,
+          "title": "Right to equality",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "All citizens shall be equal before law. No person shall be  denied the equal protection of law"
+            },
+            {
+              "clause_no": 2,
+              "text": "No discrimination shall be made in the application of general  laws on grounds of origin, religion, race, caste, tribe, sex, physical condition,  condition of health,  marital status, pregnancy, economic condition, language  or region, ideology or on similar other grounds.  "
+            },
+            {
+              "clause_no": 3,
+              "text": "The State shall not discriminate citizens on grounds of origin,  religion, race, caste, tribe, sex, economic condition, language, region, ideology or on similar other grounds.",
+              "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law.",
+              "provision": "Provided that nothing shall be deemed to prevent the making of special provisions by law for the protection, empowerment or development of the citizens including the socially or culturally backward women, Dalit, indigenous people, indigenous nationalities, Madhesi, Tharu, Muslim, oppressed class, Pichhada class, minorities, the marginalized, farmers, labours, youths, children,  senior citizens, gender and sexual minorities, persons with disabilities, persons in pregnancy, incapacitated or helpless, backward region and indigent Khas Arya."
+            },
+            {
+              "clause_no": 4,
+              "text": "No discrimination shall be made on the ground of gender with  regard to remuneration and social security for the same work."
+            },
+            {
+              "clause_no": 5,
+              "text": "All offspring shall have the equal right to the ancestral property  without discrimination on the ground of gender."
+            }
+          ]
+        },
+        {
+          "article_no": 19,
+          "title": "Right to communication",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No publication and broadcasting or dissemination or printing of any news item, editorial, feature article or other reading, audio and audio-visual material through any means whatsoever including electronic publication, broadcasting and printing shall be censored",
+              "provision": "Provided that nothing shall be deemed to prevent the making of Acts to impose reasonable restrictions on any act which may undermine the sovereignty, territorial integrity, nationality of Nepal or the harmonious relations between the Federal Units or the harmonious relations between various castes, tribes, religions or communities, or on any act of sedition, defamation or contempt of court or incitement to an offence, or on any act which may be contrary to public decency or morality, on any act of hatred to labour and on any act of incitement to caste-based untouchability as well as gender discrimination. "
+            },
+            {
+              "clause_no": 2,
+              "text": "No radio, television, on-line or other form of digital or electronic equipment, press or other means of communication publishing, broadcasting or printing any news item, feature, editorial, article, information or other material shall be closed or seized nor shall registration thereof be cancelled nor shall such material be seized by the reason of publication, broadcasting or printing of such material through any audio, audio-visual or electronic equipment. ",
+              "provision": "Provided that nothing contained in this clause shall be deemed to prevent the making of an Act to regulate radio, television, online or any other form of digital or electronic equipment, press or other means of communication"
+            },
+            {
+              "clause_no": 3,
+              "text": "No means of communication including the press, electronic broadcasting and telephone shall be interrupted except in accordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 20,
+          "title": "Rights relating to justice",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No person shall be detained in custody without informing him or her of the ground for his or her arrest."
+            },
+            {
+              "clause_no": 2,
+              "text": "Any person who is arrested shall have the right to consult a legal practitioner of his or her choice from the time of such arrest and to be defended by such legal practitioner. Any consultation made by such person with, and advice given by, his or her legal practitioner shall be confidential. ",
+              "explanation": "For the purpose of this clause, \"legal practitioner\" means any person who is authorized by law to represent any person in any court. ",
+              "provision": "Provided this clause shall not apply to a citizen of an enemy state."
+            },
+            {
+              "clause_no": 3,
+              "text": "Any person who is arrested shall be produced before the adjudicating authority within a period of twenty-four hours of such arrest, excluding the time necessary for the journey from the place of arrest to such authority; and any such person shall not be detained in custody except on the order of such authority. ",
+              "provision": "Provided that this clause shall not apply to a person held in preventive detention and to a citizen of an enemy state. "
+            },
+            {
+              "clause_no": 4,
+              "text": "No person shall be liable for punishment for an act which was not punishable by the law in force when the act was committed nor shall any person be subjected to a punishment greater than that prescribed by the law in force at the time of the commission of the offence. "
+            },
+            {
+              "clause_no": 5,
+              "text": "Every person charged with an offence shall be presumed innocent until proved guilty of the offence"
+            },
+            {
+              "clause_no": 6,
+              "text": "No person shall be tried and punished for the same offence in a court more than once."
+            },
+            {
+              "clause_no": 7,
+              "text": "No person charged with an offence shall be compelled to testify against himself or herself."
+            },
+            {
+              "clause_no": 8,
+              "text": "Every person shall have the right to be informed of any proceedings taken against him or her."
+            },
+            {
+              "clause_no": 9,
+              "text": "Every person shall have the right to a fair trial by an independent, impartial and competent court or judicial body."
+            },
+            {
+              "clause_no": 10,
+              "text": "Any indigent party shall have the right to free legal aid in accordance with law"
+            }
+          ]
+        },
+        {
+          "article_no": 21,
+          "title": "Right of victim of crime",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " A victim of crime shall have the right to get \ninformation about the investigation and proceedings of a case in which he or \nshe is the victim."
+            },
+            {
+              "clause_no": 2,
+              "text": "A victim of crime shall have the right to justice including social \nrehabilitation and compensation in accordance with law."
+            }
+          ]
+        },
+        {
+          "article_no": 22,
+          "title": "Right against torture ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No person who is arrested or detained shall be \nsubjected to physical or mental torture or to cruel, inhuman or degrading \ntreatment. "
+            },
+            {
+              "clause_no": 2,
+              "text": "Any act mentioned in clause (1) shall be punishable by law, and \nany person who is the victim of such treatment shall have the right to obtain \ncompensation in accordance with law."
+            }
+          ]
+        },
+        {
+          "article_no": 23,
+          "title": "Right against preventive detention ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No person shall be held under \npreventive detention unless there is a sufficient ground of the existence of an \nimmediate threat to the sovereignty, territorial integrity or public peace and \norder of Nepal."
+            },
+            {
+              "clause_no": 2,
+              "text": "Information about the situation of a person who is held under \npreventive detention pursuant to clause (1) must be given immediately to his or \nher family members or relatives.",
+              "provision": "Provided that this clause shall not apply to a citizen of an enemy state. "
+            },
+            {
+              "clause_no": 3,
+              "text": "If the authority making preventive detention holds any person \nunder preventive detention contrary to law or in bad faith, the person held \nunder preventive detention shall have the right to obtain compensation in \naccordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 24,
+          "title": "Right against untouchability and discrimination :",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No person shall be \nsubjected to any form of untouchability or discrimination in any private and \npublic places on grounds of his or her origin, caste, tribe, community, \nprofession, occupation or physical condition. "
+            },
+            {
+              "clause_no": 2,
+              "text": "In producing or distributing any goods, services or facilities, no \nperson belonging to any particular caste or tribe shall be prevented from \npurchasing or acquiring such goods, services or facilities nor shall such goods, \nservices or facilities be sold, distributed or provided only to the persons \nbelonging to any particular caste or tribe."
+            },
+            {
+              "clause_no": 3,
+              "text": "No act purporting to demonstrate any person or community as \nsuperior or inferior on grounds of origin, caste, tribe or physical condition or \njustifying social discrimination on grounds of caste, tribe or untouchability or \npropagating ideology based on untouchability and caste based superiority or \nhatred or encouraging caste-based discrimination in any manner whatsoever \nshall be allowed."
+            },
+            {
+              "clause_no": 4,
+              "text": "No discrimination in any form shall be allowed at a workplace \nwith or without making untouchability on the ground of caste."
+            },
+            {
+              "clause_no": 5,
+              "text": "Any act of untouchability and discrimination in any form \ncommitted in contravention of this Article shall be punishable by law as a \nsevere social offence, and the victim of such act shall have the right to obtain \ncompensation in accordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 25,
+          "title": "Right relating to property :",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every citizen shall, subject to law, have the right \nto acquire, own, sell, dispose, acquire business profits from, and otherwise deal \nwith, property.",
+              "explanation": "For the purposes of this Article, \"property\" means any form \nof property including movable and immovable property, and includes an \nintellectual property right. ",
+              "provision": "Provided that the State may levy tax on property of a person, and tax on \nincome of a person in accordance with the concept of progressive taxation. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The State shall not, except for public interest, requisition, \nacquire, or otherwise create any encumbrance on, property of a person.",
+              "provision": "Provided that this clause shall not apply to any property acquired by any \nperson illicitly."
+            },
+            {
+              "clause_no": 3,
+              "text": "The basis of compensation to be provided and procedures to be \nfollowed in the requisition by the State of property of any person for public \ninterest in accordance with clause (3) shall be as provided for in the Act."
+            },
+            {
+              "clause_no": 4,
+              "text": "The provisions of clauses (2) and (3) shall not prevent the State \nfrom making land reforms, management and regulation in accordance with law \nfor the purposes of enhancement of product and productivity of lands, \nmodernization and commercialization of agriculture, environment protection \nand planned housing and urban development."
+            },
+            {
+              "clause_no": 5,
+              "text": "Nothing shall prevent the State from using the property of any \nperson, which it has requisitioned for public interest in accordance with clause \n(3), for any other public interest instead of such public interest."
+            }
+          ]
+        },
+        {
+          "article_no": 26,
+          "title": "Right to freedom of religion ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " Every person who has faith in religion shall \nhave the freedom to profess, practice and protect his or her religion according \nto his or her conviction."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every religious denomination shall have the right to operate and \nprotect its religious sites and religious Guthi (trusts). ",
+              "provision": "Provided that nothing shall be deemed to prevent the regulation, by \nmaking law, of the operation and protection of religious sites and religious \ntrusts and management of trust properties and lands. "
+            },
+            {
+              "clause_no": 3,
+              "text": "No person shall, in the exercise of the right conferred by this \nArticle, do, or cause to be done, any act which may be contrary to public \nhealth, decency and morality or breach public peace, or convert another person \nfrom one religion to another or any act or conduct that may jeopardize other's \nreligion. "
+            }
+          ]
+        },
+        {
+          "article_no": 27,
+          "title": "Right to information ",
+          "text": " Every citizen shall have the right to demand and receive \ninformation on any matter of his or her interest or of public interest.",
+          "provision": "Provided that no one shall be compelled to provide information on any \nmatter of which confidentiality must be maintained in accordance with law. "
+        },
+        {
+          "article_no": 28,
+          "title": "Right to privacy",
+          "text": " The privacy of any person, his or her residence, property, \ndocument, data, correspondence and matters relating to his or her character \nshall, except in accordance with law, be inviolable."
+        },
+        {
+          "article_no": 29,
+          "title": "Right against exploitation ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " Every person shall have the right against exploitation"
+            },
+            {
+              "clause_no": 2,
+              "text": "No person shall be exploited in any manner on the grounds of \nreligion, custom, tradition, usage, practice or on any other grounds. "
+            },
+            {
+              "clause_no": 3,
+              "text": "No one shall be subjected to trafficking nor shall one be held in \nslavery or servitude. "
+            },
+            {
+              "clause_no": 4,
+              "text": "No one shall be forced to work against his or her will.",
+              "provision": "Provided that nothing shall be deemed to prevent the making of law \nempowering the State to require citizens to perform compulsory service for \npublic purposes. "
+            },
+            {
+              "clause_no": 5,
+              "text": "Act contrary to clauses (3) and (4) shall be punishable by law and \nthe victim shall have the right to obtain compensation from the perpetrator in \naccordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 30,
+          "title": "Right to clean environment",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every citizen shall have the right to live in a \nclean and healthy environment."
+            },
+            {
+              "clause_no": 2,
+              "text": "The victim shall have the right to obtain compensation, in \naccordance with law, for any injury caused from environmental pollution or \ndegradation."
+            },
+            {
+              "clause_no": 3,
+              "text": "This Article shall not be deemed to prevent the making of \nnecessary legal provisions for a proper balance between the environment and \ndevelopment, in development works of the nation. "
+            }
+          ]
+        },
+        {
+          "article_no": 31,
+          "title": "Right relating to education",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " Every citizen shall have the right of access to \nbasic education."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every citizen shall have the right to get compulsory and free \neducation up to the basic level and free education up to the secondary level \nfrom the State."
+            },
+            {
+              "clause_no": 3,
+              "text": "The citizens with disabilities and the economically indigent \ncitizens shall have the right to get free higher education in accordance with \nlaw. "
+            },
+            {
+              "clause_no": 4,
+              "text": "The visually impaired citizens shall have the right to get free \neducation through brail script and the citizens with hearing or speaking \nimpairment, to get free education through sign language, in accordance with \nlaw."
+            },
+            {
+              "clause_no": 5,
+              "text": "Every Nepalese community residing in Nepal shall have the right \nto get education in its mother tongue and, for that purpose, to open and operate \nschools and educational institutes, in accordance with law."
+            }
+          ]
+        },
+        {
+          "article_no": 32,
+          "title": "Right to language and culture",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": ") Every person and community shall have the \nright to use their languages."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every person and community shall have the right to participate in \nthe cultural life of their communities. "
+            },
+            {
+              "clause_no": 3,
+              "text": "Every Nepalese community residing in Nepal shall have the right \nto preserve and promote its language, script, culture, cultural civilization and \nheritage."
+            }
+          ]
+        },
+        {
+          "article_no": 33,
+          "title": "Right to employment",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every citizen shall have the right to employment. \nThe terms and conditions of employment, and unemployment benefit shall be \nas provided for in the Federal law."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every citizen shall have the right to choose employment."
+            }
+          ]
+        },
+        {
+          "article_no": 34,
+          "title": "Right to labour",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every labourer shall have the right to practice appropriate \nlabour. ",
+              "explanation": " For the purposes of this Article, \"labourer\" means a labourer \nor worker who does physical or mental work for an employer in consideration \nfor remuneration."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every labourer shall have the right to appropriate remuneration, \nfacilities and contributory social security. "
+            },
+            {
+              "clause_no": 3,
+              "text": "Every labourer shall have the right to form and join trade unions \nand to engage in collective bargaining, in accordance with law.   "
+            }
+          ]
+        },
+        {
+          "article_no": 35,
+          "title": "Right relating to health",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every citizen shall have the right to free basic \nhealth services from the State, and no one shall be deprived of emergency \nhealth services."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every person shall have the right to get information about his or \nher medical treatment.  "
+            },
+            {
+              "clause_no": 3,
+              "text": "Every citizen shall have equal access to health services."
+            },
+            {
+              "clause_no": 4,
+              "text": "Every citizen shall have the right of access to clean drinking \nwater and sanitation."
+            }
+          ]
+        },
+        {
+          "article_no": 36,
+          "title": "Right relating to food",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every citizen shall have the right relating to food. "
+            },
+            {
+              "clause_no": 2,
+              "text": "Every citizen shall have the right to be safe from the state of \nbeing in danger of life from the scarcity of food. "
+            },
+            {
+              "clause_no": 3,
+              "text": "Every citizen shall have the right to food sovereignty in \naccordance with law."
+            }
+          ]
+        },
+        {
+          "article_no": 37,
+          "title": "Right to housing",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Every citizen shall have the right to an appropriate housing"
+            },
+            {
+              "clause_no": 2,
+              "text": "No citizen shall be evicted from the residence owned by him or \nher nor shall his or her residence be infringed except in accordance with law. "
+            },
+            {
+              "clause_no": 1,
+              "text": "Every woman shall have equal lineage right without \ngender based discrimination."
+            },
+            {
+              "clause_no": 2,
+              "text": "Every woman shall have the right to safe motherhood and \nreproductive health. "
+            },
+            {
+              "clause_no": 3,
+              "text": "No woman shall be subjected to physical, mental, sexual, \npsychological or other form of violence or exploitation on grounds of religion, \nsocial, cultural tradition, practice or on any other grounds. Such act shall be \npunishable by law, and the victim shall have the right to obtain compensation \nin accordance with law."
+            },
+            {
+              "clause_no": 4,
+              "text": "Women shall have the right to participate in all bodies of the \nState on the basis of the principle of proportional inclusion."
+            },
+            {
+              "clause_no": 5,
+              "text": "Women shall have the right to obtain special opportunity in \neducation, health, employment and social security, on the basis of positive \ndiscrimination."
+            },
+            {
+              "clause_no": 6,
+              "text": "The spouse shall have the equal right to property and family"
+            }
+          ]
+        },
+        {
+          "article_no": 39,
+          "title": "Rights of the child",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " Every child shall have the right to name and birth \nregistration along with his or her identity. "
+            },
+            {
+              "clause_no": 2,
+              "text": "Every child shall have the right to education, health, \nmaintenance, proper care, sports, entertainment and overall personality \ndevelopment from the families and the State. "
+            },
+            {
+              "clause_no": 3,
+              "text": "Every child shall have the right to elementary child development \nand child participation."
+            },
+            {
+              "clause_no": 4,
+              "text": "No child shall be employed to work in any factory, mine or \nengaged in similar other hazardous work."
+            },
+            {
+              "clause_no": 5,
+              "text": "No child shall be subjected to child marriage, transported \nillegally, abducted/kidnapped or taken in hostage."
+            },
+            {
+              "clause_no": 6,
+              "text": "No child shall be recruited or used in army, police or any armed \ngroup, or be subjected, in the name of cultural or religious traditions, to abuse, exclusion or physical, mental, sexual or other form of exploitation or improper \nuse by any means or in any manner. "
+            },
+            {
+              "clause_no": 7,
+              "text": "No child shall be subjected to physical, mental or any other form \nof torture in home, school or other place and situation whatsoever. "
+            },
+            {
+              "clause_no": 8,
+              "text": " \nEvery child shall have the right to juvenile friendly justice. "
+            },
+            {
+              "clause_no": 9,
+              "text": "The child who is helpless, orphan, with disabilities, conflict \nvictim, displaced or vulnerable shall have the right to special protection and \nfacilities from the State."
+            },
+            {
+              "clause_no": 10,
+              "text": " \nAny act contrary to in clauses (4), (5), (6) and (7) shall be \npunishable by law, and a child who is the victim of such act shall have the right \nto obtain compensation from the perpetrator, in accordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 40,
+          "title": "Rights of Dalit ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " The Dalit shall have the right to participate in all bodies of \nthe State on the basis of the principle of proportional inclusion. Special \nprovision shall be made by law for the empowerment, representation and \nparticipation of the Dalit community in public services as well as other sectors \nof employment."
+            },
+            {
+              "clause_no": 2,
+              "text": "Provision of free education with scholarship, from primary to \nhigher education, shall be made by law for the Dalit students. Special provision \nshall be made by law for the Dalit in technical and vocational education."
+            },
+            {
+              "clause_no": 3,
+              "text": "Special provision shall be made by law in order to provide health \nand social security to the Dalit community. "
+            },
+            {
+              "clause_no": 4,
+              "text": " \nThe Dalit community shall have the right to use, protect and \ndevelop their traditional occupation, knowledge, skill and technology. The \nState shall accord priority to the Dalit community in modern business related \nwith their traditional occupation and provide skills and resources required \ntherefor."
+            },
+            {
+              "clause_no": 5,
+              "text": "The State shall once provide land to the landless Dalit in \naccordance with law."
+            },
+            {
+              "clause_no": 6,
+              "text": "The State shall, in accordance with law, arrange settlement for \nthe Dalit who do not have housing. "
+            },
+            {
+              "clause_no": 7,
+              "text": "The facilities conferred by this Article to the Dalit community \nmust be distributed in a just manner so that the Dalit women, men and Dalit in \nall communities can obtain such facilities proportionately. "
+            }
+          ]
+        },
+        {
+          "article_no": 41,
+          "title": "Rights of senior citizens",
+          "text": "The senior citizens shall have the right to special \nprotection and social security from the State."
+        },
+        {
+          "article_no": 42,
+          "title": "Right to social justice",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " The socially backward women, Dalit, indigenous \npeople, indigenous nationalities, Madhesi, Tharu, minorities, persons with \ndisabilities, marginalized communities, Muslims, backward classes, gender and \nsexual minorities, youths, farmers, labourers, oppressed or citizens of \nbackward regions and indigent Khas Arya shall have the right to participate in \nthe State bodies on the basis of inclusive principle."
+            },
+            {
+              "clause_no": 2,
+              "text": "The indigent citizens and citizens of the communities on the \nverge of extinction shall have the right to get special opportunities and benefits \nin education, health, housing, employment, food and social security for their \nprotection, upliftment, empowerment and development. "
+            },
+            {
+              "clause_no": 3,
+              "text": "The citizens with disabilities shall have the right to live with \ndignity and honour, with the identity of their diversity, and have equal access to \npublic services and facilities. "
+            },
+            {
+              "clause_no": 4,
+              "text": "Every farmer shall have the right to have access to lands for agro \nactivities, select and protect local seeds and agro species which have been used \nand pursued traditionally, in accordance with law. "
+            },
+            {
+              "clause_no": 5,
+              "text": "The families of the martyrs who have sacrificed their life, \npersons who were forced to disappear, and those who became disabled and injured in all popular movements, armed conflicts and revolutions that have \nbeen carried out for progressive democratic changes in Nepal, democracy \nfighters, conflict victims and displaced ones, persons with disabilities, the \ninjured and victims shall have the right to get a  prioritized opportunity, with \njustice and due respect, in education, health, employment, housing and social \nsecurity, in accordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 43,
+          "title": "Right to social security ",
+          "text": "The indigent citizens, incapacitated and helpless \ncitizens, helpless single women, citizens with disabilities, children, citizens \nwho cannot take care themselves and citizens belonging to the tribes on the \nverge of extinction shall have the right to social security, in accordance with \nlaw."
+        },
+        {
+          "article_no": 44,
+          "title": "Rights of the consumer",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " Every consumer shall have the right to obtain \nquality goods and services."
+            },
+            {
+              "clause_no": 2,
+              "text": "A person who has suffered injury from any substandard goods or \nservices shall have the right to obtain compensation in accordance with law. "
+            }
+          ]
+        },
+        {
+          "article_no": 45,
+          "title": "Right against exile",
+          "text": "No citizen shall be exiled."
+        },
+        {
+          "article_no": 46,
+          "title": "Right to constitutional remedies",
+          "text": "There shall be a right to obtain constitutional \nremedies in the manner set forth in Article 133 or 144 for the enforcement of \nthe rights conferred by this Part."
+        },
+        {
+          "article_no": 47,
+          "title": "Implementation of fundamental rights",
+          "text": "The State shall, as required, make legal \nprovisions for the implementation of the rights conferred by this Part, within \nthree years of the commencement of this Constitution. "
+        },
+        {
+          "article_no": 48,
+          "title": "Duties of citizens",
+          "text": " Every citizen shall have the following duties: \n(a) to safeguard the nationality, sovereignty and integrity of Nepal, \nwhile being loyal to the nation, \n(b) to abide by the Constitution and law,\n(c) to render compulsory service as and when the State so requires,\n(d) to protect and preserve public property."
+        }
+      ],
+      "explanation": "For the purposes of this Part and Part 4, \"indigent\" means a person who earns income less than that specified by the Federal law."
+    },
+    {
+      "part_no": 4,
+      "part_title": "Directive Principles, Policies and Obligations of the State",
+      "articles": [
+        {
+          "article_no": 49,
+          "title": "To be guiding principles",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " The directive principles, policies and obligations \nset forth in this Part shall be the guiding principles for the governance of the \nState.  "
+            },
+            {
+              "clause_no": 2,
+              "text": "The State shall mobilize, or cause to be mobilized, means and \nresources, as required, to implement the principles, policies and obligations set \nforth in this Part."
+            }
+          ]
+        },
+        {
+          "article_no": 50,
+          "title": "Directive principles",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " The political objective of the State shall be to establish \na public welfare system of governance, by establishing a just system in all \naspects of the national life through the rule of law, values and norms of \nfundamental rights and human rights, gender equality, proportional inclusion, \nparticipation and social justice, while at the same time protecting the life, \nproperty, equality and liberties of the people, in keeping with the vitality of \nfreedom, sovereignty, territorial integrity and independence of Nepal, and to \nconsolidate a federal democratic republican system of governance in order to \nensure an atmosphere conducive to the enjoyment of the fruits of democracy, \nwhile at the same time maintaining the relations between the Federal Units on \nthe basis of cooperative federalism and incorporating the principle of \nproportional participation in the system of governance on the basis of local \nautonomy and decentralization."
+            },
+            {
+              "clause_no": 2,
+              "text": "The social and cultural objective of the State shall be to build a \ncivilized and egalitarian society by eliminating all forms of discrimination, \nexploitation and injustice on the grounds of religion, culture, tradition, usage, \ncustom, practice or on any other similar grounds, to develop social, cultural \nvalues founded on national pride, democracy, pro-people, respect of labour, \nentrepreneurship, discipline, dignity and harmony, and to consolidate the national unity by maintaining social cohesion, solidarity and harmony, while \nrecognizing cultural diversity."
+            },
+            {
+              "clause_no": 3,
+              "text": "\nThe economic objective of the State shall be to achieve a \nsustainable economic development, while achieving rapid economic growth, by \nway of maximum mobilization of the available means and resources through \nparticipation and development of public, private and cooperatives, and to \ndevelop a socialism-oriented independent and prosperous economy while \nmaking the national economy independent, self-reliant and progressive in order \nto  build an exploitation free society by abolishing economic inequality through \nequitable distribution of the gains. "
+            },
+            {
+              "clause_no": 4,
+              "text": "The State shall direct its international relations towards \nenhancing the dignity of the nation in the world community by maintaining \ninternational relations on the basis of sovereign equality, while safeguarding \nthe freedom, sovereignty, territorial integrity and independence and national \ninterest of Nepal."
+            }
+          ]
+        },
+        {
+          "article_no": 51,
+          "title": "Policies of the State",
+          "text": "The State shall pursue the following policies",
+          "clauses": [
+            {
+              "clause_no": 0,
+              "text": "Policies relating to national unity and national security",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to keep intact the national unity, while protecting the freedom, \nsovereignty, territorial integrity and independence of Nepal,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to \npromote the national unity while developing mutual \ncooperative relations between the Federal Units by maintaining \nmutual cohesion, harmony and solidarity between various castes, \ntribes, religions, languages, cultures and communities,"
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to maintain law and order by developing a national security \nsystem,"
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to guarantee  the overall human security system, "
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to make all security organs, including the Nepal Army, Nepal \nPolice and Armed Police Force Nepal, competent, strong, \nprofessional, inclusive and accountable to the people, on the \nbasis of national security policies,"
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to make and keep the citizens ready and competent to serve the \nnation as and when necessary,"
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to make proper use, in nations' interest, of the knowledge, skills \nand experiences of former public employees including former \nemployees, military and police. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to political and governance system of State",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to guarantee the best interests and prosperity of the people \nthrough economic, social and cultural transformations, while \nsafeguarding, \nconsolidating \nachievements,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to maintain rule of law by protecting and promoting human \nrights, "
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to implement international treaties, agreements to which Nepal is \na party, "
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to guarantee good governance by ensuring the equal and easy \naccess of the people to the services and facilities delivered by the \nState, while making public administration fair, competent, \nimpartial, transparent, free from corruption, accountable and \nparticipatory, "
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to make necessary provisions to make mass media fair, healthy, \nimpartial, decent, responsible and professional, "
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to develop and expand harmonious and cooperative relations \nbetween the Federal Units by way of sharing of responsibilities, \nresources and administration between them. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Relating to social and cultural transformation",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to build the society founded on cordial social relations by \ndeveloping a healthy and civilized culture, "
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to carrying out studies, research works, excavation and \ndissemination for the protection, promotion and development of \nancient, archaeological and cultural heritages,"
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to make community development through enhancement of local \npublic participation, by promoting and mobilizing the creativity \nof local communities in social, cultural and service-oriented \nworks,"
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to focus on the development of arts, literature and music which \nform cultural heritages, "
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to end all forms of discrimination, inequality, exploitation and \ninjustice in the name of religion, custom, usage, practice and \ntradition existing in the society,"
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to protect and develop languages, scripts, culture, literature, arts, \nmotion pictures and heritages of various castes, tribes, and \ncommunities on the basis of equality and co-existence, while \nmaintaining the cultural diversity of the country,"
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to pursue a multi-lingual policy."
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Relating to economy, industry and commerce",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to \nenhance national economy through partnership and \nindependent development of the public, private and cooperative \nsectors, "
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to achieve economic prosperity by way of optimum mobilization \nof the available means and resources, while focusing on the role \nof private sector in economy,"
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to promote the cooperative sector and mobilize it in national \ndevelopment to the maximum extent,"
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to encourage and mobilize the economic sector in the overall \nnational development, while providing for regulation to maintain \nfairness, accountability and competition in all of its activities, "
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to make equitable distribution of the available means and \nresources and benefits of economic development,"
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to diversify and expand markets for goods and services, while \npromoting exports through development and expansion of \nindustries upon identifying areas of comparative advantage,"
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to protect the interests of consumers by maintaining trade \nfairness and discipline by making national economy competitive, \nwhile ending activities such as creating black marketing, \nmonopoly, artificial scarcity and restricting competition, "
+                },
+                {
+                  "letter": "8",
+                  "freedom": "to protect and promote domestic industries and resources and \naccord priority to domestic investment based on Nepalese labour, \nskills and raw materials for the development of national \neconomy,"
+                },
+                {
+                  "letter": "9",
+                  "freedom": "to give priority to domestic investment for the development of \nnational economy, "
+                },
+                {
+                  "letter": "10",
+                  "freedom": "to encourage foreign capital and technological investment in \nareas of import substitution and export promotion, in consonance \nwith national interest, and encourage and mobilize such \ninvestment in infrastructure building,"
+                },
+                {
+                  "letter": "11",
+                  "freedom": "to make the obtaining of foreign assistance transparent, while  \nmaking the national needs and priorities as the basis for obtaining \nforeign assistance, and incorporating amounts received in form of \nforeign assistance in the national budget,"
+                },
+                {
+                  "letter": "12",
+                  "freedom": "to utilize knowledge, skill, technology and capital of the non\nresident Nepalese in the national development, "
+                },
+                {
+                  "letter": "13",
+                  "freedom": "to give dynamism to the economic development by establishing \ncoordination between the States and the States and the Federation \nin relation to industrial corridors, special economic zones, \nnational projects and projects involving foreign investment. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to agriculture and land reforms",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to make scientific land reforms having regard to the interests of \nthe farmers, while ending the dual ownership existing in the \nlands, "
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to enhance product and productivity by carrying out land \npooling, while discouraging inactive land ownership,"
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to \nmake land management and commercialization, \nindustrialization, \ndiversification \nand \nmodernization \nof \nagriculture, by pursuing land-use policies to enhance agriculture \nproduct and productivity, while protecting and promoting the \nrights and interests of the farmers,"
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to make proper use of lands, while regulating and managing \nlands on the basis of, inter alia, productivity, nature of lands and \necological balance, "
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to provide for the farmers' access to agricultural inputs, agro\nproducts at fair price and market. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to development",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to formulate sustainable socio-economic development strategies \nand programs under the regional development plan for inclusive \neconomic development with regional balance, and implement \nthem in a coordinative manner,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to \ndevelop balanced, environment friendly, quality and \nsustainable physical infrastructures, while according priority to \nthe regions lagging behind from development perspective, "
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to \nenhance local public participation in the process of \ndevelopment works,"
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to enhance investment in scientific study, research works and in \ninvention, progress and development of science and technology, \nand protect scientists, technologists, intellectual and eminent \ntalents,"
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to ensure easy and simple access of the general public to \ninformation \ntechnology \nby \ndeveloping \nand \nexpanding \ninformation technology to the tune of national needs, and make \noptimum utilization of information technology in the national \ndevelopment, "
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to make provisions enabling the general public to enjoy fruits of \ndevelopment in a just manner, while according priority to the \nindigent citizens in the distribution of such fruits,"
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to \ndevelop an integrated national identity management \ninformation system and manage all kinds of information and data \nof the citizens in an integrated manner, and linking such system \nwith the services and facilities provided by the State and with \nnational development plans, "
+                },
+                {
+                  "letter": "8",
+                  "freedom": "to update demographic statistics and linking it with national \ndevelopment plans. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to protection, promotion and use of natural resources",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to protect, promote, and make environmental friendly and \nsustainable use  of, natural resources available in the country, in \nconsonance with national interest and adopting the concept of \ninter-generational equity, and make equitable distribution of \nfruits, according priority and preferential right to the local \ncommunities,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to make multi-purpose development of water resources, while \naccording priority to domestic investment based on public \nparticipation, "
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to ensure reliable supply of energy in an affordable and easy \nmanner, and make proper use of energy, for the fulfilment of the \nbasic needs of citizens, by generating and developing renewable \nenergy, "
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to develop sustainable and reliable irrigation by making control \nof water-induced disasters, and river management,"
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to conserve, promote, and make sustainable use of, forests, \nwildlife, birds, vegetation and bio-diversity, by mitigating \npossible risks to environment from industrial and physical \ndevelopment, while raising awareness of general public about \nenvironment cleanliness,"
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to maintain the forest area in necessary lands for ecological \nbalance, "
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to adopt appropriate measures to abolish or mitigate existing or \npossible adverse environmental impacts on the nature, \nenvironment or biological diversity,"
+                },
+                {
+                  "letter": "8",
+                  "freedom": "to \npursue the principles of environmentally sustainable \ndevelopment such as the principles of polluter pays, of \nprecaution in environmental protection and of prior informed \nconsent."
+                },
+                {
+                  "letter": "9",
+                  "freedom": "to make advance warning, preparedness, rescue, relief and \nrehabilitation in order to mitigate risks from natural disasters. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to basic needs of the citizens",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to prepare human resources that are competent, competitive, \nethical, and devoted to national interests, while making education \nscientific, technical, vocational, empirical, employment and \npeople-oriented, "
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to make private sector investment made in education service\noriented by regulating and managing such investment, while \nenhancing the State's investment in the education sector, "
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to make higher education easy, qualitative and accessible, and \nfree gradually, "
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to establish and promote community information centres and \nlibraries for the personality development of citizens,"
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to keep on enhancing investment necessary in the  public health \nsector by the State in order to make the citizens healthy, "
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to ensure easy, convenient and equal access of all to quality \nhealth services,"
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to protect and promote health systems including Ayurveda, as a \ntraditional medical system of Nepal, natural therapy and \nhomeopathy system,"
+                },
+                {
+                  "letter": "8",
+                  "freedom": "to make private sector investment in the health sector service\noriented by regulating and managing such investment, while \nenhancing the State's investment in this sector, "
+                },
+                {
+                  "letter": "9",
+                  "freedom": "to focus on health research and keep on increasing the number of \nhealth institutions and health workers in order to make health \nservices widely available and qualitative, "
+                },
+                {
+                  "letter": "10",
+                  "freedom": "to increase average life expectancy by reducing maternal and \ninfant mortality rate, while encouraging family planning for \npopulation management on the basis of Nepal's capacity and \nneed,"
+                },
+                {
+                  "letter": "11",
+                  "freedom": "to manage unplanned settlement and develop planned and \nsystematic settlement, "
+                },
+                {
+                  "letter": "12",
+                  "freedom": "to provide for sustainable production, supplies, storage, security, \nand easy and effective distribution of foods by encouraging food \nproduction in tune with climate and soil, in consonance with the \nconcept of food sovereignty, while enhancing investment in the \nagriculture sector, "
+                },
+                {
+                  "letter": "13",
+                  "freedom": "to ensure planned supply system by according special priority to \nthe remote and backward regions, while ensuring equal access of \nall citizens to basic goods and services, "
+                },
+                {
+                  "letter": "14",
+                  "freedom": " to enhance investment in the transportation sector, while ensuring \nsimple, easy and equal access of the citizens to transportation \nfacilities, and to make the transportation sector safe, systematic \nand persons with disabilities friendly by encouraging public transportation and regulating private transportation, while \naccording priority to the environment friendly technologies, "
+                },
+                {
+                  "letter": "15",
+                  "freedom": "to arrange for access to medical treatment while ensuring \ncitizen's health insurance."
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to labour and employment",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to make competent and professional the labour force that has \nremained as the main socio-economic strength of the country and \nenhance employment within the country, while ensuring a \nsituation enabling all to work,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to guarantee social security, while ensuring the basic rights of all \nlabours, in consonance with the concept of decent labour, "
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to abolish all forms of labour exploitation including child labour, "
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to encourage participation of labours in management, while \nmaintain cordial relations between the labours and entrepreneurs, "
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to regulate and manage the sector in order to make foreign \nemployment free from exploitation, safe and systematic and to \nguarantee employment and rights of the labours,"
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to encourage to mobilize the capital, skills, technology and \nexperience gained from foreign employment in productive \nsectors in the country."
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to social justice and inclusion",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to keep on making appropriate arrangements for the livelihoods \nof the helpless single women, while according priority to them in \nemployment on the basis of skills, competency and qualification"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to make self-dependent the women who are vulnerable, subjected \nto social and family exclusion and victims of violence self-reliant \nby making their rehabilitation, protection and empowerment"
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to ensure enjoyment of requisite services and facilities at the \nreproductive stage, "
+                },
+                {
+                  "letter": "4",
+                  "freedom": "to evaluate economically the work and contribution such as \nmaintenance of children and care of families,"
+                },
+                {
+                  "letter": "5",
+                  "freedom": "to take into consideration primarily of the best interests of the \nchild, "
+                },
+                {
+                  "letter": "6",
+                  "freedom": "to \nidentify the freed bonded labours, Kamlari, Harawa, \nCharawa, tillers, landless, squatters and rehabilitate them by \nproviding housing, housing plot for residence and cultivable land \nor employment for their livelihoods, "
+                },
+                {
+                  "letter": "7",
+                  "freedom": "to create an atmosphere conducive to the full enjoyment of the \npolitical, economic, social and cultural rights, while enhancing \nthe participation of youths in national development, to make their \npersonality development, while providing special opportunity in \nareas including education, health and employment for the \nempowerment and development of the youths and provide them \nwith appropriate opportunities for the overall development of the \nState, "
+                },
+                {
+                  "letter": "8",
+                  "freedom": "to make the indigenous nationalities participate in decisions \nconcerning that community by making special provisions for \nopportunities and benefits in order to ensure the right of these \nnationalities to live with dignity, along with their identity, and \nprotect and promote traditional knowledge, skill, culture, social tradition and experience of the indigenous nationalities and local \ncommunities,"
+                },
+                {
+                  "letter": "9",
+                  "freedom": "to make special provisions for opportunities and benefits to \nminority communities to enjoy social and cultural rights, with \nmaintaining their identity,"
+                },
+                {
+                  "letter": "10",
+                  "freedom": "to make special provisions for equal distribution of economic, \nsocial and cultural opportunities and benefits to the Madhesi \ncommunity, Muslims and backward class, and for opportunities \nand benefits to the indigent citizens within such communities for \ntheir protection, upliftment, empowerment and development, "
+                },
+                {
+                  "letter": "11",
+                  "freedom": "to make special provisions for opportunities and benefits for the \nprotection, upliftment, empowerment and development of the \ncitizens of the oppressed and backward regions and for the \nfulfilment of their basic needs,"
+                },
+                {
+                  "letter": "12",
+                  "freedom": "to accord priority to the indigent within all sexes, regions and \ncommunities in the provision of social security and social justice, "
+                },
+                {
+                  "letter": "13",
+                  "freedom": "to make planned investment in sports and sport-persons in order \nto prepare healthy, competent and disciplined citizens, and to \ndevelop sports as a means of consolidating national unity and \nenhancing national prestige at the international level,"
+                },
+                {
+                  "letter": "14",
+                  "freedom": "to adopt a single door system for the establishment, approval, \noperation, regulation and management of community-based and \nnational or international non-governmental organizations and to \ninvolve such organizations only in the sectors of national need \nand priority, while making investment and role of such \norganizations transparent and accountable. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to justice and penal system",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to make the administration of justice speedy, efficient, widely \navailable, economical, impartial, effective, and accountable to \npeople,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to pursue alternative means such as mediation and arbitration for \nthe settlement of disputes of general nature,"
+                },
+                {
+                  "letter": "3",
+                  "freedom": "to adopt effective measures for the control of corruption and \nirregularities in all sectors including political, administrative, \njudicial and social sectors. "
+                }
+              ]
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to tourism",
+              "explanation": "To develop eco-friendly tourism industries \nas an important base of national economy by way of identification, \nprotection, promotion and publicity of the ancient, cultural, religious, \narchaeological and natural heritages of Nepal, to make environment and \npolicy required for the development of tourism culture, and to accord \npriority to local people in the distribution of benefits of tourism \nindustries. "
+            },
+            {
+              "clause_no": 0,
+              "text": "Policies relating to international relations",
+              "sub_clauses": [
+                {
+                  "letter": "1",
+                  "freedom": "to conduct an independent  foreign policy based on the Charter of \nthe United Nations, non-alignment, principles of Panchsheel, \ninternational law and the norms of world peace, taking into \nconsideration of the overall interest of  \nthe nation, while \nremaining active in safeguarding the sovereignty, territorial \nintegrity, independence and national interest of Nepal,"
+                },
+                {
+                  "letter": "2",
+                  "freedom": "to review treaties concluded in the past, and make treaties, \nagreements based on equality and mutual interest. "
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "article_no": 52,
+          "title": "Obligations of the State :",
+          "text": " It shall be the obligation of the State to make Nepal a \nprosperous and affluent country by  protecting and promoting fundamental \nrights and human rights, pursuing directive principles of the State and gradually implementing policies of the State, while keeping intact the freedom, \nsovereignty, territorial integrity and independence of Nepal. "
+        },
+        {
+          "article_no": 53,
+          "title": "To submit report",
+          "text": " The Government of Nepal shall submit an annual report \ncontaining the steps taken and achievements made in the implementation of the \ndirective principles, policies and obligations of the State set forth in this Part to \nthe President, and the President shall cause such report to be laid through the \nPrime Minister before the Federal Parliament."
+        },
+        {
+          "article_no": 54,
+          "title": "Provisions relating to monitoring",
+          "text": "There shall be a committee, in accordance \nwith law, in the Federal Parliament in order to monitor and evaluate whether \nthe directive principles, policies and obligations of the State set forth in this \nPart have been implemented progressively or not. "
+        },
+        {
+          "article_no": 55,
+          "title": "Questions not to be raised in court",
+          "text": "No question shall be raised in any court as \nto whether any matter contained in this Part has been implemented or not. "
+        }
+      ]
+    },
+    {
+      "part_no": 5,
+      "part_title": "Structure of State and Distribution of State Power",
+      "articles": [
+        {
+          "article_no": 56,
+          "title": "Structure of State",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The main structure of the Federal Democratic Republic \nof Nepal shall be of three levels, namely the Federation, the State and the Local level"
+            },
+            {
+              "clause_no": 2,
+              "text": "The Federation, State and Local levels shall exercise the power \nof State of Nepal pursuant to this Constitution and law."
+            },
+            {
+              "clause_no": 3,
+              "text": "There shall be States consisting of the Districts as mentioned in \nSchedule-4 existing in Nepal at the time of commencement of this \nConstitution."
+            },
+            {
+              "clause_no": 4,
+              "text": "There shall be Village Institutions, Municipalities and District \nAssemblies under the Local level. The number of Wards in a Village \nInstitution and Municipality shall be as provided for in the Federal law. "
+            },
+            {
+              "clause_no": 5,
+              "text": "Any Special, Protected or Autonomous Region can be set by the \nFederal law for social, cultural protection or economic development."
+            },
+            {
+              "clause_no": 6,
+              "text": "The Federation, State and Local levels shall protect Nepal's \nfreedom, sovereignty, territorial integrity, independence, national interest, \noverall development, multi-party, competitive, democratic, republican, federal \nsystem of governance, human rights and fundamental rights, rule of law, \nseparation of powers and check and balance, egalitarian society based on \npluralism and equality, inclusive representation and identity."
+            }
+          ]
+        },
+        {
+          "article_no": 57,
+          "title": "Distribution of State power",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The powers of the Federation shall be vested in \nthe matters enumerated in Schedule-5, and such powers shall be exercised \npursuant to this Constitution and the Federal law. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The powers of a State shall be vested in the matters enumerated \nin Schedule-6, and such powers shall be exercised pursuant to this Constitution \nand the State law. "
+            },
+            {
+              "clause_no": 3,
+              "text": "The concurrent powers of the Federation and the State shall be \nvested in the matters enumerated in Schedule-7, and such powers shall be \nexercised pursuant to this Constitution, the Federal law and the State law. "
+            },
+            {
+              "clause_no": 4,
+              "text": "The powers of the Local level shall be vested in the matters \nenumerated in Schedule-8, and such powers shall be exercised pursuant to this \nConstitution and the law made by the Village Assembly or Municipal \nAssembly."
+            },
+            {
+              "clause_no": 5,
+              "text": "The concurrent powers of the Federation, State and Local levels \nshall be vested in the matters enumerated in Schedule-9, and such powers shall \nbe exercised pursuant to this Constitution, the Federal law, the State law and \nthe law made by the Village Assembly or Municipal Assembly. "
+            },
+            {
+              "clause_no": 6,
+              "text": "Any law to be made by the State Assembly, Village Assembly or \nMunicipal Assembly pursuant to clause (3) or (5) shall be so made as not to be \ninconsistent with the Federal law, and any law made by the State Assembly, \nVillage Assembly or Municipal Assembly which is inconsistent with the \nFederal law shall be invalid to the extent of such inconsistency."
+            },
+            {
+              "clause_no": 7,
+              "text": "Any law to be made by the Village Assembly or Municipal \nAssembly pursuant to clause (5) shall be so made as not to be inconsistent with \nthe State law, and any law made by the Village Assembly or Municipal \nAssembly which is inconsistent with the State law shall be invalid to the extent \nof such inconsistency."
+            }
+          ]
+        },
+        {
+          "article_no": 58,
+          "title": "Residual powers ",
+          "text": "The Federation shall have power on any matter not \nenumerated in the Federal List, State List, List of Local level or Concurrent List or on any matter which is not so specified in this Constitution as to be \nexercised by any level."
+        },
+        {
+          "article_no": 59,
+          "title": "Exercise of financial powers : ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " The Federation, State and Local level shall \nmake laws, make annual budget, decisions, formulate and implement policies \nand plans on any matters related to financial powers within their respective \njurisdictions."
+            },
+            {
+              "clause_no": 2,
+              "text": "The Federation may so make necessary policies, standards and \nlaws on any of the matters enumerated in the Concurrent List and other areas \nof financial powers as to be applicable also to the States. "
+            },
+            {
+              "clause_no": 3,
+              "text": "The Federation, State and Local level shall make budget of their \nrespective levels, and the time for submission of budget by the State and Local \nlevel shall be as provided for in the Federal law."
+            },
+            {
+              "clause_no": 4,
+              "text": "The Federation, State and Local level shall provide for the \nequitable distribution of benefits derived from the use of natural resources or \ndevelopment. Certain portions of such benefits shall be distributed, pursuant to \nlaw, in forms of royalty, services or goods to the project affected regions and \nlocal communities."
+            },
+            {
+              "clause_no": 5,
+              "text": "If, in utilising natural resources, the local community desires to \nmake investment therein, the Federation, State and Local level shall accord \npriority to such investment in such portion as provided by law on the basis of \nthe nature and size of such investment. "
+            },
+            {
+              "clause_no": 6,
+              "text": "The Government of Nepal shall have power to obtain foreign \nassistance and borrow loans. Such assistance or loans shall be so obtained or \nborrowed as to have macro-economic stability of the country."
+            },
+            {
+              "clause_no": 7,
+              "text": "Provisions relating to the management of budget deficits and \nother fiscal discipline of the Federation, State and Local level shall be as \nprovided for in the Federal law."
+            }
+          ]
+        },
+        {
+          "article_no": 60,
+          "title": "Distribution of sources of revenue",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The Federation, State and Local level \nmay impose taxes on matters falling within their respective jurisdiction and \ncollect revenue from these sources.",
+              "provision": "Provided that provisions relating to the imposition of taxes and \ncollection of revenue on matters that fall within the Concurrent List and on \nmatters that are not included in the List of any level shall be as determined by \nthe Government of Nepal. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The Government of Nepal shall make provisions for the equitable \ndistribution of the collected revenue to the Federation, State and Local level."
+            },
+            {
+              "clause_no": 3,
+              "text": "The amount of fiscal transfer receivable by the State and Local \nlevel shall be as recommended by the National Natural Resources and Fiscal \nCommission."
+            },
+            {
+              "clause_no": 4,
+              "text": "The Government of Nepal shall, on the basis of the need of \nexpenditure and revenue capacity, distribute fiscal equalization grants to the \nState and Local level. "
+            },
+            {
+              "clause_no": 5,
+              "text": "Each State shall, in accordance with the State law, distribute \nfiscal equalization grants out of the grants received from the Government of \nNepal and revenues collected from its sources, on the basis of the need of \nexpenditure and revenue capacity of its subordinate Local level. "
+            },
+            {
+              "clause_no": 6,
+              "text": "Provisions relating to distribution of conditional grants, \ncomplementary grants or special grants for other purposes to be provided by \nthe Government of Nepal from the Federal Consolidated Fund shall be as \nprovided for in the Federal law. "
+            },
+            {
+              "clause_no": 7,
+              "text": "Distribution of revenues between the Federal, State and Local \nlevel shall be made in a balanced and transparent manner. "
+            },
+            {
+              "clause_no": 8,
+              "text": "A Federal Act on the distribution of revenues shall be made \nhaving regard to the national policies, national requirements, autonomy of the State and Local levels, services to be rendered by the State and the Local level \nto the people and financial powers granted to them, capacity to collect \nrevenues, potentiality and use of revenues, assistance to be made in \ndevelopment works, reduction of regional imbalances, poverty and inequality, \nend of deprivation, and assistance to be made in the performance of contingent \nworks and fulfilment of temporary needs."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_no": 6,
+      "part_title": "President and Vice-President",
+      "articles": [
+        {
+          "article_no": 61,
+          "title": "President",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " There shall be a President of Nepal. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The President shall be the head of state of Nepal. He or she shall \nperform his or her functions in accordance with this Constitution and the \nFederal law. "
+            },
+            {
+              "clause_no": 3,
+              "text": "The President shall promote the national unity of Nepal."
+            },
+            {
+              "clause_no": 4,
+              "text": "The main duty of the President shall be to abide by and protect \nthis Constitution."
+            }
+          ]
+        },
+        {
+          "article_no": 62,
+          "title": "Election of President",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The President shall be elected by an electoral college \ncomposed of the members of the Federal Parliament and of the State \nAssemblies. The voting weightage of the members of the Federal Parliament \nand of the State Assemblies shall vary as provided for in the Federal law."
+            },
+            {
+              "clause_no": 2,
+              "text": "Notwithstanding anything contained in clause (1), nothing shall \nbe deemed to bar the formation of an electoral college for the purpose of \nelection to the President by the sole reason that election to the State Assembly \nhas not been held in any State."
+            },
+            {
+              "clause_no": 3,
+              "text": "A person who secures a majority of the then existing total votes \nof the electoral college under clause (1) shall be elected as the President. "
+            },
+            {
+              "clause_no": 4,
+              "text": "If none of the candidates secures a majority under clause (3), \nthere shall be voting between the two candidates who have secured the highest \nnumber of votes, and a candidate who secures more than fifty percent of the \ntotal votes in such a voting shall be elected as the President."
+            },
+            {
+              "clause_no": 5,
+              "text": "If none of the candidates secures more than fifty percent of the \ntotal votes even in the voting under clause (4), re-voting shall be held. A candidate who secures a majority of the total valid votes cast in such voting \nshall be elected as the President."
+            },
+            {
+              "clause_no": 6,
+              "text": "If a person who holds a political office to be filled by way of \nelection, nomination or appointment is appointed as the President under this \nArticle, his or her such office shall ipso facto be vacant."
+            },
+            {
+              "clause_no": 7,
+              "text": "Election to the President and other matters related thereto shall \nbe as provided for in the Federal law. "
+            }
+          ]
+        },
+        {
+          "article_no": 63,
+          "title": "Term of office of President",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " The term of office of the President shall be five \nyears from the date on which he or she is so elected. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The President whose term of office under clause (1) has expired \nshall continue to discharge the functions under this Constitution until another \nelected President assumes his or her office."
+            }
+          ]
+        },
+        {
+          "article_no": 64,
+          "title": "Qualification for President",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " A person who has the following qualification \nshall be qualified to become the President:",
+              "sub_clauses": [
+                {
+                  "letter": "a",
+                  "freedom": "being qualified to become a member of the Federal Parliament, "
+                },
+                {
+                  "letter": "b",
+                  "freedom": "having completed the age of at least forty five years, and "
+                },
+                {
+                  "letter": "c",
+                  "freedom": "not being disqualified by any law."
+                }
+              ]
+            },
+            {
+              "clause_no": 2,
+              "text": "Notwithstanding anything contained in clause (1), a person who \nhas already been elected twice as the President shall not become a candidate in \nthe election to the President."
+            }
+          ]
+        },
+        {
+          "article_no": 65,
+          "title": "Vacation of office of President :",
+          "text": "The office of the President shall become vacant \nin any of the following circumstances:\n\n(a) if he or she tenders resignation in writing to the Vice-President, \n(b) if a motion of impeachment against him or her is passed under Article 101,\n(c) if his or her term of office expires,  \n(d) If he or she dies."
+        },
+        {
+          "article_no": 66,
+          "title": "Functions, duties and powers of President :",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The President shall exercise \nsuch powers and perform such duties as conferred to him or her pursuant to \nthis Constitution or a Federal law. "
+            },
+            {
+              "clause_no": 2,
+              "text": " \nIn exercising the powers or duties under clause (1), the President \nshall perform all other functions to be performed by him or her on \nrecommendation and with the consent of the Council of Ministers than those \nfunctions specifically provided to be performed on recommendation of any \nbody or official under this Constitution or Federal Law. Such recommendation \nand consent shall be submitted through the Prime Minister. "
+            },
+            {
+              "clause_no": 3,
+              "text": "Any decision or order to be issued in the name of the President \nunder clause (2) and other instrument of authorization pertaining thereto shall \nbe authenticated as provided for in the Federal law. "
+            }
+          ]
+        },
+        {
+          "article_no": 67,
+          "title": "Vice-President",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": " There shall be a Vice-president of Nepal. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The functions to be performed by the President shall be \nperformed by the Vice-president during the absence of the President."
+            },
+            {
+              "clause_no": 3,
+              "text": "If a person who holds a political office to be filled by way of \nelection, nomination or appointment is appointed as the Vice-president, his or \nher such office shall ipso facto be vacant."
+            }
+          ]
+        },
+        {
+          "article_no": 68,
+          "title": "Vacation of office of Vice-president :",
+          "text": " \nThe office of the Vice-president shall \nbecome vacant in any of the following circumstances: \n\n(a) if he or she tenders resignation in writing to the President,\n(b)  if a motion of impeachment against him or her is passed under Article 101, \n(c) if his or her term of office expires, \n(d) if he or she dies. "
+        },
+        {
+          "article_no": 69,
+          "title": "Other provisions relating to Vice-President",
+          "text": "Provisions relating to the \nqualification, procedures of election and term of office of the Vice-President \nshall be the same as that of the President."
+        },
+        {
+          "article_no": 70,
+          "title": "President and Vice-President to be from different sex or community",
+          "text": " \nElection \nto the President and the Vice-president under this Constitution shall be so made \nas to have representation of different sex or community."
+        },
+        {
+          "article_no": 71,
+          "title": "Oath by President and Vice-President",
+          "text": " \nPrior to assuming their respective \noffices, the President shall take an oath of office and secrecy before the Chief \nJustice, and the Vice-President, before the President, as provided for in the \nFederal law."
+        },
+        {
+          "article_no": 72,
+          "title": "Remuneration and facilities of President and Vice-President",
+          "text": "The remuneration \nand other facilities of the President and the Vice-president shall be as provided \nfor in the Federal Act, and as specified by the Government of Nepal until such \nAct is made."
+        },
+        {
+          "article_no": 73,
+          "title": "Office of President and Vice-President ",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "There shall be separate offices for \nthe performance of the functions of the President and the Vice-President. "
+            },
+            {
+              "clause_no": 2,
+              "text": "The Government of Nepal shall make arrangements for \nemployees and other provisions as required to perform the functions of the \noffices under clause (1)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
