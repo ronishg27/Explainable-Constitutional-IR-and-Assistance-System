@@ -1,6 +1,20 @@
+import json
 import math
+from pathlib import Path
 
 from text_processing import tokenize
+
+
+def load_documents(path=None):
+	"""Load flattened MVP documents from data/flattened_nepal_constitution_mvp.json."""
+	root = Path(__file__).resolve().parents[0]
+	if path is None:
+		path = root / "data" / "flattened_nepal_constitution_mvp.json"
+	else:
+		path = Path(path)
+
+	with path.open("r", encoding="utf-8") as f:
+		return json.load(f)
 
 
 class BM25:
@@ -8,15 +22,18 @@ class BM25:
 		self.documents = documents
 		self.k1 = k1
 		self.b = b
-		self.avgdl = sum(len(doc["text"].split()) for doc in documents) / len(documents)
+		self.avgdl = sum(len(doc.get("body_tokens", tokenize(doc["text"]))) for doc in documents) / len(documents)
 		self.index = self._build_index()
-		self.doc_lengths = {doc["doc_id"]: len(doc["text"].split()) for doc in documents}
+		self.doc_lengths = {
+			doc["doc_id"]: len(doc.get("body_tokens", tokenize(doc["text"])))
+			for doc in documents
+		}
 		self.N = len(documents)
 
 	def _build_index(self):
 		index = {}
 		for doc in self.documents:
-			tokens = tokenize(doc["text"])
+			tokens = doc.get("body_tokens", tokenize(doc["text"]))
 			doc_id = doc["doc_id"]
 			for token in tokens:
 				if token not in index:
@@ -99,3 +116,30 @@ def search_bm25_with_boost(query, bm25_instance, documents, title_boost=5.0, top
 		doc_copy["score"] = score
 		results.append(doc_copy)
 	return results
+
+
+def main():
+	documents = load_documents()
+	bm25 = BM25(documents)
+
+	print(f"Loaded {len(documents)} documents from flattened_nepal_constitution_mvp.json")
+	print(f"Average document length: {bm25.avgdl:.2f} tokens")
+
+	while True:
+		query = input("Search query (or type exit): ").strip()
+		if not query or query.lower() == "exit":
+			break
+
+		results = search_bm25_with_boost(query, bm25, documents)
+		if not results:
+			print("No results found. Try a different query.")
+			continue
+
+		print("\nTop results:")
+		for rank, res in enumerate(results, start=1):
+			print(f"{rank}. {res['citation']} (score={res['score']:.3f})")
+			print(f"   {res['text'][:200].strip()}\n")
+
+
+if __name__ == "__main__":
+	main()
