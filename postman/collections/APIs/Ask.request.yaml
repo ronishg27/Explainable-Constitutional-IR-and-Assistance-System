@@ -1,0 +1,12 @@
+$kind: http-request
+name: Ask
+url: "{{base_url}}/ask"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"query\":\"What are my freedom rights?\"\r
+
+    }"
+order: 3000

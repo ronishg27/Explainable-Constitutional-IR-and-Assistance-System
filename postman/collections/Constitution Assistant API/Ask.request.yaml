@@ -1,0 +1,14 @@
+$kind: http-request
+version: v3
+url: '{{base_url}}/api/v1/ask'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "query": "What are the fundamental rights?"
+    }
+order: 3000
