@@ -43,6 +43,7 @@ class BM25:
 		self.index = load_inverted_index()
 		if self.index is None:
 			self.index = self._build_index()
+
 		
 		self.doc_lengths = {
 			doc["doc_id"]: len(doc.get("body_tokens", tokenize(doc["text"])))
@@ -142,12 +143,12 @@ def main():
 	documents = load_documents()
 	bm25 = BM25(documents)
 
-	print(f"Loaded {len(documents)} documents from flattened_nepal_constitution_mvp.json")
 	print(f"Inverted index loaded from pre-computed file (1307 unique terms)")
 	print(f"Average document length: {bm25.avgdl:.2f} tokens")
 
 	while True:
 		query = input("\nSearch query (or type exit): ").strip()
+
 		if not query or query.lower() == "exit":
 			break
 
