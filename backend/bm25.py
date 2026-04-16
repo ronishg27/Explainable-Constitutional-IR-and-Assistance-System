@@ -17,34 +17,13 @@ def load_documents(path=None):
 		return json.load(f)
 
 
-def load_inverted_index(path=None):
-	"""Load pre-computed inverted index from data/inverted_index_mvp.json."""
-	root = Path(__file__).resolve().parents[0]
-	if path is None:
-		path = root / "data" / "inverted_index_mvp.json"
-	else:
-		path = Path(path)
-
-	if not path.exists():
-		return None
-
-	with path.open("r", encoding="utf-8") as f:
-		return json.load(f)
-
-
 class BM25:
 	def __init__(self, documents, k1=1.5, b=0.75):
 		self.documents = documents
 		self.k1 = k1
 		self.b = b
 		self.avgdl = sum(len(doc.get("body_tokens", tokenize(doc["text"]))) for doc in documents) / len(documents)
-		
-		# Try to load pre-computed index, fallback to building
-		self.index = load_inverted_index()
-		if self.index is None:
-			self.index = self._build_index()
-
-		
+		self.index = self._build_index()
 		self.doc_lengths = {
 			doc["doc_id"]: len(doc.get("body_tokens", tokenize(doc["text"])))
 			for doc in documents
@@ -143,12 +122,11 @@ def main():
 	documents = load_documents()
 	bm25 = BM25(documents)
 
-	print(f"Inverted index loaded from pre-computed file (1307 unique terms)")
+	print(f"Loaded {len(documents)} documents from flattened_nepal_constitution_mvp.json")
 	print(f"Average document length: {bm25.avgdl:.2f} tokens")
 
 	while True:
-		query = input("\nSearch query (or type exit): ").strip()
-
+		query = input("Search query (or type exit): ").strip()
 		if not query or query.lower() == "exit":
 			break
 
