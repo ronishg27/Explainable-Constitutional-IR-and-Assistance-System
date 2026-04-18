@@ -15,6 +15,8 @@ from ollama import Client
 # Import search modules
 import sys
 
+
+
 ROOT_DIR = Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -28,7 +30,7 @@ class LLM(Enum):
     QWEN3_4B: str = "qwen3:4b"
     QWEN3_8B: str = "qwen3:8b"
     GEMMA3_1B: str = "gemma3:1b"
-    GLM5_CLOUD: str = "glm5:cloud"
+    GLM5_CLOUD: str = "glm-5:cloud"
     
 
 class RAGWorkflow:
@@ -38,7 +40,7 @@ class RAGWorkflow:
         self,
         documents_path: Optional[str] = None,
         ollama_host: Optional[str] = None,
-        model: str = LLM.LLAMA2_7B.value,
+        model: str = LLM.GLM5_CLOUD.value,
         max_context_articles: int = 5,
         title_boost: float = 5.0,
     ):
@@ -67,10 +69,13 @@ class RAGWorkflow:
         self.bm25 = BM25(self.documents)
 
         # Initialize Ollama client
-        ollama_host = ollama_host or os.environ.get(
+        ollama_host = os.environ.get(
             "OLLAMA_HOST", "http://127.0.0.1:11434"
         )
-        self.client = Client(host=ollama_host)
+        ollama_api_key = os.environ.get('OLLAMA_API_KEY') or ""
+      
+        self.client = Client(host=ollama_host, 
+                            headers={'Authorization': 'Bearer ' + ollama_api_key    })
 
     def check_ollama_connection(self) -> tuple[bool, str]:
         """Check whether Ollama is reachable and report status."""

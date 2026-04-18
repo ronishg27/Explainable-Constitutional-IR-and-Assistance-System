@@ -2,6 +2,11 @@ from flask import Flask, request, jsonify
 
 from src.llm.rag_workflow import RAGWorkflow
 
+
+# dotenv
+from dotenv import load_dotenv
+load_dotenv()
+
 app = Flask(__name__)
 
 @app.route("/api/v1")
