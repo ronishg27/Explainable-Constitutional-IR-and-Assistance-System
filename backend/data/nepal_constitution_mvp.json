@@ -130,6 +130,104 @@
       ]
     },
     {
+      "part_no": 2,
+      "part_title": "Citizenship",
+      "articles": [
+        {
+          "article_no": 10,
+          "title": "Not to deprive of citizenship",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No citizen of Nepal may be deprived of the\nright to obtain citizenship."
+            },
+            {
+              "clause_no": 2,
+              "text": "There is a provision of single federal citizenship with State\nidentity in Nepal."
+            }
+          ]
+        },
+        {
+          "article_no": 11,
+          "title": "To be citizens of Nepal",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The persons who have obtained the citizenship of\nNepal at the time of commencement of this Constitution and who are qualified\nto obtain citizenship in accordance with this Part shall be the citizens of Nepal"
+            },
+            {
+              "clause_no": 2,
+              "text": "The following person who has his or her permanent domicile in\nNepal at the time of commencement of this Constitution shall be the citizen of\nNepal by descent:",
+              "sub_clauses": [
+                {
+                  "letter": "a",
+                  "freedom": "a person who has obtained the citizenship of Nepal by descent prior\nto the commencement of this Constitution,"
+                },
+                {
+                  "letter": "b",
+                  "freedom": " a person whose father or mother was a citizen of Nepal at his or her\nbirth."
+                }
+              ]
+            },
+            {
+              "clause_no": 3,
+              "text": "A child of a citizen having obtained the citizenship of Nepal by\nbirth prior to the commencement of Nepal shall, upon attaining majority,\nacquire the citizenship of Nepal by descent if the child's father and mother both\nare citizens of Nepal."
+            },
+            {
+              "clause_no": 4,
+              "text": "Every minor who is found within Nepal and the whereabouts of\nwhose father and mother are not known shall, until the father or the mother of\nthe child is traced, be a citizen of Nepal by descent."
+            },
+            {
+              "clause_no": 5,
+              "text": "A person who is born in Nepal from a woman who is a citizen of\nNepal and has resided in Nepal and whose father is not traced shall be provided\nwith the citizenship of Nepal by descent.",
+              "provision": "Provided that his or her father is held to be a foreign citizen, the\ncitizenship of such person shall be converted into naturalized citizenship as\nprovided for in the Federal law."
+            },
+            {
+              "clause_no": 6,
+              "text": "A foreign woman who has a matrimonial relationship with a\ncitizen of Nepal may, if she so wishes, acquire the naturalized citizenship of\nNepal as provided for in the Federal law."
+            },
+            {
+              "clause_no": 7,
+              "text": "Notwithstanding anything contained elsewhere in this Article, in\nthe case of a person born from a woman who is a citizen of Nepal and married\nto a foreign citizen, the person may acquire the naturalized citizenship of Nepal\nin accordance with the Federal law if he or she has permanently resided in\nNepal and has not acquired the citizenship of a foreign country.",
+              "provision": "Provided that if such person's mother and father both are citizens of\nNepal at the time of acquisition of citizenship, such person born in Nepal may\nacquire the citizenship of Nepal by descent."
+            },
+            {
+              "clause_no": 8,
+              "text": "In the cases other than those mentioned in this Article, the\nGovernment of Nepal may, in accordance with the Federal law, grant the\nnaturalized citizenship of Nepal."
+            },
+            {
+              "clause_no": 9,
+              "text": "The Government of Nepal may, in accordance with the Federal\nlaw, grant the honorary citizenship of Nepal."
+            },
+            {
+              "clause_no": 10,
+              "text": "Whenever any territory is acquired by way of merger into Nepal,\na person having his or her domicile in such territory shall become a citizen of\nNepal, subject to the Federal law."
+            }
+          ]
+        },
+        {
+          "article_no": 12,
+          "title": "Citizenship with identity of descent and gender",
+          "text": "A person who obtains the\ncitizenship of Nepal by descent in accordance with this Constitution may\nobtain a certificate of citizenship of Nepal with gender identity by the name of\nhis or her mother or father. "
+        },
+        {
+          "article_no": 13,
+          "title": "Acquisition, reacquisition and termination of citizenship",
+          "text": "Other matters\nrelating to the acquisition, reacquisition and termination of citizenship shall be\nas provided for in the Federal law."
+        },
+        {
+          "article_no": 14,
+          "title": "Power to grant non-resident Nepalese citizenship",
+          "text": "The non-residential\ncitizenship of Nepal may be so granted to a person who has acquired the\ncitizenship of a foreign country, has resided in a country other than a member\nstate of the South Asian Association for Regional Cooperation, and who or\nwhose father or mother, grandfather or grandmother was previously a citizen of\nNepal by decent or birth but subsequently acquired the citizenship of the\nforeign country that such person may enjoy economic, social and cultural\nrights in accordance with the Federal law."
+        },
+        {
+          "article_no": 15,
+          "title": "Other provisions relating to citizenship of Nepal",
+          "text": "Other matters relating to the\nmaintenance of records setting out the identity of every citizen of Nepal and\nthe citizenship of Nepal shall be as provided for in the Federal law."
+        }
+      ]
+    },
+    {
       "part_no": 3,
       "part_title": "Fundamental Rights and Duties",
       "articles": [
@@ -1624,104 +1722,6 @@
               "text": "The Government of Nepal shall make arrangements for \nemployees and other provisions as required to perform the functions of the \noffices under clause (1)."
             }
           ]
-        }
-      ]
-    },
-    {
-      "part_no": 2,
-      "part_title": "Citizenship",
-      "articles": [
-        {
-          "article_no": 10,
-          "title": "Not to deprive of citizenship",
-          "clauses": [
-            {
-              "clause_no": 1,
-              "text": "No citizen of Nepal may be deprived of the\nright to obtain citizenship."
-            },
-            {
-              "clause_no": 2,
-              "text": "There is a provision of single federal citizenship with State\nidentity in Nepal."
-            }
-          ]
-        },
-        {
-          "article_no": 11,
-          "title": "To be citizens of Nepal",
-          "clauses": [
-            {
-              "clause_no": 1,
-              "text": "The persons who have obtained the citizenship of\nNepal at the time of commencement of this Constitution and who are qualified\nto obtain citizenship in accordance with this Part shall be the citizens of Nepal"
-            },
-            {
-              "clause_no": 2,
-              "text": "The following person who has his or her permanent domicile in\nNepal at the time of commencement of this Constitution shall be the citizen of\nNepal by descent:",
-              "sub_clauses": [
-                {
-                  "letter": "a",
-                  "freedom": "a person who has obtained the citizenship of Nepal by descent prior\nto the commencement of this Constitution,"
-                },
-                {
-                  "letter": "b",
-                  "freedom": " a person whose father or mother was a citizen of Nepal at his or her\nbirth."
-                }
-              ]
-            },
-            {
-              "clause_no": 3,
-              "text": "A child of a citizen having obtained the citizenship of Nepal by\nbirth prior to the commencement of Nepal shall, upon attaining majority,\nacquire the citizenship of Nepal by descent if the child's father and mother both\nare citizens of Nepal."
-            },
-            {
-              "clause_no": 4,
-              "text": "Every minor who is found within Nepal and the whereabouts of\nwhose father and mother are not known shall, until the father or the mother of\nthe child is traced, be a citizen of Nepal by descent."
-            },
-            {
-              "clause_no": 5,
-              "text": "A person who is born in Nepal from a woman who is a citizen of\nNepal and has resided in Nepal and whose father is not traced shall be provided\nwith the citizenship of Nepal by descent.",
-              "provision": "Provided that his or her father is held to be a foreign citizen, the\ncitizenship of such person shall be converted into naturalized citizenship as\nprovided for in the Federal law."
-            },
-            {
-              "clause_no": 6,
-              "text": "A foreign woman who has a matrimonial relationship with a\ncitizen of Nepal may, if she so wishes, acquire the naturalized citizenship of\nNepal as provided for in the Federal law."
-            },
-            {
-              "clause_no": 7,
-              "text": "Notwithstanding anything contained elsewhere in this Article, in\nthe case of a person born from a woman who is a citizen of Nepal and married\nto a foreign citizen, the person may acquire the naturalized citizenship of Nepal\nin accordance with the Federal law if he or she has permanently resided in\nNepal and has not acquired the citizenship of a foreign country.",
-              "provision": "Provided that if such person's mother and father both are citizens of\nNepal at the time of acquisition of citizenship, such person born in Nepal may\nacquire the citizenship of Nepal by descent."
-            },
-            {
-              "clause_no": 8,
-              "text": "In the cases other than those mentioned in this Article, the\nGovernment of Nepal may, in accordance with the Federal law, grant the\nnaturalized citizenship of Nepal."
-            },
-            {
-              "clause_no": 9,
-              "text": "The Government of Nepal may, in accordance with the Federal\nlaw, grant the honorary citizenship of Nepal."
-            },
-            {
-              "clause_no": 10,
-              "text": "Whenever any territory is acquired by way of merger into Nepal,\na person having his or her domicile in such territory shall become a citizen of\nNepal, subject to the Federal law."
-            }
-          ]
-        },
-        {
-          "article_no": 12,
-          "title": "Citizenship with identity of descent and gender",
-          "text": "A person who obtains the\ncitizenship of Nepal by descent in accordance with this Constitution may\nobtain a certificate of citizenship of Nepal with gender identity by the name of\nhis or her mother or father. "
-        },
-        {
-          "article_no": 13,
-          "title": "Acquisition, reacquisition and termination of citizenship",
-          "text": "Other matters\nrelating to the acquisition, reacquisition and termination of citizenship shall be\nas provided for in the Federal law."
-        },
-        {
-          "article_no": 14,
-          "title": "Power to grant non-resident Nepalese citizenship",
-          "text": "The non-residential\ncitizenship of Nepal may be so granted to a person who has acquired the\ncitizenship of a foreign country, has resided in a country other than a member\nstate of the South Asian Association for Regional Cooperation, and who or\nwhose father or mother, grandfather or grandmother was previously a citizen of\nNepal by decent or birth but subsequently acquired the citizenship of the\nforeign country that such person may enjoy economic, social and cultural\nrights in accordance with the Federal law."
-        },
-        {
-          "article_no": 15,
-          "title": "Other provisions relating to citizenship of Nepal",
-          "text": "Other matters relating to the\nmaintenance of records setting out the identity of every citizen of Nepal and\nthe citizenship of Nepal shall be as provided for in the Federal law."
         }
       ]
     },
