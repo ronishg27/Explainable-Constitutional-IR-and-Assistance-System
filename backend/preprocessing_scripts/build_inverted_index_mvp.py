@@ -27,7 +27,7 @@ def build_inverted_index(documents):
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    input_path = root / "data" / "flattened_nepal_constitution_mvp.json"
+    input_path = root / "data" / "flattened_nepal_constitution.json"
     output_path = root / "data" / "inverted_index_mvp.json"
 
     print(f"Loading documents from {input_path.name}...")
