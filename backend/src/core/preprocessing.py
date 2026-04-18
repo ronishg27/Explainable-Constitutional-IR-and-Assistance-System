@@ -20,17 +20,15 @@ class NLP:
             self.lemma_dict = json.load(f)
 
 
-    @staticmethod
-    def preprocess(text):
+    def preprocess(self, text):
         """Preprocesses the input text by normalizing, tokenizing, and removing stopwords."""
-        normalized_text = NLP.normalize(text)
-        tokens = NLP.tokenize(normalized_text)
-        filtered_tokens = NLP.remove_stopwords(tokens)
-        lemmatized_tokens = NLP.lemmatize(filtered_tokens)
+        normalized_text = self.normalize(text)
+        tokens = self.tokenize(normalized_text)
+        filtered_tokens = self.remove_stopwords(tokens)
+        lemmatized_tokens = self.lemmatize(filtered_tokens)
         return lemmatized_tokens
 
-    @staticmethod
-    def normalize(text):
+    def normalize(self, text):
         """Normalizes the input text by converting it to lowercase and removing punctuation."""
         if not text:
             return ""
@@ -40,8 +38,7 @@ class NLP:
         return normalized_text
 
 
-    @staticmethod
-    def tokenize(text):
+    def tokenize(self, text):
         """Tokenizes the input text into a list of tokens."""
         if not text:
             return []
@@ -49,16 +46,14 @@ class NLP:
         tokens = text.split()
         return tokens
     
-    @staticmethod
-    def remove_stopwords(tokens):
+    def remove_stopwords(self, tokens):
         """Removes stopwords from the list of tokens."""
         return [token for token in tokens if token not in STOPWORDS]
     
 
-    @staticmethod
-    def lemmatize(tokens):
+    def lemmatize(self, tokens):
         """Lemmatizes the input tokens to their base forms."""
-        return [NLP.lemma_dict.get(token, token) for token in tokens]
+        return [self.lemma_dict.get(token, token) for token in tokens]
 
 
 
