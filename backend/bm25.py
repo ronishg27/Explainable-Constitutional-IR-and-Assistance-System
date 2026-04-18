@@ -18,7 +18,7 @@ def load_documents(path=None):
 
 
 class BM25:
-	def __init__(self, documents, k1=1.5, b=0.75):
+	def __init__(self, documents, k1=2, b=0.9):
 		self.documents = documents
 		self.k1 = k1
 		self.b = b
