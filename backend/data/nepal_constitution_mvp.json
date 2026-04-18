@@ -801,7 +801,7 @@
             },
             {
               "clause_no": 3,
-              "text": "\nThe economic objective of the State shall be to achieve a \nsustainable economic development, while achieving rapid economic growth, by \nway of maximum mobilization of the available means and resources through \nparticipation and development of public, private and cooperatives, and to \ndevelop a socialism-oriented independent and prosperous economy while \nmaking the national economy independent, self-reliant and progressive in order \nto  build an exploitation free society by abolishing economic inequality through \nequitable distribution of the gains. "
+              "text": "The economic objective of the State shall be to achieve a \nsustainable economic development, while achieving rapid economic growth, by \nway of maximum mobilization of the available means and resources through \nparticipation and development of public, private and cooperatives, and to \ndevelop a socialism-oriented independent and prosperous economy while \nmaking the national economy independent, self-reliant and progressive in order \nto  build an exploitation free society by abolishing economic inequality through \nequitable distribution of the gains. "
             },
             {
               "clause_no": 4,
@@ -1622,6 +1622,308 @@
             {
               "clause_no": 2,
               "text": "The Government of Nepal shall make arrangements for \nemployees and other provisions as required to perform the functions of the \noffices under clause (1)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_no": 2,
+      "part_title": "Citizenship",
+      "articles": [
+        {
+          "article_no": 10,
+          "title": "Not to deprive of citizenship",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "No citizen of Nepal may be deprived of the\nright to obtain citizenship."
+            },
+            {
+              "clause_no": 2,
+              "text": "There is a provision of single federal citizenship with State\nidentity in Nepal."
+            }
+          ]
+        },
+        {
+          "article_no": 11,
+          "title": "To be citizens of Nepal",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The persons who have obtained the citizenship of\nNepal at the time of commencement of this Constitution and who are qualified\nto obtain citizenship in accordance with this Part shall be the citizens of Nepal"
+            },
+            {
+              "clause_no": 2,
+              "text": "The following person who has his or her permanent domicile in\nNepal at the time of commencement of this Constitution shall be the citizen of\nNepal by descent:",
+              "sub_clauses": [
+                {
+                  "letter": "a",
+                  "freedom": "a person who has obtained the citizenship of Nepal by descent prior\nto the commencement of this Constitution,"
+                },
+                {
+                  "letter": "b",
+                  "freedom": " a person whose father or mother was a citizen of Nepal at his or her\nbirth."
+                }
+              ]
+            },
+            {
+              "clause_no": 3,
+              "text": "A child of a citizen having obtained the citizenship of Nepal by\nbirth prior to the commencement of Nepal shall, upon attaining majority,\nacquire the citizenship of Nepal by descent if the child's father and mother both\nare citizens of Nepal."
+            },
+            {
+              "clause_no": 4,
+              "text": "Every minor who is found within Nepal and the whereabouts of\nwhose father and mother are not known shall, until the father or the mother of\nthe child is traced, be a citizen of Nepal by descent."
+            },
+            {
+              "clause_no": 5,
+              "text": "A person who is born in Nepal from a woman who is a citizen of\nNepal and has resided in Nepal and whose father is not traced shall be provided\nwith the citizenship of Nepal by descent.",
+              "provision": "Provided that his or her father is held to be a foreign citizen, the\ncitizenship of such person shall be converted into naturalized citizenship as\nprovided for in the Federal law."
+            },
+            {
+              "clause_no": 6,
+              "text": "A foreign woman who has a matrimonial relationship with a\ncitizen of Nepal may, if she so wishes, acquire the naturalized citizenship of\nNepal as provided for in the Federal law."
+            },
+            {
+              "clause_no": 7,
+              "text": "Notwithstanding anything contained elsewhere in this Article, in\nthe case of a person born from a woman who is a citizen of Nepal and married\nto a foreign citizen, the person may acquire the naturalized citizenship of Nepal\nin accordance with the Federal law if he or she has permanently resided in\nNepal and has not acquired the citizenship of a foreign country.",
+              "provision": "Provided that if such person's mother and father both are citizens of\nNepal at the time of acquisition of citizenship, such person born in Nepal may\nacquire the citizenship of Nepal by descent."
+            },
+            {
+              "clause_no": 8,
+              "text": "In the cases other than those mentioned in this Article, the\nGovernment of Nepal may, in accordance with the Federal law, grant the\nnaturalized citizenship of Nepal."
+            },
+            {
+              "clause_no": 9,
+              "text": "The Government of Nepal may, in accordance with the Federal\nlaw, grant the honorary citizenship of Nepal."
+            },
+            {
+              "clause_no": 10,
+              "text": "Whenever any territory is acquired by way of merger into Nepal,\na person having his or her domicile in such territory shall become a citizen of\nNepal, subject to the Federal law."
+            }
+          ]
+        },
+        {
+          "article_no": 12,
+          "title": "Citizenship with identity of descent and gender",
+          "text": "A person who obtains the\ncitizenship of Nepal by descent in accordance with this Constitution may\nobtain a certificate of citizenship of Nepal with gender identity by the name of\nhis or her mother or father. "
+        },
+        {
+          "article_no": 13,
+          "title": "Acquisition, reacquisition and termination of citizenship",
+          "text": "Other matters\nrelating to the acquisition, reacquisition and termination of citizenship shall be\nas provided for in the Federal law."
+        },
+        {
+          "article_no": 14,
+          "title": "Power to grant non-resident Nepalese citizenship",
+          "text": "The non-residential\ncitizenship of Nepal may be so granted to a person who has acquired the\ncitizenship of a foreign country, has resided in a country other than a member\nstate of the South Asian Association for Regional Cooperation, and who or\nwhose father or mother, grandfather or grandmother was previously a citizen of\nNepal by decent or birth but subsequently acquired the citizenship of the\nforeign country that such person may enjoy economic, social and cultural\nrights in accordance with the Federal law."
+        },
+        {
+          "article_no": 15,
+          "title": "Other provisions relating to citizenship of Nepal",
+          "text": "Other matters relating to the\nmaintenance of records setting out the identity of every citizen of Nepal and\nthe citizenship of Nepal shall be as provided for in the Federal law."
+        }
+      ]
+    },
+    {
+      "part_no": 7,
+      "part_title": "Federal Executive",
+      "articles": [
+        {
+          "article_no": 74,
+          "title": "Form of government",
+          "text": "The form of government of Nepal shall be multi-party,\ncompetitive, federal, democratic, republican, parliamentary form of\ngovernment based on pluralism."
+        },
+        {
+          "article_no": 75,
+          "title": "Executive power",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The executive power of Nepal shall, pursuant to this\nConstitution and law, be vested in the Council of Ministers."
+            },
+            {
+              "clause_no": 2,
+              "text": "The responsibility for issuing general directives, controlling and\nregulating the governance of Nepal shall, subject to this Constitution and law,\nlie in the Council of Ministers."
+            },
+            {
+              "clause_no": 3,
+              "text": "All Federal executive functions of Nepal shall be performed in\nthe name of the Government of Nepal."
+            },
+            {
+              "clause_no": 4,
+              "text": "Any decision or order to be issued in the name of the\nGovernment of Nepal pursuant to clause (3) and other instruments of\nauthorization pertaining thereto shall be authenticated as provided for in the\nFederal law."
+            }
+          ]
+        },
+        {
+          "article_no": 76,
+          "title": "Constitution of Council of Ministers",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The President shall appoint the leader\nof a parliamentary party that commands majority in the House of\nRepresentatives as the Prime Minister, and the Council of Ministers shall be\nconstituted under his or her chairpersonship."
+            },
+            {
+              "clause_no": 2,
+              "text": "In cases where no party has a clear majority in the House of\nRepresentatives under clause (1), the President shall appoint as the Prime\nMinister a member of the House of Representatives who can command\nmajority with the support of two or more parties representing to the House of\nRepresentatives."
+            },
+            {
+              "clause_no": 3,
+              "text": "In cases where Prime Minister cannot be appointed under clause\n(2) no later than thirty days after the date of declaration of the final results of\nelection to the House of Representatives or the Prime Minister so appointed\nfails to secure a vote of confidence under clause (4), the President shall appoint\nas the Prime Minister the parliamentary party leader of the party which has the\nhighest number of members in the House of Representatives."
+            },
+            {
+              "clause_no": 4,
+              "text": "The Prime Minister appointed under clause (2) or (3) shall obtain\na vote of confidence from the House of Representatives no later than thirty\ndays after the date of such appointment."
+            },
+            {
+              "clause_no": 5,
+              "text": "In cases where the Prime Minister appointed under clause (3)\nfails to obtain a vote of confidence under clause (4) and any member under\nclause (2) presents a ground on which he or she can obtain a vote of confidence\nin the House of Representatives, the President shall appoint such member as\nthe Prime Minister."
+            },
+            {
+              "clause_no": 6,
+              "text": "The Prime Minister appointed under clause (5) must obtain a\nvote of confidence under clause (4)."
+            },
+            {
+              "clause_no": 7,
+              "text": " In cases where the Prime Minister appointed under clause (5)\nfails to obtain a vote of confidence or the Prime Minister cannot be appointed,\nthe President shall, on recommendation of the Prime Minister, dissolve the\nHouse of Representatives and appoint a date of election so that the election to\nanother House of Representatives is completed within six months."
+            },
+            {
+              "clause_no": 8,
+              "text": "Procedures on the appointment of the Prime Minister under this\nArticle must be completed no later than thirty five days after the date of\ndeclaration of the final results of election to the House of Representatives held\nunder this Constitution or the date on which the office of the Prime Minister\nhas fallen vacant."
+            },
+            {
+              "clause_no": 9,
+              "text": "The President shall, on recommendation of the Prime Minister,\nconstitute the Council of Ministers comprising a maximum of twenty five\nMinisters including the Prime Minister, in accordance with the inclusive\nprinciple, from amongst the members of the Federal Parliament.",
+              "explanation": "For the purposes of this Article, \"Minister\" means a Deputy\nPrime Minister, Minister, Minister of State and Assistant Minister."
+            },
+            {
+              "clause_no": 10,
+              "text": "The Prime Minister and Ministers shall be collectively\nresponsible to the Federal Parliament, and the Ministers shall be individually\nresponsible for the work of their respective Ministries to the Prime Minister\nand the Federal Parliament."
+            }
+          ]
+        },
+        {
+          "article_no": 77,
+          "title": "Vacation of office of Prime Minister and Minister",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The office of the Prime\nMinister shall be vacant in any of the following circumstances:",
+              "sub_clauses": [
+                {
+                  "letter": "a",
+                  "freedom": "if he or she tenders resignation in writing to the President"
+                },
+                {
+                  "letter": "b",
+                  "freedom": "if a vote of confidence is not passed or a vote of no-confidence is\npassed against him or her under Article 100"
+                },
+                {
+                  "letter": "c",
+                  "freedom": "if he or she ceases to be a member of the House of\nRepresentatives"
+                },
+                {
+                  "letter": "d",
+                  "freedom": "if he or she dies"
+                }
+              ]
+            },
+            {
+              "clause_no": 2,
+              "text": "The office of a Minister shall be vacant in any of the following\ncircumstances",
+              "sub_clauses": [
+                {
+                  "letter": "a",
+                  "freedom": "if he or she tenders resignation in writing to the Prime Minister"
+                },
+                {
+                  "letter": "b",
+                  "freedom": "if the Prime Minister removes him or her from office"
+                },
+                {
+                  "letter": "c",
+                  "freedom": "if the office of Prime Minister falls vacant under sub-clause (a),\n(b) or (c) of clause (1)"
+                },
+                {
+                  "letter": "d",
+                  "freedom": "if he or she dies"
+                }
+              ]
+            },
+            {
+              "clause_no": 3,
+              "text": "If the office of Prime Minister falls vacant under clause (1), the\nsame Council of Ministers shall continue to act until another Council of\nMinisters is constituted",
+              "provision": "Provided that if the Prime Minister dies, the senior-most Minister shall\nact as the Prime Minister until a new Prime Minister is appointed"
+            }
+          ]
+        },
+        {
+          "article_no": 78,
+          "title": "Non-member of Federal Parliament to be Minister",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "Notwithstanding\nanything contained in clause (9) of Article 76, the President may, on\nrecommendation of the Prime Minister, appoint a person who is not a member\nof the Federal Parliament as a Minister"
+            },
+            {
+              "clause_no": 2,
+              "text": "A Minister appointed under clause (1) must obtain membership\nof the Federal Parliament within six months from the date of taking oath by\nhim or her. "
+            },
+            {
+              "clause_no": 3,
+              "text": "In the event of failure to obtain membership of the Federal\nParliament within the period mentioned in clause (2), he or she shall not be\nqualified to be reappointed to the office of Minister during the term of the then\nHouse of Representatives."
+            },
+            {
+              "clause_no": 4,
+              "text": "Notwithstanding anything contained in clause (1), a person who\nhas been defeated in the election to the then House of Representatives shall not\nbe qualified to be appointed to the office of Minister during the term of such\nHouse of Representatives."
+            }
+          ]
+        },
+        {
+          "article_no": 79,
+          "title": "Remuneration and other facilities of Prime Minister and Ministers",
+          "text": "The\nremuneration and other facilities of the Prime Minister and Ministers shall be\nas provided for in the Federal Act, and shall be as specified by the Government\nof Nepal until such Act is made."
+        },
+        {
+          "article_no": 80,
+          "title": "Oath",
+          "text": "The Prime Minister, Deputy Prime Minister and Ministers shall take an\noath of office and secrecy before the President, and Ministers of State and Assistant Ministers, before the Prime Minister, as provided for in the Federal\nlaw, prior to assuming their respective offices."
+        },
+        {
+          "article_no": 81,
+          "title": "To inform President",
+          "text": "The Prime Minister shall inform the President about the\nfollowing matters:",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "resolutions of the Council of Ministers"
+            },
+            {
+              "clause_no": 2,
+              "text": "Bills to be introduced in the Federal Parliament"
+            },
+            {
+              "clause_no": 3,
+              "text": "such other necessary information as commanded by the President\non matters set forth in clauses (a) and (b)"
+            },
+            {
+              "clause_no": 4,
+              "text": "current general state of affairs of the country and matters\nconcerning foreign relations."
+            }
+          ]
+        },
+        {
+          "article_no": 82,
+          "title": "Transaction of business of Government of Nepal",
+          "clauses": [
+            {
+              "clause_no": 1,
+              "text": "The business of the\nGovernment of Nepal shall be allocated and transacted in accordance with the\nrules approved by the Government of Nepal."
+            },
+            {
+              "clause_no": 2,
+              "text": "No question may be raised in any court as to whether or not the\nrules under clause (1) have been observed."
             }
           ]
         }
