@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify
 
 from src.llm.rag_workflow import RAGWorkflow
-
-
+from flask_cors import CORS
 # dotenv
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+# cors setup
+CORS(app)
+
 
 @app.route("/api/v1")
 def home():

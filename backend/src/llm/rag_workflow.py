@@ -9,12 +9,9 @@ from enum import Enum
 import os
 from pathlib import Path
 from typing import Optional
-
 from ollama import Client
-
-# Import search modules
 import sys
-
+from .ollama_llm import createOllamaClient
 
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -23,9 +20,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from src.core.bm25 import BM25, search_bm25_with_boost, load_documents
 
-
-
-class LLM(Enum):
+class OllamaModels(Enum):
     LLAMA2_7B: str = "llama2:7b-chat"
     QWEN3_4B: str = "qwen3:4b"
     QWEN3_8B: str = "qwen3:8b"
@@ -40,7 +35,7 @@ class RAGWorkflow:
         self,
         documents_path: Optional[str] = None,
         ollama_host: Optional[str] = None,
-        model: str = LLM.GLM5_CLOUD.value,
+        model: str = OllamaModels.LLAMA2_7B.value,
         max_context_articles: int = 5,
         title_boost: float = 5.0,
     ):
@@ -54,7 +49,7 @@ class RAGWorkflow:
             max_context_articles: Max articles to include in LLM context.
             title_boost: Title matching boost factor for BM25.
         """
-        # Use flattened_nepal_constitution.json as default
+        # Use flattened_nepal_constitution_mvp.json as default
         if documents_path is None:
             root = Path(__file__).resolve().parents[2]
             documents_path = root / "data" / "flattened_nepal_constitution.json"
@@ -67,15 +62,7 @@ class RAGWorkflow:
         # Load documents and build BM25 index
         self.documents = load_documents(str(documents_path))
         self.bm25 = BM25(self.documents)
-
-        # Initialize Ollama client
-        ollama_host = os.environ.get(
-            "OLLAMA_HOST", "http://127.0.0.1:11434"
-        )
-        ollama_api_key = os.environ.get('OLLAMA_API_KEY') or ""
-      
-        self.client = Client(host=ollama_host, 
-                            headers={'Authorization': 'Bearer ' + ollama_api_key    })
+        self.client = createOllamaClient()
 
     def check_ollama_connection(self) -> tuple[bool, str]:
         """Check whether Ollama is reachable and report status."""

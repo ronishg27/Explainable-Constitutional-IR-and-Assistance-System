@@ -7,11 +7,11 @@ from .preprocessing import NLP
 
 
 def load_documents(path=None):
-	"""Load flattened MVP documents from data/flattened_nepal_constitution_mvp.json."""
+	"""Load flattened MVP documents from data/flattened_nepal_constitution.json."""
 	root = Path(__file__).resolve().parents[0].parent.parent
 	
 	if path is None:
-		path = root / "data" / "flattened_nepal_constitution_mvp.json"
+		path = root / "data" / "flattened_nepal_constitution.json"
 	else:
 		path = Path(path)
 
@@ -125,7 +125,7 @@ def main():
 	documents = load_documents()
 	bm25 = BM25(documents)
 
-	print(f"Loaded {len(documents)} documents from flattened_nepal_constitution_mvp.json")
+	print(f"Loaded {len(documents)} documents from flattened_nepal_constitution.json")
 	print(f"Average document length: {bm25.avgdl:.2f} tokens")
 
 	while True:
