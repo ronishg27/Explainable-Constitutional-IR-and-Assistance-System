@@ -6,8 +6,12 @@ from ollama import Client
 def createOllamaClient()-> Client: 
   ollama_host = os.environ.get("OLLAMA_HOST", "http://127.0.0.1:11434")
   ollama_api_key = os.environ.get('OLLAMA_API_KEY') or ""
-  
-  return Client(host=ollama_host, headers={"Authorization": f"Bearer {ollama_api_key}"})
+
+  headers = None
+  if ollama_api_key.strip():
+    headers = {"Authorization": f"Bearer {ollama_api_key.strip()}"}
+
+  return Client(host=ollama_host, headers=headers)
 
 def main() -> None:
   client = createOllamaClient()
