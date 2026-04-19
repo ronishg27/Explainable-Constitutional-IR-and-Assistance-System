@@ -310,7 +310,7 @@ def flatten_flat_constitution(data):
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    input_path = root / "data" / "constitution_combined.json"
+    input_path = root / "data" / "nepal_constitution_mvp.json"
     output_path = root / "data" / "flattened_nepal_constitution.json"
 
     with input_path.open("r", encoding="utf-8") as f:

@@ -14,21 +14,24 @@ from constants.stopwords import STOPWORDS
 
 class NLP:
     def __init__(self):
-        root_dir = Path(__file__).resolve().parents[2]
-        lemma_path = root_dir / "data" / "lemma_dict_v3.json"
-        with lemma_path.open("r", encoding="utf-8") as f:
-            self.lemma_dict = json.load(f)
+        pass
+        # root_dir = Path(__file__).resolve().parents[2]
+        # lemma_path = root_dir / "data" / "lemma_dict_v3.json"
+        # with lemma_path.open("r", encoding="utf-8") as f:
+        #     self.lemma_dict = json.load(f)
 
 
-    def preprocess(self, text):
+    @staticmethod
+    def preprocess(text):
         """Preprocesses the input text by normalizing, tokenizing, and removing stopwords."""
-        normalized_text = self.normalize(text)
-        tokens = self.tokenize(normalized_text)
-        filtered_tokens = self.remove_stopwords(tokens)
-        lemmatized_tokens = self.lemmatize(filtered_tokens)
+        normalized_text = NLP.normalize(text)
+        tokens = NLP.tokenize(normalized_text)
+        filtered_tokens = NLP.remove_stopwords(tokens)
+        lemmatized_tokens = NLP.lemmatize(filtered_tokens)
         return lemmatized_tokens
 
-    def normalize(self, text):
+    @staticmethod
+    def normalize(text):
         """Normalizes the input text by converting it to lowercase and removing punctuation."""
         if not text:
             return ""
@@ -38,7 +41,8 @@ class NLP:
         return normalized_text
 
 
-    def tokenize(self, text):
+    @staticmethod
+    def tokenize(text):
         """Tokenizes the input text into a list of tokens."""
         if not text:
             return []
@@ -46,14 +50,16 @@ class NLP:
         tokens = text.split()
         return tokens
     
-    def remove_stopwords(self, tokens):
+    @staticmethod
+    def remove_stopwords(tokens):
         """Removes stopwords from the list of tokens."""
         return [token for token in tokens if token not in STOPWORDS]
     
 
-    def lemmatize(self, tokens):
+    @staticmethod
+    def lemmatize(tokens):
         """Lemmatizes the input tokens to their base forms."""
-        return [self.lemma_dict.get(token, token) for token in tokens]
+        return [NLP.lemma_dict.get(token, token) for token in tokens]
 
 
 
