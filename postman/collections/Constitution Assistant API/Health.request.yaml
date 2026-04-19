@@ -1,5 +1,6 @@
 $kind: http-request
 version: v3
-url: '{{base_url}}/api/v1/health'
+name: Health
+url: "{{base_url}}/health"
 method: GET
 order: 2000

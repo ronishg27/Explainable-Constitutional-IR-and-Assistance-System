@@ -1,14 +1,14 @@
 $kind: http-request
 version: v3
-url: '{{base_url}}/api/v1/ask'
+name: Ask
+url: "{{base_url}}/ask"
 method: POST
 headers:
-  - key: Content-Type
-    value: application/json
+  Content-Type: application/json
 body:
   type: json
   content: |-
     {
-      "query": "What are the fundamental rights?"
+      "query": " Discuss the concept of sovereignty and state power in Nepal."
     }
 order: 3000
