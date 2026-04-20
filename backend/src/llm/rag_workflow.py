@@ -35,7 +35,7 @@ class RAGWorkflow:
         self,
         documents_path: Optional[str] = None,
         ollama_host: Optional[str] = None,
-        model: str = OllamaModels.LLAMA2_7B.value,
+        model: str = OllamaModels.GEMMA3_1B.value,
         max_context_articles: int = 5,
         title_boost: float = 5.0,
     ):
