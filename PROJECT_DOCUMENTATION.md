@@ -1,7 +1,7 @@
 # Explainable Constitutional IR and Assistance System - Project Documentation
 
 **Project Name:** Explainable Constitutional IR and Assistance System  
-**Version:** 2.0.0 (documentation refresh)  
+**Version:** 2.0.1 (documentation refresh)  
 **Last Updated:** April 19, 2026  
 **Purpose:** Retrieval-Augmented constitutional question answering for Nepal's Constitution, combining BM25 search with LLM-based response generation.  
 **Author:** Ronish Ghimire, Devraj Khatiwada, Nayan Nepal
@@ -156,7 +156,9 @@ frontend/
 ```
 
 - **Current failure behavior:**
-  - If Ollama connection fails, returns `500` with `{"error": "Failed to connect to Ollama."}`
+  - If Ollama connection is unavailable at request time, returns `503` with `{"error": "Ollama service is unavailable."}`
+  - If request payload is invalid, returns `400` with validation message (content type, JSON payload, query presence/type/length)
+  - Unexpected runtime failures return `500` with `{"error": "An error occurred while processing the query."}`
 
 ---
 
@@ -193,7 +195,7 @@ Implemented in `backend/src/llm/rag_workflow.py`.
 3. Retrieve top-k relevant documents (`max_context_articles`, default `5`)
 4. Format retrieved passages into a structured constitutional context
 5. Build instruction prompt constrained to provided articles
-6. Call Ollama chat model (default: `llama2:7b-chat`)
+6. Call Ollama chat model (default: `gemma3:1b`)
 7. Return answer and citations
 
 ### Model Options in Code
@@ -208,6 +210,7 @@ Enum includes:
 In `backend/src/llm/ollama_llm.py`:
 - `OLLAMA_HOST` env var supported (default `http://127.0.0.1:11434`)
 - Optional bearer token from `OLLAMA_API_KEY`
+- Authorization header is only sent when `OLLAMA_API_KEY` is non-empty (prevents invalid empty `Bearer` header failures)
 
 ---
 
@@ -247,13 +250,14 @@ Typical fields include:
 - Flask API routes (`/api/v1`, `/api/v1/health`, `/api/v1/ask`)
 - BM25 retrieval with title boosting
 - RAG orchestration (retrieve + prompt + LLM answer)
-- Ollama connectivity check before answering
+- Ollama connectivity check before answering (performed per request for fresh status)
+- Input validation for `/ask` (content type, JSON body, query type, query length)
 - Postman collection and environment for quick API testing
 
 ### Partially Implemented / In Progress
-- Better runtime efficiency (index/workflow currently rebuilt per request)
+- Better runtime efficiency under load (single-process startup caching exists; no cross-worker shared cache yet)
 - Unified preprocessing stack across all modules (duplicate utilities still exist)
-- Stronger request validation and robust error handling
+- More granular error categories (e.g., model missing vs host unavailable vs timeout)
 
 ### Not Yet Implemented
 - Fully built frontend experience
@@ -265,12 +269,12 @@ Typical fields include:
 
 ## 9. Known Issues and Technical Debt
 
-1. **Per-request initialization overhead**
-- `RAGWorkflow()` is created inside each `/ask` request.
-- This reloads documents and rebuilds BM25 repeatedly.
+1. **Workflow startup overhead and memory footprint**
+- `RAGWorkflow()` is initialized at app startup, which avoids per-request rebuilds.
+- Initial startup can still be slow for larger corpora, and memory remains resident for process lifetime.
 
 2. **Input validation gaps**
-- `query` field currently has limited validation (empty/malformed body handling is minimal).
+- Core validation is implemented, but sanitization and stricter semantic constraints are still limited.
 
 3. **Preprocessing duplication**
 - Multiple tokenizer/search implementations exist (`backend/bm25.py`, `backend/ii_tf.py`, `backend/src/core/bm25.py`).
@@ -287,12 +291,9 @@ Typical fields include:
 ## 10. Recommendations for Project Report and Next Milestone
 
 ### A. Immediate (High Priority)
-1. Move `RAGWorkflow` initialization to app startup (singleton/service-level cache).
-2. Add request validation for `/ask`:
-   - missing JSON
-   - missing/empty `query`
-   - max query length
-3. Improve error messages for model/data failures.
+1. Add retrieval + generation latency timing in logs for each `/ask` call.
+2. Improve error messages for model/data failures (e.g., missing model vs host unreachable).
+3. Add fallback model strategy when the configured model is unavailable.
 
 ### B. Short Term
 1. Consolidate retrieval code into one canonical module (`backend/src/core`).

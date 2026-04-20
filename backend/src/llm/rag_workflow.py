@@ -8,7 +8,7 @@ with accurate citations.
 from enum import Enum
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 from ollama import Client
 import sys
 from .ollama_llm import createOllamaClient
@@ -64,13 +64,33 @@ class RAGWorkflow:
         self.bm25 = BM25(self.documents)
         self.client = createOllamaClient()
 
+    def _extract_model_names(self, models_response: Any) -> list[str]:
+        """Normalize model names from Ollama list response shapes."""
+        model_names: list[str] = []
+
+        if isinstance(models_response, dict):
+            model_items = models_response.get("models", [])
+        else:
+            model_items = getattr(models_response, "models", [])
+
+        for model_item in model_items or []:
+            if isinstance(model_item, dict):
+                name = model_item.get("model") or model_item.get("name")
+            else:
+                name = getattr(model_item, "model", None) or getattr(model_item, "name", None)
+
+            if isinstance(name, str) and name:
+                model_names.append(name)
+
+        return model_names
+
     def check_ollama_connection(self) -> tuple[bool, str]:
         """Check whether Ollama is reachable and report status."""
         try:
-            models = self.client.list()
-            model_items = models.get("models", []) if isinstance(models, dict) else []
-            if model_items:
-                return True, f"Connected to Ollama. Found {len(model_items)} model(s)."
+            models_response = self.client.list()
+            model_names = self._extract_model_names(models_response)
+            if model_names:
+                return True, f"Connected to Ollama. Found {len(model_names)} model(s)."
             return True, "Connected to Ollama. No local models listed."
         except Exception as exc:
             return False, (
@@ -78,6 +98,25 @@ class RAGWorkflow:
                 "or set OLLAMA_HOST to the correct endpoint. "
                 f"Details: {exc}"
             )
+
+    def check_model_availability(self, model_name: Optional[str] = None) -> tuple[bool, str, list[str]]:
+        """Check whether the requested model exists in local Ollama models."""
+        target_model = model_name or self.model
+
+        try:
+            models_response = self.client.list()
+            available_models = self._extract_model_names(models_response)
+
+            if target_model in available_models:
+                return True, f"Model '{target_model}' is available.", available_models
+
+            return (
+                False,
+                f"Model '{target_model}' is unavailable in local Ollama models.",
+                available_models,
+            )
+        except Exception as exc:
+            return False, f"Could not verify model availability. Details: {exc}", []
 
     def retrieve(self, query: str, top_k: Optional[int] = None) -> list[dict]:
         """

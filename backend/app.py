@@ -67,12 +67,33 @@ def ask():
         if not is_connected:
             logging.warning(f"Ollama unavailable during /ask: {status_message}")
             return jsonify({"error": "Ollama service is unavailable."}), 503
+
+        is_model_available, model_status_message, available_models = workflow.check_model_availability()
+        if not is_model_available:
+            logging.warning(f"Ollama model unavailable during /ask: {model_status_message}")
+            retrieve_only_result = workflow.ask(query, retrieve_only=True)
+            return jsonify({
+                "query": query,
+                "articles": retrieve_only_result.get("retrieved_articles", []),
+                "ollama_status": {
+                    "connected": True,
+                    "model": workflow.model,
+                    "model_available": False,
+                    "message": model_status_message,
+                    "available_models": available_models,
+                },
+            })
     
         result = workflow.ask(query, stream=False)
         return jsonify({
             "query": query,
             "response": result.get('answer'),
-            "articles": result.get('retrieved_articles', [])
+            "articles": result.get('retrieved_articles', []),
+            "ollama_status": {
+                "connected": True,
+                "model": workflow.model,
+                "model_available": True,
+            },
         })
         
     except Exception as e:
