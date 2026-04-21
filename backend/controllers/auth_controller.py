@@ -44,7 +44,7 @@ def login():
     email = data.get("email").strip().lower()
     password = data.get("password").strip()
     
-    result = asyncio.run(UserService.authenticate_user(email, password))
+    result = UserService.authenticate_user(email, password)
     if result['success']:
         return jsonify({
             "message": result['message'],
