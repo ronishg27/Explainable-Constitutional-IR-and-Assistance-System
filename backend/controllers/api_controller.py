@@ -19,6 +19,9 @@ def home():
             "endpoints": {
                 "/api/v1/health": "Check the health of the API.",
                 "/api/v1/ask": "Submit a query to get a response.",
+                "/api/v1/auth/register": "Register a new user.",
+                "/api/v1/auth/login": "Login with email and password.",
+                "/api/v1/auth/logout": "Logout the current user.",
             },
             "version": "1.0.0",
         }
