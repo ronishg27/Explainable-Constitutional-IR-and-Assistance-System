@@ -15,9 +15,10 @@ class UserService:
                 fullname = fullname.strip(),
                 email = email.strip().lower(),
                 role = role.strip().lower() if role else 'user',
-                password_hash = password
             )
+            user.set_password(password.strip())
             user.save()
+            
             
             return {
                 'success': True,
@@ -47,7 +48,7 @@ class UserService:
             }
             
     @staticmethod
-    async def get_user(user_id: str):
+    def get_user(user_id: str):
         """Retrieve a user by their ID."""
         try:
             user = User.objects.get(id=user_id)
@@ -72,7 +73,7 @@ class UserService:
             }
             
     @staticmethod
-    async def get_user_by_email(email: str):
+    def get_user_by_email(email: str):
         """Retrieve a user by their email."""
         try:
             user = User.objects.get(email=email.strip().lower())
@@ -97,7 +98,7 @@ class UserService:
 
 
     @staticmethod
-    async def list_users():
+    def list_users():
         """List all users."""
         try:
             users = User.objects()
@@ -115,7 +116,7 @@ class UserService:
             }
             
     @staticmethod
-    async def delete_user(user_id: str):
+    def delete_user(user_id: str):
         """Delete a user by their ID."""
         try:
             user = User.objects.get(id=user_id)
@@ -141,7 +142,7 @@ class UserService:
             
     
     @staticmethod
-    async def authenticate_user(email: str, password: str):
+    def authenticate_user(email: str, password: str):
         """Authenticate a user."""
         try:
             user = User.objects.get(email=email.strip().lower())

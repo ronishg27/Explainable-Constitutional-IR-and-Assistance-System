@@ -1,7 +1,6 @@
 from enum import Enum
 
-from mongoengine import Document, StringField, IntField, DateTimeField, ListField, BooleanField,  EnumField
-from mongoengine.errors import ValidationError
+from mongoengine import Document, StringField,  DateTimeField,  EnumField
 from datetime import datetime, timezone
 import bcrypt
 
