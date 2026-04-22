@@ -1,8 +1,12 @@
 import logging
 from models.user_model import User
+import jwt
+import os
 from mongoengine.errors import ValidationError, DoesNotExist, NotUniqueError
 
 logger = logging.getLogger(__name__)
+
+jwt_secret = os.getenv("JWT_SECRET")
 
 
 class UserService:
@@ -147,10 +151,15 @@ class UserService:
         try:
             user = User.objects.get(email=email.strip().lower())
             if user.check_password(password):
+                # create a JWT 
+                token = jwt.encode(
+                    {'user_id': str(user.id), 'email': user.email},
+                    jwt_secret, algorithm='HS256')
                 return {
                     'success': True,
                     'data': user.to_json(),
-                    'message': 'Login successful'
+                    'message': 'Login successful',
+                    'token': token
                 }
             else:
                 return {
