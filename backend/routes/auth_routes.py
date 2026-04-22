@@ -1,5 +1,6 @@
 from flask import Blueprint
 from controllers.auth_controller import register, login, logout
+from controllers.decorators import token_required
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
@@ -16,6 +17,7 @@ def login_user():
 
 # TODO: Implement Protected route and token-based authentication before enabling logout
 @auth_bp.route("/logout", methods=["POST"])
+@token_required
 def logout_user():
     return logout()
 

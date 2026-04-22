@@ -1,6 +1,6 @@
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 import logging
-import asyncio
+import jwt
 from services.user_service import UserService
 
 logger = logging.getLogger(__name__)
@@ -46,11 +46,15 @@ def login():
     
     result = UserService.authenticate_user(email, password)
     if result['success']:
-        return jsonify({
+        resp = make_response(jsonify({
             "message": result['message'],
             "user": result['data'],
             "authenticated": True
-            }), 200
+            })
+        )
+        resp.set_cookie('token', result['token'], httponly=True, secure=True, samesite='Strict', max_age=60*60*60*12) # 12 hours expiration
+        return resp
+        
     else:
         return jsonify({
             "error": result['error'],
@@ -60,9 +64,11 @@ def login():
 
 
 def logout():
-    return jsonify({
-        "message": "Logout endpoint is not implemented yet."
-        }), 501
-
+    # set the token cookie to expire immediately
+    resp = make_response(jsonify({
+        "message": "Logout successful."
+        }))
+    resp.set_cookie('token', '', expires=0, httponly=True, secure=True, samesite='Strict', max_age=-1)
+    return resp, 200
 
 
