@@ -71,4 +71,20 @@ def logout():
     resp.set_cookie('token', '', expires=0, httponly=True, secure=True, samesite='Strict', max_age=-1)
     return resp, 200
 
+def get_current_user():
+    print(request.user)
+    user_id = request.user.get('user_id')
+    print(f"Getting current user with ID: {user_id}")
+    print(f"Request user info: {request.user.get('email')}")
+    user = UserService.get_user(user_id)
+    if user:
+        return jsonify({
+            "user": user
+        }), 200
+    
+    return jsonify({
+        "error": "User not found."
+    }), 404
+    
+
 
