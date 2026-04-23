@@ -1,6 +1,6 @@
 import jwt
 from functools import wraps
-from flask import request, jsonify, make_response
+from flask import request, jsonify
 import os
 
 
@@ -9,11 +9,18 @@ def token_required(f):
     def decorated(*args, **kwargs):
         auth_header = request.headers.get('Authorization')
         
-        if not auth_header or not auth_header.startswith('Bearer '):
+        token = None
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        elif request.cookies.get('token'):
+            token = request.cookies.get('token')
+
+        if not token:
             return jsonify({'error': 'Token is missing!'}), 401
         
-        token = auth_header.split(' ')[1]
         JWT_SECRET = os.getenv('JWT_SECRET')
+        if not JWT_SECRET:
+            return jsonify({'error': 'JWT_SECRET is not set in environment variables!'}), 500
         try:
             payload = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
             request.user = payload

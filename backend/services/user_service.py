@@ -6,7 +6,7 @@ from mongoengine.errors import ValidationError, DoesNotExist, NotUniqueError
 
 logger = logging.getLogger(__name__)
 
-jwt_secret = os.getenv("JWT_SECRET")
+JWT_SECRET = os.getenv("JWT_SECRET")
 
 
 class UserService:
@@ -152,9 +152,11 @@ class UserService:
             user = User.objects.get(email=email.strip().lower())
             if user.check_password(password):
                 # create a JWT 
-                token = jwt.encode(
-                    {'user_id': str(user.id), 'email': user.email},
-                    jwt_secret, algorithm='HS256')
+                payload = {
+                    'user_id': str(user.id),
+                    'email': user.email
+                }
+                token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
                 return {
                     'success': True,
                     'data': user.to_json(),
