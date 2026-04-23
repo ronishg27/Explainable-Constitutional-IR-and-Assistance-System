@@ -6,6 +6,7 @@ with accurate citations.
 """
 
 from enum import Enum
+import logging
 import os
 from pathlib import Path
 from typing import Any, Optional
@@ -20,12 +21,15 @@ if str(ROOT_DIR) not in sys.path:
 
 from src.core.bm25 import BM25, search_bm25_with_boost, load_documents
 
+logger = logging.getLogger(__name__)
+
 class OllamaModels(Enum):
     LLAMA2_7B: str = "llama2:7b-chat"
     QWEN3_4B: str = "qwen3:4b"
     QWEN3_8B: str = "qwen3:8b"
     GEMMA3_1B: str = "gemma3:1b"
     GLM5_CLOUD: str = "glm-5:cloud"
+    QWEN35_4B: str = "qwen3.5:4b"
     
 
 class RAGWorkflow:
@@ -139,6 +143,14 @@ class RAGWorkflow:
             title_boost=self.title_boost,
             top_k=top_k,
         )
+
+        if not results:
+            logger.info(
+                "No articles crossed relevance threshold (score > 0). query='%s', top_k=%s",
+                query,
+                top_k,
+            )
+
         return results
 
     def format_context(self, articles: list[dict]) -> str:
