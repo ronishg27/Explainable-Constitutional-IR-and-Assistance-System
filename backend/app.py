@@ -24,12 +24,6 @@ def rebuild_document_artifacts():
     build_inverted_index()
     generate_lemma_dict()
 
-
-def download_stanza_models():
-    import stanza
-    logger.info("Downloading Stanza models...")
-    stanza.download('en', processors='tokenize,mwt,lemma', download_method=stanza.DownloadMethod.REUSE_RESOURCES)
-
 def create_app():
     from routes.api_routes import api_bp
     from routes.auth_routes import auth_bp
@@ -62,7 +56,6 @@ def main():
 
     if args.rebuild_data:
         rebuild_document_artifacts()
-        download_stanza_models()
 
     app = create_app()
 
