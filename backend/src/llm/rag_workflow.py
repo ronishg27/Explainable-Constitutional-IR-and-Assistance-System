@@ -39,7 +39,7 @@ class RAGWorkflow:
         self,
         documents_path: Optional[str] = None,
         ollama_host: Optional[str] = None,
-        model: str = OllamaModels.GEMMA3_1B.value,
+        model: str = OllamaModels.QWEN3_4B.value,
         max_context_articles: int = 5,
         title_boost: float = 5.0,
     ):
@@ -179,17 +179,8 @@ class RAGWorkflow:
         return "\n".join(context_lines)
 
     def build_prompt(self, query: str, context: str) -> str:
-        """
-        Build a structured prompt for the LLM.
-
-        Args:
-            query: User question.
-            context: Formatted context from retrieved articles.
-
-        Returns:
-            Full prompt for LLM.
-        """
-        prompt = f"""You are an expert on the Constitution of Nepal. Answer the following question based ONLY on the provided constitutional articles.
+        prompt = f"""
+You are an expert in constitutional law, specifically the Constitution of Nepal. Your task is to answer the following question based ONLY on the **provided constitutional articles**. Do not reference any external knowledge or sources. **Only cite articles present in the context.**
 
 CONSTITUTION ARTICLES:
 {context}
@@ -197,11 +188,12 @@ CONSTITUTION ARTICLES:
 QUESTION: {query}
 
 ANSWER:
-- Provide a clear, accurate answer based on the constitution.
-- If the answer spans multiple articles, cite each one.
-- Format citations as [Article X] or [Part Y, Article Z].
-- If the constitution doesn't address the question, say so clearly.
-- Keep the answer concise but complete."""
+- **Strictly** base your answer only on the provided articles. Do not reference any other source or external knowledge.
+- **Cite only the articles listed above**. If the answer requires referencing multiple articles, cite them **precisely** as [Part X, Article Y] (e.g., [Part 5, Article 56(2)]).
+- If the Constitution does not address the question or if there is no relevant article, **explicitly state** that the question is not addressed by the Constitution and do not attempt to make assumptions or guesses.
+- **Do not provide any information** that is not in the provided articles or make any references to sources outside the provided context.
+- **If an article is not present in the context**, **do not mention it**. Ensure your answer strictly adheres to the information in the provided articles.
+"""
         return prompt
 
     def ask(
