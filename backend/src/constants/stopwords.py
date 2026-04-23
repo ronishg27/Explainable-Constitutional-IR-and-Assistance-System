@@ -10,7 +10,7 @@ STOPWORDS = {
     'with', 'code', 'deemed', 'rules', 'my', 'shall', 'neither',
     'if', 'thereafter', 'provided', 'consistent', 'noting', 'his', 'thereof',
     'who', 'another', 'noted', 'chapter', 'include', 'can', 'whereby', 'or',
-    'each', 'is', 'he', 'state', 'therewith', 'hereunder', 'either', 'deem',
+    'each', 'is', 'he', 'therewith', 'hereunder', 'either', 'deem',
     'section', 'at', 'notwithstanding', 'how', 'therein', 'acts', 'in', 'part', 'entity', 'persons', 'what', 'such', 'its', 'whereof',
     'wherewith', 'statutes', 'all', 'have', 'but',
     'must', 'to', 'includes', 'her', 'cases', 'the', 'inconsistent', 'every',
@@ -18,6 +18,6 @@ STOPWORDS = {
     'subject', 'authorities', 'constitutional', 'our', 'from', 'law', 'hereby',
     'hereafter', 'that', 'applies', 'which', 'for', 'amendment', 'constitution',
     'regulations', 'an', 'when', 'thereunder', 'herewith', 'has', 'courts',
-    'parties', 'states', 'tribunal', 'would', 'whereas', 'thereupon',
+    'parties', 'tribunal', 'would', 'whereas', 'thereupon',
     'whereinbefore', 'suchlike', 'thereinbefore', 'thereby', 'whereupon'
 }

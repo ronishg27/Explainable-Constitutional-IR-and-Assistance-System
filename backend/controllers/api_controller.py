@@ -1,15 +1,25 @@
 import logging
+from threading import Lock
 
 from flask import jsonify, request
 
 from src.llm.rag_workflow import RAGWorkflow
 
+logger = logging.getLogger(__name__)
+_workflow = None
+_workflow_lock = Lock()
 
-workflow = RAGWorkflow()
 
-# Check connection to Ollama at startup.
-_, status_message = workflow.check_ollama_connection()
-logging.info(f"Ollama connection status: {status_message}")
+def get_workflow():
+    global _workflow
+
+    if _workflow is None:
+        with _workflow_lock:
+            if _workflow is None:
+                _workflow = RAGWorkflow()
+                logger.info("RAG workflow initialized lazily on first use.")
+
+    return _workflow
 
 
 def home():
@@ -54,18 +64,17 @@ def ask():
         ), 400
 
     try:
+        workflow = get_workflow()
         is_connected, status_message = workflow.check_ollama_connection()
         if not is_connected:
-            logging.warning(f"Ollama unavailable during /ask: {status_message}")
+            logger.warning("Ollama unavailable during /ask: %s", status_message)
             return jsonify({"error": "Ollama service is unavailable."}), 503
 
         is_model_available, model_status_message, available_models = (
             workflow.check_model_availability()
         )
         if not is_model_available:
-            logging.warning(
-                f"Ollama model unavailable during /ask: {model_status_message}"
-            )
+            logger.warning("Ollama model unavailable during /ask: %s", model_status_message)
             retrieve_only_result = workflow.ask(query, retrieve_only=True)
             return jsonify(
                 {
