@@ -25,6 +25,7 @@ class BM25:
 		self.documents = documents
 		self.k1 = k1
 		self.b = b
+		# avgdl = (total number of tokens across all documents) / (number of documents)
 		self.avgdl = sum(len(doc.get("body_tokens", self.nlp.lemmatize_text(doc["text"]))) for doc in documents) / len(documents)
 		self.index = self._build_index()
 		self.doc_lengths = {

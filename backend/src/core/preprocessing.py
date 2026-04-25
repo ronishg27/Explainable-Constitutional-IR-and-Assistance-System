@@ -11,7 +11,7 @@ from constants.stopwords import STOPWORDS
 _spacy_nlp = None
 
 
-def _get_spacy_pipeline():
+def get_spacy_pipeline():
     global _spacy_nlp
 
     if _spacy_nlp is None:
@@ -86,7 +86,7 @@ class NLP:
         if not query:
             return ""
 
-        nlp = _get_spacy_pipeline()
+        nlp = get_spacy_pipeline()
         doc = nlp(query)
 
         expanded_terms = []
@@ -116,8 +116,8 @@ class NLP:
         if not text:
             return []
 
-        nlp = _get_spacy_pipeline()
-        doc = nlp(text)
+        nlp_pipeline = get_spacy_pipeline()
+        doc = nlp_pipeline(text)
 
         lemmatized_tokens = []
         for token in doc:
