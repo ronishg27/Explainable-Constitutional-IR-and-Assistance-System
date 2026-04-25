@@ -8,3 +8,12 @@ __pycache__
 !.env.sample
 
 todo.md
+
+node_modules/*
+dist/*
+package-lock.json
+.vite
+.DS_Store
+.idea/*
+*.log
+
