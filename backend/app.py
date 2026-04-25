@@ -17,6 +17,9 @@ load_dotenv(dotenv_path=".env")
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# load spacy pipeline to warm up the model and avoid first request latency
+from core.preprocessing import get_spacy_pipeline
+get_spacy_pipeline()
 
 def rebuild_document_artifacts():
     logging.info("Rebuilding document artifacts from data/nepal_constitution_mvp.json")
