@@ -1,6 +1,3 @@
-
-
-import json
 import re
 import sys
 from pathlib import Path
@@ -11,6 +8,28 @@ if str(SRC_DIR) not in sys.path:
 
 from constants.stopwords import STOPWORDS
 
+_spacy_nlp = None
+
+
+def get_spacy_pipeline():
+    global _spacy_nlp
+
+    if _spacy_nlp is None:
+        try:
+            import spacy
+        except ImportError as exc:
+            raise RuntimeError(
+                "spaCy is required for spaCy-based preprocessing. "
+                "Install it with: pip install spacy"
+            ) from exc
+
+        # Prefer a full English pipeline, but keep a lightweight fallback.
+        try:
+            _spacy_nlp = spacy.load("en_core_web_sm")
+        except OSError:
+            _spacy_nlp = spacy.blank("en")
+
+    return _spacy_nlp
 
 class NLP:
     def __init__(self):
@@ -61,12 +80,65 @@ class NLP:
         """Lemmatizes the input tokens to their base forms."""
         return [NLP.lemma_dict.get(token, token) for token in tokens]
 
+    @staticmethod
+    def expand_query(query):
+        """Expands the input query by adding synonyms or related terms."""
+        if not query:
+            return ""
+
+        nlp = get_spacy_pipeline()
+        doc = nlp(query)
+
+        expanded_terms = []
+        seen = set()
+
+        for token in doc:
+            if token.is_space or token.is_punct:
+                continue
+
+            raw = token.text.strip().lower()
+            lemma = token.lemma_.strip().lower() if token.lemma_ else ""
+
+            if lemma in {"", "-pron-"}:
+                lemma = raw
+
+            for term in (raw, lemma):
+                if not term or term in STOPWORDS or term in seen:
+                    continue
+                seen.add(term)
+                expanded_terms.append(term)
+
+        return " ".join(expanded_terms)
+
+    @staticmethod
+    def lemmatize_text(text):
+        """Lemmatizes the input text using spaCy."""
+        if not text:
+            return []
+
+        nlp_pipeline = get_spacy_pipeline()
+        doc = nlp_pipeline(text)
+
+        lemmatized_tokens = []
+        for token in doc:
+            if token.is_space or token.is_punct:
+                continue
+
+            lemma = token.lemma_.strip().lower() if token.lemma_ else ""
+            if lemma in {"", "-pron-"}:
+                lemma = token.text.strip().lower()
+
+            if lemma and lemma not in STOPWORDS:
+                lemmatized_tokens.append(lemma)
+
+        return lemmatized_tokens
 
 
 if __name__ == "__main__":
     nlp = NLP()
     sample_text = "The quick brown foxes were jumping over the lazy dogs. They've been doing this for years! Isn't it amazing?  "
-    processed_tokens = nlp.preprocess(sample_text)
+    # processed_tokens = nlp.preprocess(sample_text)
+    processed_tokens = nlp.lemmatize_text(sample_text)
     print(processed_tokens)
     
 

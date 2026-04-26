@@ -6,7 +6,8 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from text_processing import tokenize
+from src.core.preprocessing import NLP
+
 
 
 def _label_key(key):
@@ -37,12 +38,12 @@ def _make_document(doc_id, part_no, article_no, title, text, citation, level, cl
         "title": title,
         "text": text,
         "citation": citation,
-        "title_tokens": tokenize(title),
-        "body_tokens": tokenize(text),
+        "title_tokens": NLP.tokenize(title),
+        "body_tokens": NLP.tokenize(text),
     }
 
 
-def flatten_mvp_constitution(data):
+def flatten_constitution(data):
     """Flattens nested structure to article, clause and sub-clause documents."""
     documents = []
 
@@ -322,7 +323,7 @@ def main():
         documents = flatten_flat_constitution(data)
     else:
         # Nested format with parts (nepal_constitution_mvp.json)
-        documents = flatten_mvp_constitution(data)
+        documents = flatten_constitution(data)
 
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(documents, f, indent=2, ensure_ascii=False)
