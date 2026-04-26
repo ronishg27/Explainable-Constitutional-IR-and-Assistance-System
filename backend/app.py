@@ -1,31 +1,32 @@
-import argparse
 import logging
 import os
+
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 
 from config.db_connect import Database
-from preprocessing_scripts.build_inverted_index_mvp import main as build_inverted_index
-from preprocessing_scripts.flatten_constitution import main as flatten_constitution
-from preprocessing_scripts.generate_safe_lemma_dict import main as generate_lemma_dict
 
-# load env vars
 load_dotenv(dotenv_path=".env")
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# load spacy pipeline to warm up the model and avoid first request latency
-from core.preprocessing import get_spacy_pipeline
-get_spacy_pipeline()
-
 def rebuild_document_artifacts():
-    logging.info("Rebuilding document artifacts from data/nepal_constitution_mvp.json")
+    from preprocessing_scripts.build_inverted_index import main as build_inverted_index
+    from preprocessing_scripts.flatten_constitution import main as flatten_constitution
+    from preprocessing_scripts.generate_safe_lemma_dict import main as generate_lemma_dict
+
+    logger.info("Rebuilding document artifacts from data/nepal_constitution.json")
     flatten_constitution()
     build_inverted_index()
     generate_lemma_dict()
+
+
+def warm_up_spacy():
+    from src.core.preprocessing import get_spacy_pipeline
+
+    get_spacy_pipeline()
 
 def create_app():
     from routes.api_routes import api_bp
@@ -45,7 +46,9 @@ def create_app():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Constitution assistant API server")
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser(description="Constitution assistant API server")
     parser.add_argument(
         "--rebuild-data",
         action="store_true",
@@ -60,10 +63,10 @@ def main():
     if args.rebuild_data:
         rebuild_document_artifacts()
 
+    warm_up_spacy()
     app = create_app()
 
     logger.info("Starting the Flask API server...")
-    # NOTE: debug=True should only for development
     app.run(debug=True)
 
 

@@ -7,7 +7,7 @@ from .preprocessing import NLP
 
 
 def load_documents(path=None):
-	"""Load flattened MVP documents from data/flattened_nepal_constitution.json."""
+	"""Load flattened documents from data/flattened_nepal_constitution.json."""
 	root = Path(__file__).resolve().parents[0].parent.parent
 	
 	if path is None:

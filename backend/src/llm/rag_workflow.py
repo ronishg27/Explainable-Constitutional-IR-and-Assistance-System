@@ -53,7 +53,6 @@ class RAGWorkflow:
             max_context_articles: Max articles to include in LLM context.
             title_boost: Title matching boost factor for BM25.
         """
-        # Use flattened_nepal_constitution_mvp.json as default
         if documents_path is None:
             root = Path(__file__).resolve().parents[2]
             documents_path = root / "data" / "flattened_nepal_constitution.json"
