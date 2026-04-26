@@ -8,3 +8,7 @@ __pycache__
 !.env.sample
 
 todo.md
+*/temp/*.py
+graphify-out
+.graphify*
+node_modules/

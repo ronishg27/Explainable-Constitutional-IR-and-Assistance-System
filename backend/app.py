@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 from config.db_connect import Database
 from preprocessing_scripts.build_inverted_index_mvp import main as build_inverted_index
-from preprocessing_scripts.flatten_mvp_constitution import main as flatten_constitution
+from preprocessing_scripts.flatten_constitution import main as flatten_constitution
 from preprocessing_scripts.generate_safe_lemma_dict import main as generate_lemma_dict
 
 # load env vars
