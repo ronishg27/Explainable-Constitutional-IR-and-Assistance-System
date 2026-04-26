@@ -25,10 +25,11 @@ class BM25:
 		self.documents = documents
 		self.k1 = k1
 		self.b = b
-		self.avgdl = sum(len(doc.get("body_tokens", self.nlp.tokenize(doc["text"]))) for doc in documents) / len(documents)
+		# avgdl = (total number of tokens across all documents) / (number of documents)
+		self.avgdl = sum(len(doc.get("body_tokens", self.nlp.lemmatize_text(doc["text"]))) for doc in documents) / len(documents)
 		self.index = self._build_index()
 		self.doc_lengths = {
-			doc["doc_id"]: len(doc.get("body_tokens", self.nlp.tokenize(doc["text"])))
+			doc["doc_id"]: len(doc.get("body_tokens", self.nlp.lemmatize_text(doc["text"])))
 			for doc in documents
 		}
 		self.N = len(documents)
@@ -36,7 +37,7 @@ class BM25:
 	def _build_index(self):
 		index = {}
 		for doc in self.documents:
-			tokens = doc.get("body_tokens", self.nlp.tokenize(doc["text"]))
+			tokens = doc.get("body_tokens", self.nlp.lemmatize_text(doc["text"]))
 			doc_id = doc["doc_id"]
 			for token in tokens:
 				if token not in index:
@@ -70,7 +71,7 @@ class BM25:
 
 
 def search_bm25(query, bm25_instance, documents, top_k=5):
-	query_tokens = bm25_instance.nlp.tokenize(query)
+	query_tokens = bm25_instance.nlp.lemmatize_text(query)
 	if not query_tokens:
 		return []
 
@@ -96,7 +97,7 @@ def search_bm25(query, bm25_instance, documents, top_k=5):
 
 
 def search_bm25_with_boost(query, bm25_instance, documents, title_boost=5.0, top_k=5):
-	query_tokens = bm25_instance.nlp.tokenize(query)
+	query_tokens = bm25_instance.nlp.lemmatize_text(query)
 	if not query_tokens:
 		return []
 

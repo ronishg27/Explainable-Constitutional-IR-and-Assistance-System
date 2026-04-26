@@ -101,7 +101,9 @@ def build_safe_dict(vocab):
 
 def main():
     root = Path(__file__).resolve().parents[1]
-    docs_path = root / "data" / "flattened_constitution.json"
+    docs_path = root / "data" / "flattened_nepal_constitution.json"
+    if not docs_path.exists():
+        docs_path = root / "data" / "flattened_constitution.json"
     output_path = root / "data" / "lemma_dict_v3.json"
 
     documents = read_documents(docs_path)

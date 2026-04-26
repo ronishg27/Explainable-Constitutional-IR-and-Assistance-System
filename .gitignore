@@ -17,3 +17,7 @@ package-lock.json
 .idea/*
 *.log
 
+*/temp/*.py
+graphify-out
+.graphify*
+node_modules/

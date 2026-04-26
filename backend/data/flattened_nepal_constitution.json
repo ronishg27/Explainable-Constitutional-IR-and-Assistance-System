@@ -74,10 +74,12 @@
     "text": "The sovereignty and state authority of Nepal\nshall be vested in the Nepalese people. It shall be exercised in accordance with\nthe provisions set forth in this Constitution.",
     "citation": "Part 1, Article 2",
     "title_tokens": [
-      "sovereignty"
+      "sovereignty",
+      "state"
     ],
     "body_tokens": [
       "sovereignty",
+      "state",
       "nepal",
       "vested",
       "nepalese",
@@ -143,6 +145,7 @@
     "text": "(1) Nepal is an independent, indivisible, sovereign, secular,\ninclusive, democratic, socialism-oriented, federal democratic republican state\n(1) [Explanation] For the purposes of this Article, \"secular\" means religious,\ncultural freedoms, including protection of religion, culture handed down from\nthe time immemorial.\n(2) The territory of Nepal shall comprise:\n(2)(a) the territory existing at the time of commencement of this\nConstitution\n(2)(b) such other territory as may be acquired after the\ncommencement of this Constitution",
     "citation": "Part 1, Article 4",
     "title_tokens": [
+      "state",
       "nepal"
     ],
     "body_tokens": [
@@ -159,6 +162,7 @@
       "federal",
       "democratic",
       "republican",
+      "state",
       "1",
       "explanation",
       "purposes",
@@ -202,6 +206,7 @@
     "text": "Nepal is an independent, indivisible, sovereign, secular,\ninclusive, democratic, socialism-oriented, federal democratic republican state\n[Explanation] For the purposes of this Article, \"secular\" means religious,\ncultural freedoms, including protection of religion, culture handed down from\nthe time immemorial.",
     "citation": "Part 1, Article 4(1)",
     "title_tokens": [
+      "state",
       "nepal"
     ],
     "body_tokens": [
@@ -217,6 +222,7 @@
       "federal",
       "democratic",
       "republican",
+      "state",
       "explanation",
       "purposes",
       "secular",
@@ -244,6 +250,7 @@
     "text": "The territory of Nepal shall comprise:",
     "citation": "Part 1, Article 4(2)",
     "title_tokens": [
+      "state",
       "nepal"
     ],
     "body_tokens": [
@@ -263,6 +270,7 @@
     "text": "the territory existing at the time of commencement of this\nConstitution",
     "citation": "Part 1, Article 4(2)(a)",
     "title_tokens": [
+      "state",
       "nepal"
     ],
     "body_tokens": [
@@ -283,6 +291,7 @@
     "text": "such other territory as may be acquired after the\ncommencement of this Constitution",
     "citation": "Part 1, Article 4(2)(b)",
     "title_tokens": [
+      "state",
       "nepal"
     ],
     "body_tokens": [
@@ -449,6 +458,8 @@
       "language",
       "nepal",
       "2",
+      "state",
+      "state",
       "determine",
       "one",
       "more",
@@ -460,6 +471,7 @@
       "majority",
       "people",
       "within",
+      "state",
       "official",
       "language",
       "s",
@@ -516,6 +528,8 @@
       "language"
     ],
     "body_tokens": [
+      "state",
+      "state",
       "determine",
       "one",
       "more",
@@ -527,6 +541,7 @@
       "majority",
       "people",
       "within",
+      "state",
       "official",
       "language",
       "s",
@@ -854,6 +869,7 @@
       "single",
       "federal",
       "citizenship",
+      "state",
       "identity",
       "nepal"
     ]
@@ -901,6 +917,7 @@
       "single",
       "federal",
       "citizenship",
+      "state",
       "identity",
       "nepal"
     ]
@@ -1584,6 +1601,7 @@
       "country",
       "than",
       "member",
+      "state",
       "south",
       "asian",
       "association",
@@ -1999,6 +2017,7 @@
       "similar",
       "grounds",
       "3",
+      "state",
       "discriminate",
       "citizens",
       "grounds",
@@ -2174,6 +2193,7 @@
       "equality"
     ],
     "body_tokens": [
+      "state",
       "discriminate",
       "citizens",
       "grounds",
@@ -2679,6 +2699,7 @@
       "provision",
       "citizen",
       "enemy",
+      "state",
       "3",
       "arrested",
       "produced",
@@ -2706,6 +2727,7 @@
       "detention",
       "citizen",
       "enemy",
+      "state",
       "4",
       "liable",
       "punishment",
@@ -2836,7 +2858,8 @@
       "represent",
       "provision",
       "citizen",
-      "enemy"
+      "enemy",
+      "state"
     ]
   },
   {
@@ -2879,7 +2902,8 @@
       "preventive",
       "detention",
       "citizen",
-      "enemy"
+      "enemy",
+      "state"
     ]
   },
   {
@@ -3296,6 +3320,7 @@
       "provision",
       "citizen",
       "enemy",
+      "state",
       "3",
       "making",
       "preventive",
@@ -3385,7 +3410,8 @@
       "relatives",
       "provision",
       "citizen",
-      "enemy"
+      "enemy",
+      "state"
     ]
   },
   {
@@ -3781,6 +3807,7 @@
       "right",
       "1",
       "provision",
+      "state",
       "levy",
       "tax",
       "property",
@@ -3790,6 +3817,7 @@
       "progressive",
       "taxation",
       "2",
+      "state",
       "public",
       "interest",
       "requisition",
@@ -3809,6 +3837,7 @@
       "procedures",
       "followed",
       "requisition",
+      "state",
       "property",
       "public",
       "interest",
@@ -3819,6 +3848,7 @@
       "2",
       "3",
       "prevent",
+      "state",
       "making",
       "land",
       "reforms",
@@ -3841,6 +3871,7 @@
       "5",
       "nothing",
       "prevent",
+      "state",
       "using",
       "property",
       "requisitioned",
@@ -3895,6 +3926,7 @@
       "property",
       "right",
       "provision",
+      "state",
       "levy",
       "tax",
       "property",
@@ -3921,6 +3953,7 @@
       "property"
     ],
     "body_tokens": [
+      "state",
       "public",
       "interest",
       "requisition",
@@ -3956,6 +3989,7 @@
       "procedures",
       "followed",
       "requisition",
+      "state",
       "property",
       "public",
       "interest",
@@ -3983,6 +4017,7 @@
       "2",
       "3",
       "prevent",
+      "state",
       "making",
       "land",
       "reforms",
@@ -4022,6 +4057,7 @@
     "body_tokens": [
       "nothing",
       "prevent",
+      "state",
       "using",
       "property",
       "requisitioned",
@@ -4329,6 +4365,7 @@
       "prevent",
       "making",
       "empowering",
+      "state",
       "require",
       "citizens",
       "perform",
@@ -4448,6 +4485,7 @@
       "prevent",
       "making",
       "empowering",
+      "state",
       "require",
       "citizens",
       "perform",
@@ -4653,6 +4691,7 @@
       "up",
       "secondary",
       "level",
+      "state",
       "3",
       "citizens",
       "disabilities",
@@ -4755,7 +4794,8 @@
       "education",
       "up",
       "secondary",
-      "level"
+      "level",
+      "state"
     ]
   },
   {
@@ -5222,6 +5262,7 @@
       "basic",
       "health",
       "services",
+      "state",
       "one",
       "deprived",
       "emergency",
@@ -5272,6 +5313,7 @@
       "basic",
       "health",
       "services",
+      "state",
       "one",
       "deprived",
       "emergency",
@@ -5376,6 +5418,7 @@
       "citizen",
       "right",
       "safe",
+      "state",
       "being",
       "danger",
       "life",
@@ -5429,6 +5472,7 @@
       "citizen",
       "right",
       "safe",
+      "state",
       "being",
       "danger",
       "life",
@@ -5530,6 +5574,7 @@
       "right",
       "participate",
       "bodies",
+      "state",
       "basis",
       "principle",
       "proportional",
@@ -5707,6 +5752,7 @@
       "right",
       "participate",
       "bodies",
+      "state",
       "basis",
       "principle",
       "proportional",
@@ -5802,6 +5848,7 @@
       "personality",
       "development",
       "families",
+      "state",
       "3",
       "child",
       "right",
@@ -5886,6 +5933,7 @@
       "special",
       "protection",
       "facilities",
+      "state",
       "10",
       "contrary",
       "clauses",
@@ -5953,7 +6001,8 @@
       "overall",
       "personality",
       "development",
-      "families"
+      "families",
+      "state"
     ]
   },
   {
@@ -6149,7 +6198,8 @@
       "right",
       "special",
       "protection",
-      "facilities"
+      "facilities",
+      "state"
     ]
   },
   {
@@ -6202,6 +6252,7 @@
       "right",
       "participate",
       "bodies",
+      "state",
       "basis",
       "principle",
       "proportional",
@@ -6255,6 +6306,7 @@
       "knowledge",
       "skill",
       "technology",
+      "state",
       "accord",
       "priority",
       "dalit",
@@ -6269,11 +6321,13 @@
       "required",
       "therefor",
       "5",
+      "state",
       "once",
       "land",
       "landless",
       "dalit",
       "6",
+      "state",
       "arrange",
       "settlement",
       "dalit",
@@ -6316,6 +6370,7 @@
       "right",
       "participate",
       "bodies",
+      "state",
       "basis",
       "principle",
       "proportional",
@@ -6417,6 +6472,7 @@
       "knowledge",
       "skill",
       "technology",
+      "state",
       "accord",
       "priority",
       "dalit",
@@ -6447,6 +6503,7 @@
       "dalit"
     ],
     "body_tokens": [
+      "state",
       "once",
       "land",
       "landless",
@@ -6468,6 +6525,7 @@
       "dalit"
     ],
     "body_tokens": [
+      "state",
       "arrange",
       "settlement",
       "dalit",
@@ -6529,7 +6587,8 @@
       "special",
       "protection",
       "social",
-      "security"
+      "security",
+      "state"
     ]
   },
   {
@@ -6581,6 +6640,7 @@
       "arya",
       "right",
       "participate",
+      "state",
       "bodies",
       "basis",
       "inclusive",
@@ -6735,6 +6795,7 @@
       "arya",
       "right",
       "participate",
+      "state",
       "bodies",
       "basis",
       "inclusive",
@@ -7097,6 +7158,7 @@
       "rights"
     ],
     "body_tokens": [
+      "state",
       "required",
       "make",
       "legal",
@@ -7143,6 +7205,7 @@
       "render",
       "compulsory",
       "service",
+      "state",
       "so",
       "requires",
       "d",
@@ -7177,7 +7240,9 @@
       "guiding",
       "principles",
       "governance",
+      "state",
       "2",
+      "state",
       "mobilize",
       "cause",
       "mobilized",
@@ -7215,7 +7280,8 @@
       "forth",
       "guiding",
       "principles",
-      "governance"
+      "governance",
+      "state"
     ]
   },
   {
@@ -7233,6 +7299,7 @@
       "principles"
     ],
     "body_tokens": [
+      "state",
       "mobilize",
       "cause",
       "mobilized",
@@ -7265,6 +7332,7 @@
       "1",
       "political",
       "objective",
+      "state",
       "establish",
       "public",
       "welfare",
@@ -7344,6 +7412,7 @@
       "social",
       "cultural",
       "objective",
+      "state",
       "build",
       "civilized",
       "egalitarian",
@@ -7393,6 +7462,7 @@
       "3",
       "economic",
       "objective",
+      "state",
       "achieve",
       "sustainable",
       "economic",
@@ -7441,6 +7511,7 @@
       "distribution",
       "gains",
       "4",
+      "state",
       "direct",
       "international",
       "relations",
@@ -7485,6 +7556,7 @@
     "body_tokens": [
       "political",
       "objective",
+      "state",
       "establish",
       "public",
       "welfare",
@@ -7580,6 +7652,7 @@
       "social",
       "cultural",
       "objective",
+      "state",
       "build",
       "civilized",
       "egalitarian",
@@ -7645,6 +7718,7 @@
     "body_tokens": [
       "economic",
       "objective",
+      "state",
       "achieve",
       "sustainable",
       "economic",
@@ -7709,6 +7783,7 @@
       "principles"
     ],
     "body_tokens": [
+      "state",
       "direct",
       "international",
       "relations",
@@ -7747,9 +7822,11 @@
     "text": "The State shall pursue the following policies\n(0) Policies relating to national unity and national security\n(0)(1) to keep intact the national unity, while protecting the freedom, \nsovereignty, territorial integrity and independence of Nepal,\n(0)(2) to \npromote the national unity while developing mutual \ncooperative relations between the Federal Units by maintaining \nmutual cohesion, harmony and solidarity between various castes, \ntribes, religions, languages, cultures and communities,\n(0)(3) to maintain law and order by developing a national security \nsystem,\n(0)(4) to guarantee  the overall human security system,\n(0)(5) to make all security organs, including the Nepal Army, Nepal \nPolice and Armed Police Force Nepal, competent, strong, \nprofessional, inclusive and accountable to the people, on the \nbasis of national security policies,\n(0)(6) to make and keep the citizens ready and competent to serve the \nnation as and when necessary,\n(0)(7) to make proper use, in nations' interest, of the knowledge, skills \nand experiences of former public employees including former \nemployees, military and police.\n(0) Policies relating to political and governance system of State\n(0)(1) to guarantee the best interests and prosperity of the people \nthrough economic, social and cultural transformations, while \nsafeguarding, \nconsolidating \nachievements,\n(0)(2) to maintain rule of law by protecting and promoting human \nrights,\n(0)(3) to implement international treaties, agreements to which Nepal is \na party,\n(0)(4) to guarantee good governance by ensuring the equal and easy \naccess of the people to the services and facilities delivered by the \nState, while making public administration fair, competent, \nimpartial, transparent, free from corruption, accountable and \nparticipatory,\n(0)(5) to make necessary provisions to make mass media fair, healthy, \nimpartial, decent, responsible and professional,\n(0)(6) to develop and expand harmonious and cooperative relations \nbetween the Federal Units by way of sharing of responsibilities, \nresources and administration between them.\n(0) Relating to social and cultural transformation\n(0)(1) to build the society founded on cordial social relations by \ndeveloping a healthy and civilized culture,\n(0)(2) to carrying out studies, research works, excavation and \ndissemination for the protection, promotion and development of \nancient, archaeological and cultural heritages,\n(0)(3) to make community development through enhancement of local \npublic participation, by promoting and mobilizing the creativity \nof local communities in social, cultural and service-oriented \nworks,\n(0)(4) to focus on the development of arts, literature and music which \nform cultural heritages,\n(0)(5) to end all forms of discrimination, inequality, exploitation and \ninjustice in the name of religion, custom, usage, practice and \ntradition existing in the society,\n(0)(6) to protect and develop languages, scripts, culture, literature, arts, \nmotion pictures and heritages of various castes, tribes, and \ncommunities on the basis of equality and co-existence, while \nmaintaining the cultural diversity of the country,\n(0)(7) to pursue a multi-lingual policy.\n(0) Relating to economy, industry and commerce\n(0)(1) to \nenhance national economy through partnership and \nindependent development of the public, private and cooperative \nsectors,\n(0)(2) to achieve economic prosperity by way of optimum mobilization \nof the available means and resources, while focusing on the role \nof private sector in economy,\n(0)(3) to promote the cooperative sector and mobilize it in national \ndevelopment to the maximum extent,\n(0)(4) to encourage and mobilize the economic sector in the overall \nnational development, while providing for regulation to maintain \nfairness, accountability and competition in all of its activities,\n(0)(5) to make equitable distribution of the available means and \nresources and benefits of economic development,\n(0)(6) to diversify and expand markets for goods and services, while \npromoting exports through development and expansion of \nindustries upon identifying areas of comparative advantage,\n(0)(7) to protect the interests of consumers by maintaining trade \nfairness and discipline by making national economy competitive, \nwhile ending activities such as creating black marketing, \nmonopoly, artificial scarcity and restricting competition,\n(0)(8) to protect and promote domestic industries and resources and \naccord priority to domestic investment based on Nepalese labour, \nskills and raw materials for the development of national \neconomy,\n(0)(9) to give priority to domestic investment for the development of \nnational economy,\n(0)(10) to encourage foreign capital and technological investment in \nareas of import substitution and export promotion, in consonance \nwith national interest, and encourage and mobilize such \ninvestment in infrastructure building,\n(0)(11) to make the obtaining of foreign assistance transparent, while  \nmaking the national needs and priorities as the basis for obtaining \nforeign assistance, and incorporating amounts received in form of \nforeign assistance in the national budget,\n(0)(12) to utilize knowledge, skill, technology and capital of the non\nresident Nepalese in the national development,\n(0)(13) to give dynamism to the economic development by establishing \ncoordination between the States and the States and the Federation \nin relation to industrial corridors, special economic zones, \nnational projects and projects involving foreign investment.\n(0) Policies relating to agriculture and land reforms\n(0)(1) to make scientific land reforms having regard to the interests of \nthe farmers, while ending the dual ownership existing in the \nlands,\n(0)(2) to enhance product and productivity by carrying out land \npooling, while discouraging inactive land ownership,\n(0)(3) to \nmake land management and commercialization, \nindustrialization, \ndiversification \nand \nmodernization \nof \nagriculture, by pursuing land-use policies to enhance agriculture \nproduct and productivity, while protecting and promoting the \nrights and interests of the farmers,\n(0)(4) to make proper use of lands, while regulating and managing \nlands on the basis of, inter alia, productivity, nature of lands and \necological balance,\n(0)(5) to provide for the farmers' access to agricultural inputs, agro\nproducts at fair price and market.\n(0) Policies relating to development\n(0)(1) to formulate sustainable socio-economic development strategies \nand programs under the regional development plan for inclusive \neconomic development with regional balance, and implement \nthem in a coordinative manner,\n(0)(2) to \ndevelop balanced, environment friendly, quality and \nsustainable physical infrastructures, while according priority to \nthe regions lagging behind from development perspective,\n(0)(3) to \nenhance local public participation in the process of \ndevelopment works,\n(0)(4) to enhance investment in scientific study, research works and in \ninvention, progress and development of science and technology, \nand protect scientists, technologists, intellectual and eminent \ntalents,\n(0)(5) to ensure easy and simple access of the general public to \ninformation \ntechnology \nby \ndeveloping \nand \nexpanding \ninformation technology to the tune of national needs, and make \noptimum utilization of information technology in the national \ndevelopment,\n(0)(6) to make provisions enabling the general public to enjoy fruits of \ndevelopment in a just manner, while according priority to the \nindigent citizens in the distribution of such fruits,\n(0)(7) to \ndevelop an integrated national identity management \ninformation system and manage all kinds of information and data \nof the citizens in an integrated manner, and linking such system \nwith the services and facilities provided by the State and with \nnational development plans,\n(0)(8) to update demographic statistics and linking it with national \ndevelopment plans.\n(0) Policies relating to protection, promotion and use of natural resources\n(0)(1) to protect, promote, and make environmental friendly and \nsustainable use  of, natural resources available in the country, in \nconsonance with national interest and adopting the concept of \ninter-generational equity, and make equitable distribution of \nfruits, according priority and preferential right to the local \ncommunities,\n(0)(2) to make multi-purpose development of water resources, while \naccording priority to domestic investment based on public \nparticipation,\n(0)(3) to ensure reliable supply of energy in an affordable and easy \nmanner, and make proper use of energy, for the fulfilment of the \nbasic needs of citizens, by generating and developing renewable \nenergy,\n(0)(4) to develop sustainable and reliable irrigation by making control \nof water-induced disasters, and river management,\n(0)(5) to conserve, promote, and make sustainable use of, forests, \nwildlife, birds, vegetation and bio-diversity, by mitigating \npossible risks to environment from industrial and physical \ndevelopment, while raising awareness of general public about \nenvironment cleanliness,\n(0)(6) to maintain the forest area in necessary lands for ecological \nbalance,\n(0)(7) to adopt appropriate measures to abolish or mitigate existing or \npossible adverse environmental impacts on the nature, \nenvironment or biological diversity,\n(0)(8) to \npursue the principles of environmentally sustainable \ndevelopment such as the principles of polluter pays, of \nprecaution in environmental protection and of prior informed \nconsent.\n(0)(9) to make advance warning, preparedness, rescue, relief and \nrehabilitation in order to mitigate risks from natural disasters.\n(0) Policies relating to basic needs of the citizens\n(0)(1) to prepare human resources that are competent, competitive, \nethical, and devoted to national interests, while making education \nscientific, technical, vocational, empirical, employment and \npeople-oriented,\n(0)(2) to make private sector investment made in education service\noriented by regulating and managing such investment, while \nenhancing the State's investment in the education sector,\n(0)(3) to make higher education easy, qualitative and accessible, and \nfree gradually,\n(0)(4) to establish and promote community information centres and \nlibraries for the personality development of citizens,\n(0)(5) to keep on enhancing investment necessary in the  public health \nsector by the State in order to make the citizens healthy,\n(0)(6) to ensure easy, convenient and equal access of all to quality \nhealth services,\n(0)(7) to protect and promote health systems including Ayurveda, as a \ntraditional medical system of Nepal, natural therapy and \nhomeopathy system,\n(0)(8) to make private sector investment in the health sector service\noriented by regulating and managing such investment, while \nenhancing the State's investment in this sector,\n(0)(9) to focus on health research and keep on increasing the number of \nhealth institutions and health workers in order to make health \nservices widely available and qualitative,\n(0)(10) to increase average life expectancy by reducing maternal and \ninfant mortality rate, while encouraging family planning for \npopulation management on the basis of Nepal's capacity and \nneed,\n(0)(11) to manage unplanned settlement and develop planned and \nsystematic settlement,\n(0)(12) to provide for sustainable production, supplies, storage, security, \nand easy and effective distribution of foods by encouraging food \nproduction in tune with climate and soil, in consonance with the \nconcept of food sovereignty, while enhancing investment in the \nagriculture sector,\n(0)(13) to ensure planned supply system by according special priority to \nthe remote and backward regions, while ensuring equal access of \nall citizens to basic goods and services,\n(0)(14) to enhance investment in the transportation sector, while ensuring \nsimple, easy and equal access of the citizens to transportation \nfacilities, and to make the transportation sector safe, systematic \nand persons with disabilities friendly by encouraging public transportation and regulating private transportation, while \naccording priority to the environment friendly technologies,\n(0)(15) to arrange for access to medical treatment while ensuring \ncitizen's health insurance.\n(0) Policies relating to labour and employment\n(0)(1) to make competent and professional the labour force that has \nremained as the main socio-economic strength of the country and \nenhance employment within the country, while ensuring a \nsituation enabling all to work,\n(0)(2) to guarantee social security, while ensuring the basic rights of all \nlabours, in consonance with the concept of decent labour,\n(0)(3) to abolish all forms of labour exploitation including child labour,\n(0)(4) to encourage participation of labours in management, while \nmaintain cordial relations between the labours and entrepreneurs,\n(0)(5) to regulate and manage the sector in order to make foreign \nemployment free from exploitation, safe and systematic and to \nguarantee employment and rights of the labours,\n(0)(6) to encourage to mobilize the capital, skills, technology and \nexperience gained from foreign employment in productive \nsectors in the country.\n(0) Policies relating to social justice and inclusion\n(0)(1) to keep on making appropriate arrangements for the livelihoods \nof the helpless single women, while according priority to them in \nemployment on the basis of skills, competency and qualification\n(0)(2) to make self-dependent the women who are vulnerable, subjected \nto social and family exclusion and victims of violence self-reliant \nby making their rehabilitation, protection and empowerment\n(0)(3) to ensure enjoyment of requisite services and facilities at the \nreproductive stage,\n(0)(4) to evaluate economically the work and contribution such as \nmaintenance of children and care of families,\n(0)(5) to take into consideration primarily of the best interests of the \nchild,\n(0)(6) to \nidentify the freed bonded labours, Kamlari, Harawa, \nCharawa, tillers, landless, squatters and rehabilitate them by \nproviding housing, housing plot for residence and cultivable land \nor employment for their livelihoods,\n(0)(7) to create an atmosphere conducive to the full enjoyment of the \npolitical, economic, social and cultural rights, while enhancing \nthe participation of youths in national development, to make their \npersonality development, while providing special opportunity in \nareas including education, health and employment for the \nempowerment and development of the youths and provide them \nwith appropriate opportunities for the overall development of the \nState,\n(0)(8) to make the indigenous nationalities participate in decisions \nconcerning that community by making special provisions for \nopportunities and benefits in order to ensure the right of these \nnationalities to live with dignity, along with their identity, and \nprotect and promote traditional knowledge, skill, culture, social tradition and experience of the indigenous nationalities and local \ncommunities,\n(0)(9) to make special provisions for opportunities and benefits to \nminority communities to enjoy social and cultural rights, with \nmaintaining their identity,\n(0)(10) to make special provisions for equal distribution of economic, \nsocial and cultural opportunities and benefits to the Madhesi \ncommunity, Muslims and backward class, and for opportunities \nand benefits to the indigent citizens within such communities for \ntheir protection, upliftment, empowerment and development,\n(0)(11) to make special provisions for opportunities and benefits for the \nprotection, upliftment, empowerment and development of the \ncitizens of the oppressed and backward regions and for the \nfulfilment of their basic needs,\n(0)(12) to accord priority to the indigent within all sexes, regions and \ncommunities in the provision of social security and social justice,\n(0)(13) to make planned investment in sports and sport-persons in order \nto prepare healthy, competent and disciplined citizens, and to \ndevelop sports as a means of consolidating national unity and \nenhancing national prestige at the international level,\n(0)(14) to adopt a single door system for the establishment, approval, \noperation, regulation and management of community-based and \nnational or international non-governmental organizations and to \ninvolve such organizations only in the sectors of national need \nand priority, while making investment and role of such \norganizations transparent and accountable.\n(0) Policies relating to justice and penal system\n(0)(1) to make the administration of justice speedy, efficient, widely \navailable, economical, impartial, effective, and accountable to \npeople,\n(0)(2) to pursue alternative means such as mediation and arbitration for \nthe settlement of disputes of general nature,\n(0)(3) to adopt effective measures for the control of corruption and \nirregularities in all sectors including political, administrative, \njudicial and social sectors.\n(0) Policies relating to tourism\n(0) [Explanation] To develop eco-friendly tourism industries \nas an important base of national economy by way of identification, \nprotection, promotion and publicity of the ancient, cultural, religious, \narchaeological and natural heritages of Nepal, to make environment and \npolicy required for the development of tourism culture, and to accord \npriority to local people in the distribution of benefits of tourism \nindustries.\n(0) Policies relating to international relations\n(0)(1) to conduct an independent  foreign policy based on the Charter of \nthe United Nations, non-alignment, principles of Panchsheel, \ninternational law and the norms of world peace, taking into \nconsideration of the overall interest of  \nthe nation, while \nremaining active in safeguarding the sovereignty, territorial \nintegrity, independence and national interest of Nepal,\n(0)(2) to review treaties concluded in the past, and make treaties, \nagreements based on equality and mutual interest.",
     "citation": "Part 4, Article 51",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
+      "state",
       "pursue",
       "following",
       "policies",
@@ -7871,6 +7948,7 @@
       "political",
       "governance",
       "system",
+      "state",
       "0",
       "1",
       "guarantee",
@@ -7915,6 +7993,7 @@
       "services",
       "facilities",
       "delivered",
+      "state",
       "while",
       "making",
       "public",
@@ -8277,6 +8356,8 @@
       "establishing",
       "coordination",
       "between",
+      "states",
+      "states",
       "federation",
       "relation",
       "industrial",
@@ -8513,6 +8594,7 @@
       "system",
       "services",
       "facilities",
+      "state",
       "national",
       "development",
       "plans",
@@ -8738,6 +8820,7 @@
       "investment",
       "while",
       "enhancing",
+      "state",
       "s",
       "investment",
       "education",
@@ -8772,6 +8855,7 @@
       "public",
       "health",
       "sector",
+      "state",
       "order",
       "make",
       "citizens",
@@ -8816,6 +8900,7 @@
       "investment",
       "while",
       "enhancing",
+      "state",
       "s",
       "investment",
       "sector",
@@ -9183,6 +9268,7 @@
       "opportunities",
       "overall",
       "development",
+      "state",
       "0",
       "8",
       "make",
@@ -9502,7 +9588,8 @@
     "text": "Policies relating to national unity and national security",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -9524,7 +9611,8 @@
     "text": "to keep intact the national unity, while protecting the freedom, \nsovereignty, territorial integrity and independence of Nepal,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "keep",
@@ -9552,7 +9640,8 @@
     "text": "to \npromote the national unity while developing mutual \ncooperative relations between the Federal Units by maintaining \nmutual cohesion, harmony and solidarity between various castes, \ntribes, religions, languages, cultures and communities,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "promote",
@@ -9592,7 +9681,8 @@
     "text": "to maintain law and order by developing a national security \nsystem,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "maintain",
@@ -9614,7 +9704,8 @@
     "text": "to guarantee  the overall human security system,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "guarantee",
@@ -9635,7 +9726,8 @@
     "text": "to make all security organs, including the Nepal Army, Nepal \nPolice and Armed Police Force Nepal, competent, strong, \nprofessional, inclusive and accountable to the people, on the \nbasis of national security policies,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -9672,7 +9764,8 @@
     "text": "to make and keep the citizens ready and competent to serve the \nnation as and when necessary,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -9696,7 +9789,8 @@
     "text": "to make proper use, in nations' interest, of the knowledge, skills \nand experiences of former public employees including former \nemployees, military and police.",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -9727,14 +9821,16 @@
     "text": "Policies relating to political and governance system of State",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
       "relating",
       "political",
       "governance",
-      "system"
+      "system",
+      "state"
     ]
   },
   {
@@ -9748,7 +9844,8 @@
     "text": "to guarantee the best interests and prosperity of the people \nthrough economic, social and cultural transformations, while \nsafeguarding, \nconsolidating \nachievements,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "guarantee",
@@ -9778,7 +9875,8 @@
     "text": "to maintain rule of law by protecting and promoting human \nrights,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "maintain",
@@ -9800,7 +9898,8 @@
     "text": "to implement international treaties, agreements to which Nepal is \na party,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "implement",
@@ -9821,7 +9920,8 @@
     "text": "to guarantee good governance by ensuring the equal and easy \naccess of the people to the services and facilities delivered by the \nState, while making public administration fair, competent, \nimpartial, transparent, free from corruption, accountable and \nparticipatory,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "guarantee",
@@ -9835,6 +9935,7 @@
       "services",
       "facilities",
       "delivered",
+      "state",
       "while",
       "making",
       "public",
@@ -9860,7 +9961,8 @@
     "text": "to make necessary provisions to make mass media fair, healthy, \nimpartial, decent, responsible and professional,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -9888,7 +9990,8 @@
     "text": "to develop and expand harmonious and cooperative relations \nbetween the Federal Units by way of sharing of responsibilities, \nresources and administration between them.",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "develop",
@@ -9918,7 +10021,8 @@
     "text": "Relating to social and cultural transformation",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "relating",
@@ -9938,7 +10042,8 @@
     "text": "to build the society founded on cordial social relations by \ndeveloping a healthy and civilized culture,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "build",
@@ -9964,7 +10069,8 @@
     "text": "to carrying out studies, research works, excavation and \ndissemination for the protection, promotion and development of \nancient, archaeological and cultural heritages,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "carrying",
@@ -9994,7 +10100,8 @@
     "text": "to make community development through enhancement of local \npublic participation, by promoting and mobilizing the creativity \nof local communities in social, cultural and service-oriented \nworks,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10028,7 +10135,8 @@
     "text": "to focus on the development of arts, literature and music which \nform cultural heritages,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "focus",
@@ -10052,7 +10160,8 @@
     "text": "to end all forms of discrimination, inequality, exploitation and \ninjustice in the name of religion, custom, usage, practice and \ntradition existing in the society,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "end",
@@ -10082,7 +10191,8 @@
     "text": "to protect and develop languages, scripts, culture, literature, arts, \nmotion pictures and heritages of various castes, tribes, and \ncommunities on the basis of equality and co-existence, while \nmaintaining the cultural diversity of the country,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "protect",
@@ -10121,7 +10231,8 @@
     "text": "to pursue a multi-lingual policy.",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "pursue",
@@ -10141,7 +10252,8 @@
     "text": "Relating to economy, industry and commerce",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "relating",
@@ -10161,7 +10273,8 @@
     "text": "to \nenhance national economy through partnership and \nindependent development of the public, private and cooperative \nsectors,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "enhance",
@@ -10188,7 +10301,8 @@
     "text": "to achieve economic prosperity by way of optimum mobilization \nof the available means and resources, while focusing on the role \nof private sector in economy,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "achieve",
@@ -10219,7 +10333,8 @@
     "text": "to promote the cooperative sector and mobilize it in national \ndevelopment to the maximum extent,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "promote",
@@ -10243,7 +10358,8 @@
     "text": "to encourage and mobilize the economic sector in the overall \nnational development, while providing for regulation to maintain \nfairness, accountability and competition in all of its activities,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "encourage",
@@ -10274,7 +10390,8 @@
     "text": "to make equitable distribution of the available means and \nresources and benefits of economic development,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10299,7 +10416,8 @@
     "text": "to diversify and expand markets for goods and services, while \npromoting exports through development and expansion of \nindustries upon identifying areas of comparative advantage,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "diversify",
@@ -10332,7 +10450,8 @@
     "text": "to protect the interests of consumers by maintaining trade \nfairness and discipline by making national economy competitive, \nwhile ending activities such as creating black marketing, \nmonopoly, artificial scarcity and restricting competition,",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "protect",
@@ -10370,7 +10489,8 @@
     "text": "to protect and promote domestic industries and resources and \naccord priority to domestic investment based on Nepalese labour, \nskills and raw materials for the development of national \neconomy,",
     "citation": "Part 4, Article 51(0)(8)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "protect",
@@ -10404,7 +10524,8 @@
     "text": "to give priority to domestic investment for the development of \nnational economy,",
     "citation": "Part 4, Article 51(0)(9)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "give",
@@ -10427,7 +10548,8 @@
     "text": "to encourage foreign capital and technological investment in \nareas of import substitution and export promotion, in consonance \nwith national interest, and encourage and mobilize such \ninvestment in infrastructure building,",
     "citation": "Part 4, Article 51(0)(10)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "encourage",
@@ -10461,7 +10583,8 @@
     "text": "to make the obtaining of foreign assistance transparent, while  \nmaking the national needs and priorities as the basis for obtaining \nforeign assistance, and incorporating amounts received in form of \nforeign assistance in the national budget,",
     "citation": "Part 4, Article 51(0)(11)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10499,7 +10622,8 @@
     "text": "to utilize knowledge, skill, technology and capital of the non\nresident Nepalese in the national development,",
     "citation": "Part 4, Article 51(0)(12)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "utilize",
@@ -10525,7 +10649,8 @@
     "text": "to give dynamism to the economic development by establishing \ncoordination between the States and the States and the Federation \nin relation to industrial corridors, special economic zones, \nnational projects and projects involving foreign investment.",
     "citation": "Part 4, Article 51(0)(13)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "give",
@@ -10535,6 +10660,8 @@
       "establishing",
       "coordination",
       "between",
+      "states",
+      "states",
       "federation",
       "relation",
       "industrial",
@@ -10561,7 +10688,8 @@
     "text": "Policies relating to agriculture and land reforms",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -10582,7 +10710,8 @@
     "text": "to make scientific land reforms having regard to the interests of \nthe farmers, while ending the dual ownership existing in the \nlands,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10612,7 +10741,8 @@
     "text": "to enhance product and productivity by carrying out land \npooling, while discouraging inactive land ownership,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "enhance",
@@ -10640,7 +10770,8 @@
     "text": "to \nmake land management and commercialization, \nindustrialization, \ndiversification \nand \nmodernization \nof \nagriculture, by pursuing land-use policies to enhance agriculture \nproduct and productivity, while protecting and promoting the \nrights and interests of the farmers,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10678,7 +10809,8 @@
     "text": "to make proper use of lands, while regulating and managing \nlands on the basis of, inter alia, productivity, nature of lands and \necological balance,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10710,7 +10842,8 @@
     "text": "to provide for the farmers' access to agricultural inputs, agro\nproducts at fair price and market.",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "farmers",
@@ -10735,7 +10868,8 @@
     "text": "Policies relating to development",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -10754,7 +10888,8 @@
     "text": "to formulate sustainable socio-economic development strategies \nand programs under the regional development plan for inclusive \neconomic development with regional balance, and implement \nthem in a coordinative manner,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "formulate",
@@ -10789,7 +10924,8 @@
     "text": "to \ndevelop balanced, environment friendly, quality and \nsustainable physical infrastructures, while according priority to \nthe regions lagging behind from development perspective,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "develop",
@@ -10821,7 +10957,8 @@
     "text": "to \nenhance local public participation in the process of \ndevelopment works,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "enhance",
@@ -10844,7 +10981,8 @@
     "text": "to enhance investment in scientific study, research works and in \ninvention, progress and development of science and technology, \nand protect scientists, technologists, intellectual and eminent \ntalents,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "enhance",
@@ -10877,7 +11015,8 @@
     "text": "to ensure easy and simple access of the general public to \ninformation \ntechnology \nby \ndeveloping \nand \nexpanding \ninformation technology to the tune of national needs, and make \noptimum utilization of information technology in the national \ndevelopment,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "ensure",
@@ -10915,7 +11054,8 @@
     "text": "to make provisions enabling the general public to enjoy fruits of \ndevelopment in a just manner, while according priority to the \nindigent citizens in the distribution of such fruits,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -10948,7 +11088,8 @@
     "text": "to \ndevelop an integrated national identity management \ninformation system and manage all kinds of information and data \nof the citizens in an integrated manner, and linking such system \nwith the services and facilities provided by the State and with \nnational development plans,",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "develop",
@@ -10969,6 +11110,7 @@
       "system",
       "services",
       "facilities",
+      "state",
       "national",
       "development",
       "plans"
@@ -10985,7 +11127,8 @@
     "text": "to update demographic statistics and linking it with national \ndevelopment plans.",
     "citation": "Part 4, Article 51(0)(8)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "update",
@@ -11008,7 +11151,8 @@
     "text": "Policies relating to protection, promotion and use of natural resources",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -11031,7 +11175,8 @@
     "text": "to protect, promote, and make environmental friendly and \nsustainable use  of, natural resources available in the country, in \nconsonance with national interest and adopting the concept of \ninter-generational equity, and make equitable distribution of \nfruits, according priority and preferential right to the local \ncommunities,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "protect",
@@ -11076,7 +11221,8 @@
     "text": "to make multi-purpose development of water resources, while \naccording priority to domestic investment based on public \nparticipation,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -11106,7 +11252,8 @@
     "text": "to ensure reliable supply of energy in an affordable and easy \nmanner, and make proper use of energy, for the fulfilment of the \nbasic needs of citizens, by generating and developing renewable \nenergy,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "ensure",
@@ -11141,7 +11288,8 @@
     "text": "to develop sustainable and reliable irrigation by making control \nof water-induced disasters, and river management,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "develop",
@@ -11168,7 +11316,8 @@
     "text": "to conserve, promote, and make sustainable use of, forests, \nwildlife, birds, vegetation and bio-diversity, by mitigating \npossible risks to environment from industrial and physical \ndevelopment, while raising awareness of general public about \nenvironment cleanliness,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "conserve",
@@ -11210,7 +11359,8 @@
     "text": "to maintain the forest area in necessary lands for ecological \nbalance,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "maintain",
@@ -11233,7 +11383,8 @@
     "text": "to adopt appropriate measures to abolish or mitigate existing or \npossible adverse environmental impacts on the nature, \nenvironment or biological diversity,",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "adopt",
@@ -11263,7 +11414,8 @@
     "text": "to \npursue the principles of environmentally sustainable \ndevelopment such as the principles of polluter pays, of \nprecaution in environmental protection and of prior informed \nconsent.",
     "citation": "Part 4, Article 51(0)(8)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "pursue",
@@ -11293,7 +11445,8 @@
     "text": "to make advance warning, preparedness, rescue, relief and \nrehabilitation in order to mitigate risks from natural disasters.",
     "citation": "Part 4, Article 51(0)(9)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -11321,7 +11474,8 @@
     "text": "Policies relating to basic needs of the citizens",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -11342,7 +11496,8 @@
     "text": "to prepare human resources that are competent, competitive, \nethical, and devoted to national interests, while making education \nscientific, technical, vocational, empirical, employment and \npeople-oriented,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "prepare",
@@ -11377,7 +11532,8 @@
     "text": "to make private sector investment made in education service\noriented by regulating and managing such investment, while \nenhancing the State's investment in the education sector,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -11392,6 +11548,7 @@
       "investment",
       "while",
       "enhancing",
+      "state",
       "s",
       "investment",
       "education",
@@ -11409,7 +11566,8 @@
     "text": "to make higher education easy, qualitative and accessible, and \nfree gradually,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -11433,7 +11591,8 @@
     "text": "to establish and promote community information centres and \nlibraries for the personality development of citizens,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "establish",
@@ -11458,7 +11617,8 @@
     "text": "to keep on enhancing investment necessary in the  public health \nsector by the State in order to make the citizens healthy,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "keep",
@@ -11468,6 +11628,7 @@
       "public",
       "health",
       "sector",
+      "state",
       "order",
       "make",
       "citizens",
@@ -11485,7 +11646,8 @@
     "text": "to ensure easy, convenient and equal access of all to quality \nhealth services,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "ensure",
@@ -11509,7 +11671,8 @@
     "text": "to protect and promote health systems including Ayurveda, as a \ntraditional medical system of Nepal, natural therapy and \nhomeopathy system,",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "protect",
@@ -11538,7 +11701,8 @@
     "text": "to make private sector investment in the health sector service\noriented by regulating and managing such investment, while \nenhancing the State's investment in this sector,",
     "citation": "Part 4, Article 51(0)(8)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -11554,6 +11718,7 @@
       "investment",
       "while",
       "enhancing",
+      "state",
       "s",
       "investment",
       "sector"
@@ -11570,7 +11735,8 @@
     "text": "to focus on health research and keep on increasing the number of \nhealth institutions and health workers in order to make health \nservices widely available and qualitative,",
     "citation": "Part 4, Article 51(0)(9)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "focus",
@@ -11603,7 +11769,8 @@
     "text": "to increase average life expectancy by reducing maternal and \ninfant mortality rate, while encouraging family planning for \npopulation management on the basis of Nepal's capacity and \nneed,",
     "citation": "Part 4, Article 51(0)(10)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "increase",
@@ -11639,7 +11806,8 @@
     "text": "to manage unplanned settlement and develop planned and \nsystematic settlement,",
     "citation": "Part 4, Article 51(0)(11)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "manage",
@@ -11662,7 +11830,8 @@
     "text": "to provide for sustainable production, supplies, storage, security, \nand easy and effective distribution of foods by encouraging food \nproduction in tune with climate and soil, in consonance with the \nconcept of food sovereignty, while enhancing investment in the \nagriculture sector,",
     "citation": "Part 4, Article 51(0)(12)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "sustainable",
@@ -11702,7 +11871,8 @@
     "text": "to ensure planned supply system by according special priority to \nthe remote and backward regions, while ensuring equal access of \nall citizens to basic goods and services,",
     "citation": "Part 4, Article 51(0)(13)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "ensure",
@@ -11736,7 +11906,8 @@
     "text": "to enhance investment in the transportation sector, while ensuring \nsimple, easy and equal access of the citizens to transportation \nfacilities, and to make the transportation sector safe, systematic \nand persons with disabilities friendly by encouraging public transportation and regulating private transportation, while \naccording priority to the environment friendly technologies,",
     "citation": "Part 4, Article 51(0)(14)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "enhance",
@@ -11784,7 +11955,8 @@
     "text": "to arrange for access to medical treatment while ensuring \ncitizen's health insurance.",
     "citation": "Part 4, Article 51(0)(15)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "arrange",
@@ -11810,7 +11982,8 @@
     "text": "Policies relating to labour and employment",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -11830,7 +12003,8 @@
     "text": "to make competent and professional the labour force that has \nremained as the main socio-economic strength of the country and \nenhance employment within the country, while ensuring a \nsituation enabling all to work,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -11866,7 +12040,8 @@
     "text": "to guarantee social security, while ensuring the basic rights of all \nlabours, in consonance with the concept of decent labour,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "guarantee",
@@ -11894,7 +12069,8 @@
     "text": "to abolish all forms of labour exploitation including child labour,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "abolish",
@@ -11916,7 +12092,8 @@
     "text": "to encourage participation of labours in management, while \nmaintain cordial relations between the labours and entrepreneurs,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "encourage",
@@ -11943,7 +12120,8 @@
     "text": "to regulate and manage the sector in order to make foreign \nemployment free from exploitation, safe and systematic and to \nguarantee employment and rights of the labours,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "regulate",
@@ -11974,7 +12152,8 @@
     "text": "to encourage to mobilize the capital, skills, technology and \nexperience gained from foreign employment in productive \nsectors in the country.",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "encourage",
@@ -12002,7 +12181,8 @@
     "text": "Policies relating to social justice and inclusion",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -12023,7 +12203,8 @@
     "text": "to keep on making appropriate arrangements for the livelihoods \nof the helpless single women, while according priority to them in \nemployment on the basis of skills, competency and qualification",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "keep",
@@ -12055,7 +12236,8 @@
     "text": "to make self-dependent the women who are vulnerable, subjected \nto social and family exclusion and victims of violence self-reliant \nby making their rehabilitation, protection and empowerment",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12088,7 +12270,8 @@
     "text": "to ensure enjoyment of requisite services and facilities at the \nreproductive stage,",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "ensure",
@@ -12111,7 +12294,8 @@
     "text": "to evaluate economically the work and contribution such as \nmaintenance of children and care of families,",
     "citation": "Part 4, Article 51(0)(4)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "evaluate",
@@ -12135,7 +12319,8 @@
     "text": "to take into consideration primarily of the best interests of the \nchild,",
     "citation": "Part 4, Article 51(0)(5)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "take",
@@ -12158,7 +12343,8 @@
     "text": "to \nidentify the freed bonded labours, Kamlari, Harawa, \nCharawa, tillers, landless, squatters and rehabilitate them by \nproviding housing, housing plot for residence and cultivable land \nor employment for their livelihoods,",
     "citation": "Part 4, Article 51(0)(6)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "identify",
@@ -12194,7 +12380,8 @@
     "text": "to create an atmosphere conducive to the full enjoyment of the \npolitical, economic, social and cultural rights, while enhancing \nthe participation of youths in national development, to make their \npersonality development, while providing special opportunity in \nareas including education, health and employment for the \nempowerment and development of the youths and provide them \nwith appropriate opportunities for the overall development of the \nState,",
     "citation": "Part 4, Article 51(0)(7)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "create",
@@ -12230,7 +12417,8 @@
       "appropriate",
       "opportunities",
       "overall",
-      "development"
+      "development",
+      "state"
     ]
   },
   {
@@ -12244,7 +12432,8 @@
     "text": "to make the indigenous nationalities participate in decisions \nconcerning that community by making special provisions for \nopportunities and benefits in order to ensure the right of these \nnationalities to live with dignity, along with their identity, and \nprotect and promote traditional knowledge, skill, culture, social tradition and experience of the indigenous nationalities and local \ncommunities,",
     "citation": "Part 4, Article 51(0)(8)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12294,7 +12483,8 @@
     "text": "to make special provisions for opportunities and benefits to \nminority communities to enjoy social and cultural rights, with \nmaintaining their identity,",
     "citation": "Part 4, Article 51(0)(9)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12323,7 +12513,8 @@
     "text": "to make special provisions for equal distribution of economic, \nsocial and cultural opportunities and benefits to the Madhesi \ncommunity, Muslims and backward class, and for opportunities \nand benefits to the indigent citizens within such communities for \ntheir protection, upliftment, empowerment and development,",
     "citation": "Part 4, Article 51(0)(10)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12364,7 +12555,8 @@
     "text": "to make special provisions for opportunities and benefits for the \nprotection, upliftment, empowerment and development of the \ncitizens of the oppressed and backward regions and for the \nfulfilment of their basic needs,",
     "citation": "Part 4, Article 51(0)(11)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12396,7 +12588,8 @@
     "text": "to accord priority to the indigent within all sexes, regions and \ncommunities in the provision of social security and social justice,",
     "citation": "Part 4, Article 51(0)(12)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "accord",
@@ -12424,7 +12617,8 @@
     "text": "to make planned investment in sports and sport-persons in order \nto prepare healthy, competent and disciplined citizens, and to \ndevelop sports as a means of consolidating national unity and \nenhancing national prestige at the international level,",
     "citation": "Part 4, Article 51(0)(13)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12462,7 +12656,8 @@
     "text": "to adopt a single door system for the establishment, approval, \noperation, regulation and management of community-based and \nnational or international non-governmental organizations and to \ninvolve such organizations only in the sectors of national need \nand priority, while making investment and role of such \norganizations transparent and accountable.",
     "citation": "Part 4, Article 51(0)(14)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "adopt",
@@ -12508,7 +12703,8 @@
     "text": "Policies relating to justice and penal system",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -12529,7 +12725,8 @@
     "text": "to make the administration of justice speedy, efficient, widely \navailable, economical, impartial, effective, and accountable to \npeople,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "make",
@@ -12557,7 +12754,8 @@
     "text": "to pursue alternative means such as mediation and arbitration for \nthe settlement of disputes of general nature,",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "pursue",
@@ -12582,7 +12780,8 @@
     "text": "to adopt effective measures for the control of corruption and \nirregularities in all sectors including political, administrative, \njudicial and social sectors.",
     "citation": "Part 4, Article 51(0)(3)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "adopt",
@@ -12610,7 +12809,8 @@
     "text": "Policies relating to tourism\n[Explanation] To develop eco-friendly tourism industries \nas an important base of national economy by way of identification, \nprotection, promotion and publicity of the ancient, cultural, religious, \narchaeological and natural heritages of Nepal, to make environment and \npolicy required for the development of tourism culture, and to accord \npriority to local people in the distribution of benefits of tourism \nindustries.",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -12666,7 +12866,8 @@
     "text": "Policies relating to international relations",
     "citation": "Part 4, Article 51(0)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "policies",
@@ -12686,7 +12887,8 @@
     "text": "to conduct an independent  foreign policy based on the Charter of \nthe United Nations, non-alignment, principles of Panchsheel, \ninternational law and the norms of world peace, taking into \nconsideration of the overall interest of  \nthe nation, while \nremaining active in safeguarding the sovereignty, territorial \nintegrity, independence and national interest of Nepal,",
     "citation": "Part 4, Article 51(0)(1)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "conduct",
@@ -12735,7 +12937,8 @@
     "text": "to review treaties concluded in the past, and make treaties, \nagreements based on equality and mutual interest.",
     "citation": "Part 4, Article 51(0)(2)",
     "title_tokens": [
-      "policies"
+      "policies",
+      "state"
     ],
     "body_tokens": [
       "review",
@@ -12762,10 +12965,12 @@
     "text": "It shall be the obligation of the State to make Nepal a \nprosperous and affluent country by  protecting and promoting fundamental \nrights and human rights, pursuing directive principles of the State and gradually implementing policies of the State, while keeping intact the freedom, \nsovereignty, territorial integrity and independence of Nepal.",
     "citation": "Part 4, Article 52",
     "title_tokens": [
-      "obligations"
+      "obligations",
+      "state"
     ],
     "body_tokens": [
       "obligation",
+      "state",
       "make",
       "nepal",
       "prosperous",
@@ -12780,9 +12985,11 @@
       "pursuing",
       "directive",
       "principles",
+      "state",
       "gradually",
       "implementing",
       "policies",
+      "state",
       "while",
       "keeping",
       "intact",
@@ -12822,6 +13029,7 @@
       "principles",
       "policies",
       "obligations",
+      "state",
       "set",
       "forth",
       "president",
@@ -12865,6 +13073,7 @@
       "principles",
       "policies",
       "obligations",
+      "state",
       "set",
       "forth",
       "been",
@@ -12907,7 +13116,8 @@
     "text": "(1) The main structure of the Federal Democratic Republic \nof Nepal shall be of three levels, namely the Federation, the State and the Local level\n(2) The Federation, State and Local levels shall exercise the power \nof State of Nepal pursuant to this Constitution and law.\n(3) There shall be States consisting of the Districts as mentioned in \nSchedule-4 existing in Nepal at the time of commencement of this \nConstitution.\n(4) There shall be Village Institutions, Municipalities and District \nAssemblies under the Local level. The number of Wards in a Village \nInstitution and Municipality shall be as provided for in the Federal law.\n(5) Any Special, Protected or Autonomous Region can be set by the \nFederal law for social, cultural protection or economic development.\n(6) The Federation, State and Local levels shall protect Nepal's \nfreedom, sovereignty, territorial integrity, independence, national interest, \noverall development, multi-party, competitive, democratic, republican, federal \nsystem of governance, human rights and fundamental rights, rule of law, \nseparation of powers and check and balance, egalitarian society based on \npluralism and equality, inclusive representation and identity.",
     "citation": "Part 5, Article 56",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "1",
@@ -12921,17 +13131,21 @@
       "levels",
       "namely",
       "federation",
+      "state",
       "local",
       "level",
       "2",
       "federation",
+      "state",
       "local",
       "levels",
       "exercise",
       "power",
+      "state",
       "nepal",
       "3",
       "there",
+      "states",
       "consisting",
       "districts",
       "mentioned",
@@ -12970,6 +13184,7 @@
       "development",
       "6",
       "federation",
+      "state",
       "local",
       "levels",
       "protect",
@@ -13021,7 +13236,8 @@
     "text": "The main structure of the Federal Democratic Republic \nof Nepal shall be of three levels, namely the Federation, the State and the Local level",
     "citation": "Part 5, Article 56(1)",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "main",
@@ -13034,6 +13250,7 @@
       "levels",
       "namely",
       "federation",
+      "state",
       "local",
       "level"
     ]
@@ -13049,14 +13266,17 @@
     "text": "The Federation, State and Local levels shall exercise the power \nof State of Nepal pursuant to this Constitution and law.",
     "citation": "Part 5, Article 56(2)",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "federation",
+      "state",
       "local",
       "levels",
       "exercise",
       "power",
+      "state",
       "nepal"
     ]
   },
@@ -13071,10 +13291,12 @@
     "text": "There shall be States consisting of the Districts as mentioned in \nSchedule-4 existing in Nepal at the time of commencement of this \nConstitution.",
     "citation": "Part 5, Article 56(3)",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "there",
+      "states",
       "consisting",
       "districts",
       "mentioned",
@@ -13096,7 +13318,8 @@
     "text": "There shall be Village Institutions, Municipalities and District \nAssemblies under the Local level. The number of Wards in a Village \nInstitution and Municipality shall be as provided for in the Federal law.",
     "citation": "Part 5, Article 56(4)",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "there",
@@ -13127,7 +13350,8 @@
     "text": "Any Special, Protected or Autonomous Region can be set by the \nFederal law for social, cultural protection or economic development.",
     "citation": "Part 5, Article 56(5)",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "special",
@@ -13154,10 +13378,12 @@
     "text": "The Federation, State and Local levels shall protect Nepal's \nfreedom, sovereignty, territorial integrity, independence, national interest, \noverall development, multi-party, competitive, democratic, republican, federal \nsystem of governance, human rights and fundamental rights, rule of law, \nseparation of powers and check and balance, egalitarian society based on \npluralism and equality, inclusive representation and identity.",
     "citation": "Part 5, Article 56(6)",
     "title_tokens": [
-      "structure"
+      "structure",
+      "state"
     ],
     "body_tokens": [
       "federation",
+      "state",
       "local",
       "levels",
       "protect",
@@ -13210,6 +13436,7 @@
     "citation": "Part 5, Article 57",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
@@ -13225,16 +13452,19 @@
       "federal",
       "2",
       "powers",
+      "state",
       "vested",
       "matters",
       "enumerated",
       "6",
       "powers",
       "exercised",
+      "state",
       "3",
       "concurrent",
       "powers",
       "federation",
+      "state",
       "vested",
       "matters",
       "enumerated",
@@ -13242,6 +13472,7 @@
       "powers",
       "exercised",
       "federal",
+      "state",
       "4",
       "powers",
       "local",
@@ -13260,6 +13491,7 @@
       "concurrent",
       "powers",
       "federation",
+      "state",
       "local",
       "levels",
       "vested",
@@ -13269,11 +13501,13 @@
       "powers",
       "exercised",
       "federal",
+      "state",
       "village",
       "assembly",
       "municipal",
       "assembly",
       "6",
+      "state",
       "assembly",
       "village",
       "assembly",
@@ -13283,6 +13517,7 @@
       "5",
       "so",
       "federal",
+      "state",
       "assembly",
       "village",
       "assembly",
@@ -13299,10 +13534,12 @@
       "assembly",
       "5",
       "so",
+      "state",
       "village",
       "assembly",
       "municipal",
       "assembly",
+      "state",
       "invalid",
       "extent",
       "inconsistency"
@@ -13320,6 +13557,7 @@
     "citation": "Part 5, Article 57(1)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
@@ -13346,16 +13584,19 @@
     "citation": "Part 5, Article 57(2)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
       "powers",
+      "state",
       "vested",
       "matters",
       "enumerated",
       "6",
       "powers",
-      "exercised"
+      "exercised",
+      "state"
     ]
   },
   {
@@ -13370,19 +13611,22 @@
     "citation": "Part 5, Article 57(3)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
       "concurrent",
       "powers",
       "federation",
+      "state",
       "vested",
       "matters",
       "enumerated",
       "7",
       "powers",
       "exercised",
-      "federal"
+      "federal",
+      "state"
     ]
   },
   {
@@ -13397,6 +13641,7 @@
     "citation": "Part 5, Article 57(4)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
@@ -13427,12 +13672,14 @@
     "citation": "Part 5, Article 57(5)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
       "concurrent",
       "powers",
       "federation",
+      "state",
       "local",
       "levels",
       "vested",
@@ -13442,6 +13689,7 @@
       "powers",
       "exercised",
       "federal",
+      "state",
       "village",
       "assembly",
       "municipal",
@@ -13460,9 +13708,11 @@
     "citation": "Part 5, Article 57(6)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
+      "state",
       "assembly",
       "village",
       "assembly",
@@ -13472,6 +13722,7 @@
       "5",
       "so",
       "federal",
+      "state",
       "assembly",
       "village",
       "assembly",
@@ -13495,6 +13746,7 @@
     "citation": "Part 5, Article 57(7)",
     "title_tokens": [
       "distribution",
+      "state",
       "power"
     ],
     "body_tokens": [
@@ -13504,10 +13756,12 @@
       "assembly",
       "5",
       "so",
+      "state",
       "village",
       "assembly",
       "municipal",
       "assembly",
+      "state",
       "invalid",
       "extent",
       "inconsistency"
@@ -13534,6 +13788,7 @@
       "enumerated",
       "federal",
       "list",
+      "state",
       "list",
       "list",
       "local",
@@ -13565,6 +13820,7 @@
     "body_tokens": [
       "1",
       "federation",
+      "state",
       "local",
       "level",
       "make",
@@ -13599,8 +13855,10 @@
       "powers",
       "applicable",
       "also",
+      "states",
       "3",
       "federation",
+      "state",
       "local",
       "level",
       "make",
@@ -13610,11 +13868,13 @@
       "time",
       "submission",
       "budget",
+      "state",
       "local",
       "level",
       "federal",
       "4",
       "federation",
+      "state",
       "local",
       "level",
       "equitable",
@@ -13648,6 +13908,7 @@
       "make",
       "investment",
       "federation",
+      "state",
       "local",
       "level",
       "accord",
@@ -13684,6 +13945,7 @@
       "fiscal",
       "discipline",
       "federation",
+      "state",
       "local",
       "level",
       "federal"
@@ -13706,6 +13968,7 @@
     ],
     "body_tokens": [
       "federation",
+      "state",
       "local",
       "level",
       "make",
@@ -13756,7 +14019,8 @@
       "financial",
       "powers",
       "applicable",
-      "also"
+      "also",
+      "states"
     ]
   },
   {
@@ -13776,6 +14040,7 @@
     ],
     "body_tokens": [
       "federation",
+      "state",
       "local",
       "level",
       "make",
@@ -13785,6 +14050,7 @@
       "time",
       "submission",
       "budget",
+      "state",
       "local",
       "level",
       "federal"
@@ -13807,6 +14073,7 @@
     ],
     "body_tokens": [
       "federation",
+      "state",
       "local",
       "level",
       "equitable",
@@ -13857,6 +14124,7 @@
       "make",
       "investment",
       "federation",
+      "state",
       "local",
       "level",
       "accord",
@@ -13927,6 +14195,7 @@
       "fiscal",
       "discipline",
       "federation",
+      "state",
       "local",
       "level",
       "federal"
@@ -13950,6 +14219,7 @@
     "body_tokens": [
       "1",
       "federation",
+      "state",
       "local",
       "level",
       "impose",
@@ -13991,6 +14261,7 @@
       "collected",
       "revenue",
       "federation",
+      "state",
       "local",
       "level",
       "3",
@@ -13998,6 +14269,7 @@
       "fiscal",
       "transfer",
       "receivable",
+      "state",
       "local",
       "level",
       "recommended",
@@ -14017,9 +14289,12 @@
       "fiscal",
       "equalization",
       "grants",
+      "state",
       "local",
       "level",
       "5",
+      "state",
+      "state",
       "distribute",
       "fiscal",
       "equalization",
@@ -14060,6 +14335,7 @@
       "revenues",
       "between",
       "federal",
+      "state",
       "local",
       "level",
       "balanced",
@@ -14076,10 +14352,12 @@
       "national",
       "requirements",
       "autonomy",
+      "state",
       "local",
       "levels",
       "services",
       "rendered",
+      "state",
       "local",
       "level",
       "people",
@@ -14128,6 +14406,7 @@
     ],
     "body_tokens": [
       "federation",
+      "state",
       "local",
       "level",
       "impose",
@@ -14185,6 +14464,7 @@
       "collected",
       "revenue",
       "federation",
+      "state",
       "local",
       "level"
     ]
@@ -14209,6 +14489,7 @@
       "fiscal",
       "transfer",
       "receivable",
+      "state",
       "local",
       "level",
       "recommended",
@@ -14245,6 +14526,7 @@
       "fiscal",
       "equalization",
       "grants",
+      "state",
       "local",
       "level"
     ]
@@ -14265,6 +14547,8 @@
       "revenue"
     ],
     "body_tokens": [
+      "state",
+      "state",
       "distribute",
       "fiscal",
       "equalization",
@@ -14339,6 +14623,7 @@
       "revenues",
       "between",
       "federal",
+      "state",
       "local",
       "level",
       "balanced",
@@ -14372,10 +14657,12 @@
       "national",
       "requirements",
       "autonomy",
+      "state",
       "local",
       "levels",
       "services",
       "rendered",
+      "state",
       "local",
       "level",
       "people",
@@ -14428,6 +14715,7 @@
       "2",
       "president",
       "head",
+      "state",
       "nepal",
       "perform",
       "functions",
@@ -14481,6 +14769,7 @@
     "body_tokens": [
       "president",
       "head",
+      "state",
       "nepal",
       "perform",
       "functions",
@@ -14553,12 +14842,14 @@
       "members",
       "federal",
       "parliament",
+      "state",
       "assemblies",
       "voting",
       "weightage",
       "members",
       "federal",
       "parliament",
+      "state",
       "assemblies",
       "vary",
       "federal",
@@ -14577,9 +14868,11 @@
       "sole",
       "reason",
       "election",
+      "state",
       "assembly",
       "been",
       "held",
+      "state",
       "3",
       "secures",
       "majority",
@@ -14695,12 +14988,14 @@
       "members",
       "federal",
       "parliament",
+      "state",
       "assemblies",
       "voting",
       "weightage",
       "members",
       "federal",
       "parliament",
+      "state",
       "assemblies",
       "vary",
       "federal"
@@ -14735,9 +15030,11 @@
       "sole",
       "reason",
       "election",
+      "state",
       "assembly",
       "been",
-      "held"
+      "held",
+      "state"
     ]
   },
   {
@@ -16233,6 +16530,7 @@
       "minister",
       "minister",
       "minister",
+      "state",
       "assistant",
       "minister",
       "10",
@@ -16622,6 +16920,7 @@
       "minister",
       "minister",
       "minister",
+      "state",
       "assistant",
       "minister"
     ]
@@ -17364,6 +17663,7 @@
       "before",
       "president",
       "ministers",
+      "state",
       "assistant",
       "ministers",
       "before",
@@ -17420,6 +17720,7 @@
       "4",
       "current",
       "general",
+      "state",
       "affairs",
       "country",
       "matters",
@@ -17512,6 +17813,7 @@
     "body_tokens": [
       "current",
       "general",
+      "state",
       "affairs",
       "country",
       "matters",
