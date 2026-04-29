@@ -18,10 +18,18 @@
       "problemMatcher": []
     },
     {
+      "label": "Run full ingestion pipeline",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "preprocessing_scripts.run_ingestion"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
       "label": "Run RAG demo",
       "type": "shell",
       "command": "python",
-      "args": ["src/llm/rag_workflow.py"],
+      "args": ["-m", "src.llm.rag_workflow"],
       "group": "test",
       "problemMatcher": []
     },
@@ -29,7 +37,7 @@
       "label": "Rebuild inverted index",
       "type": "shell",
       "command": "python",
-      "args": ["preprocessing_scripts/build_inverted_index.py"],
+      "args": ["-m", "preprocessing_scripts.build_inverted_index"],
       "group": "build",
       "problemMatcher": []
     }
