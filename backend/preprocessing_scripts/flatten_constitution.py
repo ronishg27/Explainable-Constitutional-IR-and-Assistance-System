@@ -1,10 +1,5 @@
 import json
-import sys
 from pathlib import Path
-
-ROOT_DIR = Path(__file__).resolve().parents[1]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.insert(0, str(ROOT_DIR))
 
 from src.core.preprocessing import NLP
 
@@ -312,7 +307,7 @@ def flatten_flat_constitution(data):
 def main():
     root = Path(__file__).resolve().parents[1]
     input_path = root / "data" / "nepal_constitution.json"
-    output_path = root / "data" / "flattened_nepal_constitution.json"
+    output_path = root / "data" / "output" / "flattened_nepal_constitution.json"
 
     with input_path.open("r", encoding="utf-8") as f:
         data = json.load(f)

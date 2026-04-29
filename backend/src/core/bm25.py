@@ -7,11 +7,11 @@ from .preprocessing import NLP
 
 
 def load_documents(path=None):
-	"""Load flattened documents from data/flattened_nepal_constitution.json."""
+	"""Load flattened documents from data/output/flattened_nepal_constitution.json."""
 	root = Path(__file__).resolve().parents[0].parent.parent
 	
 	if path is None:
-		path = root / "data" / "flattened_nepal_constitution.json"
+		path = root / "data" / "output" / "flattened_nepal_constitution.json"
 	else:
 		path = Path(path)
 

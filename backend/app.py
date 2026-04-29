@@ -1,32 +1,15 @@
 import logging
-import os
 
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-from config.db_connect import Database
+from src.core.app_bootstrap import connect_database, rebuild_document_artifacts, warm_up_spacy
 
 load_dotenv(dotenv_path=".env")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-def rebuild_document_artifacts():
-    from preprocessing_scripts.build_inverted_index import main as build_inverted_index
-    from preprocessing_scripts.flatten_constitution import main as flatten_constitution
-    from preprocessing_scripts.generate_safe_lemma_dict import main as generate_lemma_dict
-
-    logger.info("Rebuilding document artifacts from data/nepal_constitution.json")
-    flatten_constitution()
-    build_inverted_index()
-    generate_lemma_dict()
-
-
-def warm_up_spacy():
-    from src.core.preprocessing import get_spacy_pipeline
-
-    get_spacy_pipeline()
 
 def create_app():
     from routes.api_routes import api_bp
@@ -35,10 +18,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
 
-    db = Database()
-    DB_NAME = os.getenv("MONGO_DB_NAME", "ECIRAS")
-    HOST = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-    db.connect(db_name=DB_NAME, host=HOST)
+    connect_database()
 
     app.register_blueprint(api_bp)
     app.register_blueprint(auth_bp)
@@ -61,7 +41,7 @@ def main():
     args = parse_args()
 
     if args.rebuild_data:
-        rebuild_document_artifacts()
+        rebuild_document_artifacts(logger)
 
     warm_up_spacy()
     app = create_app()
