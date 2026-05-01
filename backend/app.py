@@ -4,7 +4,7 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-from src.core.app_bootstrap import connect_database, rebuild_document_artifacts, warm_up_spacy
+from src.core.app_bootstrap import connect_database, rebuild_document_artifacts, preload_spacy
 
 load_dotenv(dotenv_path=".env")
 
@@ -43,7 +43,7 @@ def main():
     if args.rebuild_data:
         rebuild_document_artifacts(logger)
 
-    warm_up_spacy()
+    preload_spacy()
     app = create_app()
 
     logger.info("Starting the Flask API server...")
