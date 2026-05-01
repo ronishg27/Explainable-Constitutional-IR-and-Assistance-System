@@ -1,10 +1,6 @@
 import json
 from pathlib import Path
 
-from src.core.preprocessing import NLP
-
-
-
 def _label_key(key):
     return key.replace("_", " ").strip().capitalize()
 
@@ -33,8 +29,6 @@ def _make_document(doc_id, part_no, article_no, title, text, citation, level, cl
         "title": title,
         "text": text,
         "citation": citation,
-        "title_tokens": NLP.tokenize(title),
-        "body_tokens": NLP.tokenize(text),
     }
 
 
@@ -118,18 +112,19 @@ def flatten_constitution(data):
                 article_segments.append(f"[{label}] {value}")
 
             article_body = "\n".join(segment for segment in article_segments if segment)
-            if article_body:
-                documents.append(
-                    _make_document(
-                        doc_id=f"{article_no}",
-                        part_no=part_no,
-                        article_no=article_no,
-                        title=title,
-                        text=article_body,
-                        citation=f"Part {part_no}, Article {article_no}",
-                        level="article",
+            if not clauses:
+                if article_body:
+                    documents.append(
+                        _make_document(
+                            doc_id=f"{article_no}",
+                            part_no=part_no,
+                            article_no=article_no,
+                            title=title,
+                            text=article_body,
+                            citation=f"Part {part_no}, Article {article_no}",
+                            level="article",
+                        )
                     )
-                )
 
             if clauses:
                 for clause_index, clause in enumerate(clauses, start=1):
@@ -284,22 +279,25 @@ def flatten_flat_constitution(data):
         )
         for label, value in article_extras:
             article_segments.append(f"[{label}] {value}")
-
-        body_text = "\n".join(segment for segment in article_segments if segment)
-        if body_text:
-            documents.append(
-                _make_document(
-                    doc_id=f"{article_no}",
-                    part_no=part_no,
-                    article_no=article_no,
-                    clause_no=None,
-                    subclause_id=None,
-                    title=title,
-                    text=body_text,
-                    citation=f"Part {part_no}, Article {article_no}",
-                    level="article",
+            
+        
+        has_clauses = any(item.get("type") == "clause" for item in content)
+        if not has_clauses:
+            body_text = "\n".join(segment for segment in article_segments if segment)
+            if body_text:
+                documents.append(
+                    _make_document(
+                        doc_id=f"{article_no}",
+                        part_no=part_no,
+                        article_no=article_no,
+                        clause_no=None,
+                        subclause_id=None,
+                        title=title,
+                        text=body_text,
+                        citation=f"Part {part_no}, Article {article_no}",
+                        level="article",
+                    )
                 )
-            )
 
     return documents
 
@@ -320,6 +318,7 @@ def main():
         # Nested format with parts (nepal_constitution.json)
         documents = flatten_constitution(data)
 
+    output_path.parent.mkdir(parents=True, exist_ok=True)   
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(documents, f, indent=2, ensure_ascii=False)
 
