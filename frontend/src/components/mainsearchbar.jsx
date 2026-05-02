@@ -5,11 +5,14 @@ import Resultdisplay from './Resultdisplay';
 const MainSearchBar = () => {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false); // tracks whether backend is still responding
 
   const buttonRef = useRef(null);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
+
+    setLoading(true); // start loading before the request
 
     try {
       const response = await fetch('http://127.0.0.1:5000/api/v1/ask', {
@@ -19,6 +22,7 @@ const MainSearchBar = () => {
         },
         body: JSON.stringify({
           query: query,
+          use_llm: true,
         }),
       });
 
@@ -35,6 +39,8 @@ const MainSearchBar = () => {
 
     } catch (error) {
       console.error('Error while calling backend:', error);
+    } finally {
+      setLoading(false); // stop loading whether request succeeded or failed
     }
   };
 
@@ -50,20 +56,25 @@ const MainSearchBar = () => {
           className="flex-1 outline-none bg-transparent"
         />
 
+        {/* Button is disabled while loading to prevent duplicate requests */}
         <button
           ref={buttonRef}
           type="button"
           onClick={handleSearch}
-          className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700"
+          disabled={loading}
+          className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 disabled:opacity-60"
         >
-          Analyze Query
+          {loading ? 'Analyzing...' : 'Analyze Query'}
         </button>
       </div>
 
       <Suggestion setQuery={setQuery} />
 
-      {/* Display result here */}
-      {result && <Resultdisplay data={result} />}
+      {/* Show loading message while waiting for backend, result once it arrives */}
+      {loading && (
+        <p className="text-center text-gray-400 mt-10 text-sm">Analyzing...</p>
+      )}
+      {!loading && result && <Resultdisplay data={result} />}
     </div>
   );
 };
