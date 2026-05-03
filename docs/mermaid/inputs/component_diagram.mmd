@@ -1,0 +1,28 @@
+graph TD
+    subgraph Client
+        ReactApp["React SPA<br/>(SearchBar, ResultDisplay)"]
+    end
+
+    subgraph Backend
+        FlaskAPI["Flask REST API<br/>(routes: /ask, /auth)"]
+        Services["Service Layer<br/>(QAService, UserService, MessageService)"]
+        Engine["Search Engine<br/>(BM25 + Proximity)"]
+        LLMClient["Ollama Client"]
+    end
+
+    subgraph Data
+        MongoDB[("MongoDB<br/>(users, messages, articles)")]
+        FileIndex["File Indexes<br/>(tf_index, pos_index, docs)"]
+    end
+
+    subgraph External
+        OllamaService["Ollama LLM Server"]
+    end
+
+    ReactApp -->|HTTP/REST| FlaskAPI
+    FlaskAPI --> Services
+    Services --> MongoDB
+    Services --> Engine
+    Services --> LLMClient
+    Engine --> FileIndex
+    LLMClient -->|REST| OllamaService

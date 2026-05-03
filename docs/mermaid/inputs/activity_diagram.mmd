@@ -1,0 +1,16 @@
+flowchart TD
+    Start([User submits query]) --> Validate
+    Validate -->|valid| Process[QAService.answer_query]
+    Process --> UseLLM{useLLM?}
+    UseLLM -->|No| Retrieve[Engine.search → articles]
+    Retrieve --> Return[Return articles only]
+    UseLLM -->|Yes| CheckOllama{Ollama reachable?}
+    CheckOllama -->|No| Retrieve
+    CheckOllama -->|Yes| CheckModel{Model available?}
+    CheckModel -->|No| Retrieve --> ReturnWithStatus[Return articles + warning]
+    CheckModel -->|Yes| RagFull[RAGWorkflow.ask: retrieve + LLM]
+    RagFull --> LLMCall[Ollama generates answer]
+    LLMCall --> ReturnFull[Return answer + articles]
+    ReturnFull --> End([Response sent])
+    Return --> End
+    ReturnWithStatus --> End

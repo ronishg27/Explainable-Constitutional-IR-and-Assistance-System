@@ -1,0 +1,10 @@
+stateDiagram-v2
+    [*] --> Guest
+    Guest --> LoggedIn : login(email, password) / success
+    Guest --> Guest : login failed
+    LoggedIn --> Guest : logout / token expired
+    LoggedIn --> Guest : token invalid / 401
+    state LoggedIn {
+        [*] --> Active
+        Active --> Active : request protected resource
+    }
