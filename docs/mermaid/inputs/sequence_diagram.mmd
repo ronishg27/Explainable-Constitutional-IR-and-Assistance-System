@@ -1,0 +1,25 @@
+sequenceDiagram
+    actor U as User
+    participant FE as React Frontend
+    participant API as Flask API (/api/v1/ask)
+    participant QAS as QAService
+    participant RAG as RAGWorkflow
+    participant SE as SearchEngine
+    participant LLM as Ollama LLM
+    
+    U->>FE: types query & clicks "Analyze"
+    FE->>API: POST { query, use_llm: true }
+    API->>QAS: answer_query(query, useLLM=true)
+    QAS->>RAG: ask(query, retrieve_only=False)
+    RAG->>SE: search(query, top_k=5)
+    SE-->>RAG: ranked article list
+    RAG->>SE: check_model_availability()
+    SE-->>RAG: model available
+    RAG->>LLM: chat(prompt with article context)
+    LLM-->>RAG: generated answer
+    RAG-->>QAS: {answer, retrieved_articles}
+    QAS-->>API: payload with response
+    API-->>FE: JSON response
+    FE-->>U: displays answer & articles
+
+

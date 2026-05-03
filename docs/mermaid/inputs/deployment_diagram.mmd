@@ -1,0 +1,25 @@
+graph TD
+    subgraph ClientNode["Client Machine"]
+        Browser["Web Browser"]
+    end
+
+    subgraph ServerNode["Application Server"]
+        FlaskApp["Flask App<br/>(Python, Port 5000)"]
+    end
+
+    subgraph DBNode["Database Server"]
+        MongoD["MongoDB<br/>(Port 27017)"]
+    end
+
+    subgraph LLMNode["LLM Server"]
+        Ollama["Ollama<br/>(Port 11434)"]
+    end
+
+    subgraph StorageNode["File Storage"]
+        Indexes["Index & Constitution JSON files"]
+    end
+
+    Browser -->|HTTPS| FlaskApp
+    FlaskApp --> MongoD
+    FlaskApp -->|Read| Indexes
+    FlaskApp -->|REST| Ollama

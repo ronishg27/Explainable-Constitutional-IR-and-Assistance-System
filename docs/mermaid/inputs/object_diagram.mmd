@@ -1,0 +1,27 @@
+classDiagram
+    direction TB
+    class user {
+        String id
+        String fullname
+        String email
+    }
+    class message {
+        String id
+        String query
+        String answer
+    }
+    class art1 {
+        String title
+        String citation
+        String doc_id
+        Float relevance_score
+    }
+    class art2 {
+        String title
+        String citation
+        String doc_id
+        Float relevance_score
+    }
+    user --> message : user ref
+    message --> art1
+    message --> art2
