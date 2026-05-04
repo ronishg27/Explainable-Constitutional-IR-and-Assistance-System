@@ -1,0 +1,70 @@
+classDiagram
+    class User {
+        +id: ObjectId
+        +fullname: String
+        +email: String
+        +password_hash: String
+        +role: RoleEnum
+        +created_at: DateTime
+        +updated_at: DateTime
+        +set_password(password)
+        +check_password(password) bool
+    }
+
+    class ReferencedArticle {
+        +id: ObjectId
+        +title: String
+        +citation: String
+        +doc_id: String
+        +relevance_score: Float
+    }
+
+    class Message {
+        +id: ObjectId
+        +query: String
+        +answer: String
+        +user: User
+        +articles: List~ReferencedArticle~
+        +created_at: DateTime
+        +updated_at: DateTime
+    }
+
+    class QAService {
+        +answer_query(query, useLLM) Tuple
+        -_get_workflow() RAGWorkflow
+    }
+
+    class RAGWorkflow {
+        -engine: SearchEngine
+        -model: String
+        -client: OllamaClient
+        +ask(query, stream, retrieve_only) Dict
+        +retrieve(query) List
+    }
+
+    class SearchEngine {
+        -bm25_scorer: BM25Scorer
+        -proximity_scorer: ProximityScorer
+        -documents: List~Document~
+        +search(query, top_k) List
+    }
+
+    class BM25Scorer {
+        -tf_index: Dict
+        -doc_lengths: Dict
+        -avgdl: Float
+        +score(query_tokens, doc_id) Float
+    }
+
+    class ProximityScorer {
+        -positional_index: Dict
+        +score(doc_id, pairs, max_window) Float
+    }
+
+    User "1" --> "0..*" Message : creates
+    Message "0..*" --> "0..*" ReferencedArticle : references
+    QAService --> RAGWorkflow : uses
+    RAGWorkflow --> SearchEngine : uses
+    SearchEngine --> BM25Scorer
+    SearchEngine --> ProximityScorer
+    QAService ..> Message : stores results
