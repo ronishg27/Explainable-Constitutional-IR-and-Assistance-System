@@ -1,4 +1,4 @@
-PY = py
+PY = C:\Users\Rons\OneDrive\Desktop\Constitution_assistant\backend\.venv\Scripts\python.exe
 
 init: 
 	@echo "Initializing the project..."

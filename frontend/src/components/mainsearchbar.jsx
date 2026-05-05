@@ -6,6 +6,7 @@ const MainSearchBar = () => {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false); // tracks whether backend is still responding
+  const [useLlm, setUseLlm] = useState(true);
 
   const buttonRef = useRef(null);
 
@@ -22,7 +23,7 @@ const MainSearchBar = () => {
         },
         body: JSON.stringify({
           query: query,
-          use_llm: true,
+          use_llm: useLlm,
         }),
       });
 
@@ -46,6 +47,25 @@ const MainSearchBar = () => {
 
   return (
     <div className="w-full max-w-2xl mx-auto mt-10 px-4">
+      <div className="mb-3 flex justify-end">
+        <button
+          type="button"
+          onClick={() => setUseLlm((prev) => !prev)}
+          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            useLlm
+              ? 'border-blue-600 bg-blue-50 text-blue-700'
+              : 'border-gray-300 bg-white text-gray-600'
+          }`}
+        >
+          <span
+            className={`h-2.5 w-2.5 rounded-full ${
+              useLlm ? 'bg-blue-600' : 'bg-gray-400'
+            }`}
+          />
+          Use LLM: {useLlm ? 'ON' : 'OFF'}
+        </button>
+      </div>
+
       <div className="bg-white shadow-2xl flex items-center rounded-full px-4 py-3">
         <input
           type="text"
