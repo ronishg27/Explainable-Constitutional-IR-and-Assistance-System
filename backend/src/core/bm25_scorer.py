@@ -48,7 +48,7 @@ class BM25Scorer:
         title_boost: float = 5.0
     )-> float:
         base = self.score(query_tokens, doc_id)
-        title_match_count = len(set(query_tokens) & set(title_tokens))
+        title_match_count = len(set(query_tokens) & set(title_tokens)) # & -> intersection of sets
         return base+ (title_match_count * title_boost)
     
     
