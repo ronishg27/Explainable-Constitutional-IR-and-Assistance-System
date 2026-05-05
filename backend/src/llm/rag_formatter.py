@@ -34,4 +34,5 @@ ANSWER:
 - If the Constitution does not address the question or if there is no relevant article, **explicitly state** that the question is not addressed by the Constitution and do not attempt to make assumptions or guesses.
 - **Do not provide any information** that is not in the provided articles or make any references to sources outside the provided context.
 - **If an article is not present in the context**, **do not mention it**. Ensure your answer strictly adheres to the information in the provided articles.
+- Do not provide any additional information like headings, summaries, or explanations. Just answer the question based on the provided articles and cite them as required.
 """

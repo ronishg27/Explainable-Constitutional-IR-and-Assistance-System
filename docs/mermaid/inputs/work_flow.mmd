@@ -1,0 +1,29 @@
+flowchart TD
+
+subgraph OFFLINE 
+A[Raw Documents] --> B[TextProcessor]
+B --> C[Tokenized Docs]
+C --> D[IndexBuilder]
+D --> E[Inverted Index Stored]
+end
+
+subgraph ONLINE 
+F[User Query] --> G[TextProcessor]
+G --> H[SearchEngine]
+H --> I[Retriever]
+
+I --> J[BM25 Candidate Retrieval]
+J --> K[Scoring Layer]
+
+K --> K1[BM25 Score]
+K --> K2[Proximity Score]
+K1 --> K3[Combined Ranking]
+K2 --> K3
+
+K3 --> L[Top-K Results]
+L --> M[Generator LLM]
+M --> N[Final Answer]
+end
+
+%% Force vertical stacking
+E -.-> F

@@ -67,14 +67,12 @@ class SearchEngine:
         self.default_top_k = default_top_k
         self.max_window = max_window
 
-        # Pre‑tokenise titles once for fast title‑boost lookups
+        # Pre‑tokenize titles once for fast title‑boost lookups
         self.title_tokens: dict[str, list[str]] = {}
         for doc in documents:
             self.title_tokens[doc.doc_id] = self.bm25_processor.process_text(doc.title)
 
-    # -----------------------------------------------------------------
     # Public API
-    # -----------------------------------------------------------------
     def search(
         self,
         query: str,
@@ -121,15 +119,13 @@ class SearchEngine:
         scored.sort(key=lambda x: x[0], reverse=True)
         return self._format_results(scored[:top_k])
 
-    # -----------------------------------------------------------------
-    # Private pipeline steps (documented, easy to follow)
-    # -----------------------------------------------------------------
+    # Private pipeline steps
     def _prepare_bm25_query(self, query: str) -> list[str]:
-        """Tokenise with lemmatisation and stopword removal (for BM25 recall)."""
+        """Tokenize with lemmatisation and stopword removal (for BM25 recall)."""
         return self.bm25_processor.process_text(query)
 
     def _prepare_proximity_query(self, query: str) -> list[str]:
-        """Tokenise without lemmatisation, keeping stopwords (for exact proximity matching)."""
+        """Tokenize without lemmatisation, keeping stopwords (for exact proximity matching)."""
         return self.proximity_processor.process_text(query)
 
     def _generate_candidates(self, bm25_tokens: list[str]) -> set[str]:
