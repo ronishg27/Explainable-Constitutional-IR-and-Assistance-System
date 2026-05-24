@@ -1,0 +1,2564 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Constitution JSON Builder v3 - Persistent Editor</title>
+        <style>
+            :root {
+                --bg-page: #f5f6f8;
+                --bg-wrapper: #fff;
+                --bg-toolbar: #f0f2f5;
+                --bg-box: #fff;
+                --bg-input: #fff;
+                --bg-badge: #e0e0e0;
+                --bg-explanation: #fff8e1;
+                --bg-provision: #e3f2fd;
+                --bg-validation-ok: #e8f5e9;
+                --bg-validation-warn: #fff8e1;
+                --text-primary: #1a1a2e;
+                --text-secondary: #555;
+                --text-muted: #999;
+                --text-label: #444;
+                --border-box: #e0e0e0;
+                --border-input: #d0d0d0;
+                --border-box-hover: #b0b0b0;
+                --shadow-wrapper: 0 2px 12px rgba(0,0,0,0.08);
+                --color-primary: #4a6cf7;
+                --color-primary-hover: #3b5de7;
+                --color-danger: #e74c3c;
+                --color-danger-hover: #c0392b;
+                --color-success: #00b894;
+                --color-part: #4a6cf7;
+                --color-article: #6c5ce7;
+                --color-clause: #00b894;
+                --color-subclause: #fdcb6e;
+                --toast-bg: #323232;
+                --toast-text: #fff;
+                --modal-overlay: rgba(0,0,0,0.45);
+                --drag-color: #ccc;
+                --highlight-bg: #fff3cd;
+                --search-match-bg: #fff176;
+                --progress-bar: #4a6cf7;
+                --sidebar-bg: #f8f9fa;
+                --sidebar-width: 260px;
+            }
+            [data-theme="dark"] {
+                --bg-page: #0f0f1a;
+                --bg-wrapper: #1a1a2e;
+                --bg-toolbar: #222240;
+                --bg-box: #1e1e38;
+                --bg-input: #2a2a48;
+                --bg-badge: #3a3a58;
+                --bg-explanation: #2a2510;
+                --bg-provision: #102a3a;
+                --bg-validation-ok: #0d2a0d;
+                --bg-validation-warn: #2a2210;
+                --text-primary: #e0e0f0;
+                --text-secondary: #aaa;
+                --text-muted: #666;
+                --text-label: #bbb;
+                --border-box: #3a3a58;
+                --border-input: #4a4a68;
+                --border-box-hover: #6a6a88;
+                --shadow-wrapper: 0 2px 12px rgba(0,0,0,0.4);
+                --color-primary: #6b8aff;
+                --color-primary-hover: #5a7aee;
+                --color-danger: #ff6b6b;
+                --color-danger-hover: #e05555;
+                --color-success: #00d9a6;
+                --color-part: #6b8aff;
+                --color-article: #8b7cf7;
+                --color-clause: #00d9a6;
+                --color-subclause: #ffd93d;
+                --toast-bg: #555;
+                --toast-text: #fff;
+                --modal-overlay: rgba(0,0,0,0.7);
+                --drag-color: #555;
+                --highlight-bg: #3a3010;
+                --search-match-bg: #5a5010;
+                --progress-bar: #6b8aff;
+                --sidebar-bg: #151528;
+            }
+
+            * { box-sizing: border-box; }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+                margin: 0; padding: 20px;
+                background: var(--bg-page);
+                color: var(--text-primary);
+                transition: background 0.2s, color 0.2s;
+                font-size: 15px;
+            }
+            body.sidebar-open .app-wrapper { margin-left: var(--sidebar-width); }
+            h2 { margin-top: 0; font-size: 24px; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
+            h3 { margin: 0; font-size: 17px; }
+            h4 { margin: 0; font-size: 15px; }
+            h5 { margin: 0; font-size: 14px; }
+
+            .app-wrapper {
+                max-width: 1100px;
+                margin: 0 auto;
+                background: var(--bg-wrapper);
+                border-radius: 12px;
+                box-shadow: var(--shadow-wrapper);
+                padding: 24px;
+                transition: background 0.2s, margin-left 0.25s;
+            }
+
+            .save-indicator {
+                font-size: 12px;
+                color: var(--text-muted);
+                transition: opacity 0.3s;
+            }
+            .save-indicator.saving { color: var(--color-primary); }
+            .save-indicator.saved { color: var(--color-success); }
+            .save-indicator.unsaved-dot::before {
+                content: "";
+                display: inline-block;
+                width: 8px; height: 8px;
+                border-radius: 50%;
+                background: var(--color-danger);
+                margin-right: 6px;
+                vertical-align: middle;
+            }
+
+            .box {
+                border: 1px solid var(--border-box);
+                border-radius: 8px;
+                padding: 12px;
+                margin: 8px 0;
+                position: relative;
+                background: var(--bg-box);
+                transition: border-color 0.15s, background 0.2s, opacity 0.2s, box-shadow 0.3s;
+                scroll-margin-top: 70px;
+            }
+            .box:hover { border-color: var(--border-box-hover); }
+            .box.part-box { border-left: 4px solid var(--color-part); }
+            .box.article-box { border-left: 4px solid var(--color-article); }
+            .box.clause-box { border-left: 4px solid var(--color-clause); }
+            .box.subclause-box { border-left: 4px solid var(--color-subclause); }
+            .box.highlight-new {
+                animation: highlightPulse 1.5s ease-out;
+            }
+            @keyframes highlightPulse {
+                0% { box-shadow: 0 0 0 4px var(--color-primary); background: var(--highlight-bg); }
+                100% { box-shadow: 0 0 0 0 transparent; background: var(--bg-box); }
+            }
+            .box.drag-over-top { border-top: 3px solid var(--color-primary); }
+            .box.drag-over-bottom { border-bottom: 3px solid var(--color-primary); }
+            .box.dragging { opacity: 0.4; }
+
+            button {
+                margin: 4px 2px;
+                cursor: pointer;
+                font-size: 13px;
+                border: 1px solid var(--border-input);
+                border-radius: 6px;
+                padding: 6px 14px;
+                background: var(--bg-box);
+                color: var(--text-primary);
+                transition: background 0.15s, box-shadow 0.15s, color 0.2s;
+            }
+            button:hover { box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+            button:disabled { opacity: 0.5; cursor: default; }
+            textarea, input[type="text"], input[type="number"] {
+                font-family: inherit;
+                font-size: 14px;
+                border: 1px solid var(--border-input);
+                border-radius: 5px;
+                padding: 6px 10px;
+                transition: border-color 0.15s, background 0.2s, color 0.2s;
+                background: var(--bg-input);
+                color: var(--text-primary);
+            }
+            textarea:focus, input:focus { border-color: var(--color-primary); outline: none; box-shadow: 0 0 0 2px rgba(74,108,247,0.15); }
+            textarea.has-error, input.has-error { border-color: var(--color-danger); box-shadow: 0 0 0 2px rgba(231,76,60,0.15); }
+            textarea.has-warn, input.has-warn { border-color: #ff9800; box-shadow: 0 0 0 2px rgba(255,152,0,0.15); }
+            textarea { width: 70%; resize: none; overflow-y: hidden; min-height: 36px; }
+            #output { min-height: 200px; font-family: "JetBrains Mono", "Fira Code", monospace; font-size: 13px; width: 100%; resize: vertical; overflow-y: auto; }
+
+            .toolbar {
+                background: var(--bg-toolbar);
+                padding: 12px 16px;
+                margin-bottom: 20px;
+                border-radius: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                align-items: center;
+                transition: background 0.2s, box-shadow 0.2s;
+                position: sticky;
+                top: 10px;
+                z-index: 100;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            }
+            .toolbar.stuck { box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+            .toolbar .spacer { flex: 1; }
+            .toolbar button { background: var(--bg-box); border: 1px solid var(--border-input); font-size: 13px; }
+            .toolbar button.primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+            .toolbar button.primary:hover { background: var(--color-primary-hover); }
+            .toolbar button.danger { background: var(--color-danger); color: #fff; border-color: var(--color-danger); }
+            .toolbar button.danger:hover { background: var(--color-danger-hover); }
+            .toolbar button.theme-btn { font-size: 18px; padding: 4px 10px; line-height: 1; }
+            .toolbar button.active-mode { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+            .toolbar .search-input {
+                border: 1px solid var(--border-input);
+                border-radius: 5px;
+                padding: 4px 10px;
+                font-size: 13px;
+                background: var(--bg-input);
+                color: var(--text-primary);
+                width: 180px;
+                transition: border-color 0.15s;
+            }
+            .toolbar .search-input:focus { border-color: var(--color-primary); outline: none; }
+            .toolbar .search-count { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+
+            .status-bar {
+                font-size: 13px;
+                padding: 4px 10px;
+                border-radius: 5px;
+                max-width: 350px;
+                word-break: break-word;
+            }
+            .status-bar.info { background: var(--bg-validation-ok); color: #2e7d32; }
+            .status-bar.error { background: #ffebee; color: #c62828; }
+            .status-bar.warn { background: var(--bg-validation-warn); color: #e65100; }
+            [data-theme="dark"] .status-bar.info { color: #81c784; }
+            [data-theme="dark"] .status-bar.error { background: #4a1a1a; color: #ef9a9a; }
+            [data-theme="dark"] .status-bar.warn { color: #ffb74d; }
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .section-header .header-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 0;
+            }
+            .section-header .badge {
+                font-size: 11px;
+                background: var(--bg-badge);
+                padding: 2px 8px;
+                border-radius: 10px;
+                color: var(--text-secondary);
+                font-weight: 600;
+                transition: background 0.2s, color 0.2s;
+            }
+            .section-body { padding: 4px 0; }
+            .section-collapsed > .section-body { display: none; }
+            .section-collapsed > .section-header { margin-bottom: 0; }
+
+            .collapse-btn {
+                background: var(--bg-badge);
+                border: 1px solid var(--border-input);
+                border-radius: 4px;
+                width: 24px;
+                height: 24px;
+                line-height: 20px;
+                padding: 0;
+                font-weight: bold;
+                font-size: 12px;
+                cursor: pointer;
+                flex-shrink: 0;
+                color: var(--text-primary);
+            }
+
+            .drag-handle {
+                cursor: grab;
+                color: var(--drag-color);
+                font-size: 16px;
+                padding: 2px 4px;
+                user-select: none;
+                line-height: 1;
+                touch-action: none;
+            }
+            .drag-handle:active { cursor: grabbing; }
+
+            .remove-btn {
+                background-color: var(--color-danger);
+                color: white;
+                border: none;
+                padding: 4px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+            }
+            .remove-btn:hover { background-color: var(--color-danger-hover); }
+
+            .dup-btn {
+                background-color: #607d8b;
+                color: white;
+                border: none;
+                padding: 2px 8px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+                margin: 0 2px;
+            }
+            .dup-btn:hover { background-color: #455a64; }
+
+            .explanation-box, .provision-box {
+                background-color: var(--bg-explanation);
+                border-left: 3px solid #ffaa00;
+                border-radius: 4px;
+                padding: 8px 10px;
+                margin: 6px 0;
+            }
+            .provision-box {
+                background-color: var(--bg-provision);
+                border-left-color: #1976d2;
+            }
+            .explanation-box label, .provision-box label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 4px; }
+            .explanation-text, .provision-text { width: 90% !important; }
+
+            .add-btn {
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                padding: 3px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                cursor: pointer;
+                margin: 2px;
+            }
+            .add-btn:hover { background-color: #43a047; }
+            .add-btn.orange { background-color: #ff9800; }
+            .add-btn.orange:hover { background-color: #f57c00; }
+
+            label.field-label {
+                font-weight: 600;
+                display: inline-block;
+                width: 110px;
+                vertical-align: top;
+                font-size: 14px;
+                color: var(--text-label);
+                margin-top: 6px;
+                flex-shrink: 0;
+            }
+            .field-row { margin: 5px 0; display: flex; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
+
+            hr { margin: 16px 0; border: none; border-top: 1px solid var(--border-box); }
+
+            .validation-report {
+                background: var(--bg-validation-warn);
+                border: 1px solid #ffe082;
+                border-radius: 8px;
+                padding: 12px 16px;
+                margin: 10px 0;
+                max-height: 400px;
+                overflow-y: auto;
+            }
+            .validation-report h4 { margin: 0 0 8px 0; color: #e65100; }
+            .validation-report ul { margin: 0; padding-left: 20px; }
+            .validation-report li { font-size: 13px; margin: 3px 0; }
+            .validation-report .warn-item { color: #e65100; }
+            .validation-report .err-item { color: #c62828; font-weight: 600; }
+            [data-theme="dark"] .validation-report { border-color: #665500; }
+            [data-theme="dark"] .validation-report .err-item { color: #ef9a9a; }
+            [data-theme="dark"] .validation-report .warn-item { color: #ffb74d; }
+            [data-theme="dark"] .validation-report h4 { color: #ffb74d; }
+
+            .empty-state {
+                text-align: center;
+                padding: 50px 20px;
+                color: var(--text-muted);
+                border: 2px dashed var(--border-box);
+                border-radius: 10px;
+                margin: 10px 0;
+                transition: border-color 0.2s, color 0.2s;
+            }
+            .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; }
+            .empty-state h3 { color: var(--text-primary); margin-bottom: 8px; }
+            .empty-state p { margin: 6px 0; font-size: 14px; line-height: 1.5; }
+            .empty-state .shortcuts { font-size: 12px; margin-top: 16px; color: var(--text-muted); }
+            .empty-state .shortcuts code {
+                background: var(--bg-badge); padding: 2px 8px; border-radius: 4px;
+                font-size: 12px; margin: 0 2px;
+            }
+
+            .count-summary {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+                margin: 8px 0;
+                font-size: 14px;
+            }
+            .count-summary span {
+                background: var(--bg-toolbar);
+                padding: 4px 12px;
+                border-radius: 6px;
+                transition: background 0.2s;
+            }
+            .count-summary strong { color: var(--text-primary); }
+
+            .toast-container {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                pointer-events: none;
+            }
+            .toast {
+                background: var(--toast-bg);
+                color: var(--toast-text);
+                padding: 10px 18px;
+                border-radius: 8px;
+                font-size: 13px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                animation: toastIn 0.25s ease-out;
+                pointer-events: auto;
+                max-width: 360px;
+            }
+            .toast.leaving { animation: toastOut 0.2s ease-in forwards; }
+            @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+            @keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(40px); } }
+
+            .mini-btn {
+                background: none; border: none; color: var(--text-muted);
+                cursor: pointer; font-size: 12px; padding: 2px 6px;
+                border-radius: 4px; margin: 0 2px;
+            }
+            .mini-btn:hover { background: var(--bg-badge); color: var(--text-primary); }
+
+            .copy-path {
+                font-size: 11px; color: var(--text-muted); cursor: pointer;
+                padding: 1px 6px; border-radius: 3px; user-select: none;
+            }
+            .copy-path:hover { background: var(--bg-badge); color: var(--text-primary); }
+
+            .inline-insert {
+                text-align: center;
+                height: 6px;
+                position: relative;
+                cursor: pointer;
+                opacity: 0;
+                transition: opacity 0.15s;
+            }
+            .box:hover + .inline-insert, .inline-insert:hover { opacity: 1; }
+            .inline-insert::after {
+                content: "+";
+                display: inline-block;
+                width: 22px; height: 22px;
+                line-height: 20px;
+                border-radius: 50%;
+                background: var(--color-primary);
+                color: #fff;
+                font-size: 14px;
+                font-weight: bold;
+                position: absolute;
+                left: 30px;
+                top: -10px;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            }
+
+            /* Progress bar */
+            .progress-wrapper {
+                margin: 8px 0 12px 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .progress-bar {
+                flex: 1;
+                height: 6px;
+                background: var(--bg-toolbar);
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            .progress-bar-fill {
+                height: 100%;
+                width: 0%;
+                background: var(--progress-bar);
+                border-radius: 3px;
+                transition: width 0.4s ease;
+            }
+            .progress-label {
+                font-size: 12px;
+                color: var(--text-secondary);
+                white-space: nowrap;
+            }
+
+            /* Modal */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: var(--modal-overlay);
+                z-index: 10000;
+                justify-content: center;
+                align-items: center;
+                animation: modalFadeIn 0.15s ease-out;
+            }
+            .modal-overlay.open { display: flex; }
+            @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .modal-box {
+                background: var(--bg-wrapper);
+                border-radius: 12px;
+                padding: 24px;
+                min-width: 320px;
+                max-width: 480px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+                animation: modalSlideIn 0.2s ease-out;
+            }
+            @keyframes modalSlideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            .modal-box h3 { margin: 0 0 12px 0; }
+            .modal-box p { margin: 0 0 16px 0; color: var(--text-secondary); font-size: 14px; line-height: 1.5; }
+            .modal-buttons { display: flex; gap: 8px; justify-content: flex-end; }
+            .modal-buttons button { min-width: 80px; }
+            .modal-buttons .modal-confirm { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+            .modal-buttons .modal-confirm:hover { background: var(--color-primary-hover); }
+            .modal-buttons .modal-danger { background: var(--color-danger); color: #fff; border-color: var(--color-danger); }
+            .modal-buttons .modal-danger:hover { background: var(--color-danger-hover); }
+
+            /* Scroll buttons */
+            .scroll-btn {
+                position: fixed;
+                width: 44px; height: 44px;
+                border-radius: 50%;
+                background: var(--color-primary);
+                color: #fff;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 200;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                transition: transform 0.2s, background 0.2s;
+            }
+            .scroll-btn.show { display: flex; }
+            .scroll-btn:hover { transform: scale(1.1); background: var(--color-primary-hover); }
+            #scrollTopBtn { bottom: 80px; right: 30px; }
+            #scrollBottomBtn { bottom: 30px; right: 30px; }
+
+            /* Search & filter */
+            .search-hidden { display: none !important; }
+            .search-match {
+                background: var(--search-match-bg) !important;
+                border-radius: 2px;
+                padding: 0 2px;
+            }
+
+            /* Skeleton */
+            .skeleton {
+                background: linear-gradient(90deg, var(--bg-toolbar) 25%, var(--bg-box) 50%, var(--bg-toolbar) 75%);
+                background-size: 200% 100%;
+                animation: shimmer 1.5s infinite;
+                border-radius: 6px;
+                height: 20px;
+                margin: 8px 0;
+            }
+            @keyframes shimmer {
+                0% { background-position: 200% 0; }
+                100% { background-position: -200% 0; }
+            }
+            .skeleton-wrapper { padding: 20px; }
+
+            /* Breadcrumbs */
+            .breadcrumbs {
+                font-size: 12px;
+                color: var(--text-muted);
+                margin-bottom: 12px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .breadcrumbs span { cursor: pointer; }
+            .breadcrumbs span:hover { color: var(--color-primary); text-decoration: underline; }
+            .breadcrumbs .sep { color: var(--text-muted); cursor: default; }
+            .breadcrumbs .sep:hover { text-decoration: none; color: var(--text-muted); }
+
+            /* TOC / Outline sidebar */
+            .toc-sidebar {
+                position: fixed;
+                top: 0; left: 0;
+                width: var(--sidebar-width);
+                height: 100vh;
+                background: var(--sidebar-bg);
+                border-right: 1px solid var(--border-box);
+                z-index: 300;
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                overflow-y: auto;
+                padding: 16px;
+            }
+            .toc-sidebar.open { transform: translateX(0); }
+            .toc-sidebar h3 {
+                font-size: 15px;
+                margin: 0 0 12px 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .toc-sidebar .toc-close {
+                background: none;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                color: var(--text-primary);
+                padding: 0 4px;
+            }
+            .toc-sidebar .toc-item {
+                display: block;
+                padding: 4px 8px;
+                font-size: 13px;
+                color: var(--text-secondary);
+                cursor: pointer;
+                border-radius: 4px;
+                margin: 1px 0;
+                text-decoration: none;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .toc-sidebar .toc-item:hover { background: var(--bg-toolbar); color: var(--text-primary); }
+            .toc-sidebar .toc-item.toc-part {
+                font-weight: 600;
+                color: var(--color-part);
+                padding-left: 4px;
+                margin-top: 6px;
+            }
+            .toc-sidebar .toc-item.toc-article { padding-left: 20px; color: var(--color-article); }
+            .toc-sidebar .toc-item.toc-clause { padding-left: 36px; font-size: 12px; color: var(--color-clause); }
+            .toc-sidebar .toc-item.toc-subclause { padding-left: 52px; font-size: 11px; color: var(--color-subclause); }
+
+            /* Preview mode */
+            .preview-mode .box button:not(.collapse-btn):not(.theme-btn),
+            .preview-mode .box .add-btn,
+            .preview-mode .box .remove-btn,
+            .preview-mode .box .dup-btn,
+            .preview-mode .box .drag-handle,
+            .preview-mode .box .inline-insert { display: none; }
+            .preview-mode .box .section-header .header-left { pointer-events: none; }
+            .preview-mode .box { border-left-width: 2px; }
+            .preview-mode .field-row { display: flex; }
+            .preview-mode .field-row label { width: auto; min-width: 80px; }
+            .preview-mode .field-row input,
+            .preview-mode .field-row textarea { border: none; background: transparent; padding: 4px 0; resize: none; color: var(--text-primary); outline: none; box-shadow: none; }
+            .preview-mode .field-row input:focus,
+            .preview-mode .field-row textarea:focus { box-shadow: none; }
+            .preview-mode .box .explanation-box textarea,
+            .preview-mode .box .provision-box textarea { width: 100% !important; }
+            .preview-mode #parts > div:last-child button { display: none; }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                body { padding: 8px; }
+                .app-wrapper { padding: 12px; }
+                .toolbar { flex-wrap: wrap; gap: 4px; padding: 8px; }
+                .toolbar .search-input { width: 120px; }
+                .toolbar button { font-size: 12px; padding: 4px 8px; }
+                .field-row { flex-direction: column; }
+                label.field-label { width: auto; }
+                textarea { width: 100%; }
+                h2 { font-size: 20px; }
+                #output { font-size: 12px; }
+                body.sidebar-open .app-wrapper { margin-left: 0; }
+                .toc-sidebar { width: 220px; }
+                .scroll-btn { width: 38px; height: 38px; font-size: 16px; }
+                #scrollTopBtn { bottom: 56px; right: 16px; }
+                #scrollBottomBtn { bottom: 16px; right: 16px; }
+            }
+            @media (max-width: 480px) {
+                .toolbar .search-input { width: 80px; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="toast-container" id="toastContainer"></div>
+
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-box">
+                <h3 id="modalTitle">Confirm</h3>
+                <p id="modalMessage">Are you sure?</p>
+                <div class="modal-buttons">
+                    <button onclick="modalCancel()">Cancel</button>
+                    <button id="modalConfirmBtn" onclick="modalConfirm()" class="modal-confirm">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="toc-sidebar" id="tocSidebar">
+            <h3>
+                Outline
+                <button class="toc-close" onclick="toggleTOC()" title="Close outline">&times;</button>
+            </h3>
+            <div id="tocContent"></div>
+        </div>
+
+        <button class="scroll-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Scroll to top">&#8679;</button>
+        <button class="scroll-btn" id="scrollBottomBtn" onclick="window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})" title="Scroll to bottom">&#8681;</button>
+
+        <div class="app-wrapper">
+            <h2>
+                Constitution Builder v3
+                <span class="save-indicator" id="saveIndicator"></span>
+            </h2>
+
+            <div class="toolbar" id="mainToolbar">
+                <button onclick="loadFromFile()" title="Load a JSON file (Ctrl+O)">Load JSON File</button>
+                <button onclick="saveToFile()" class="primary" title="Save to file (Ctrl+S)">Save to File</button>
+                <button onclick="loadFromLocalStorage()" title="Restore last auto-saved session">Load Last Session</button>
+                <button onclick="validateAll()" title="Run validation (Ctrl+Shift+V)">Validate</button>
+                <button onclick="collapseAll(true)" title="Collapse all sections">Collapse All</button>
+                <button onclick="collapseAll(false)" title="Expand all sections">Expand All</button>
+                <button onclick="showClearModal()" class="danger" title="Clear all data">Clear All</button>
+                <span class="spacer"></span>
+                <input class="search-input" id="searchInput" type="search" placeholder="Search..." oninput="doSearch(this.value)" title="Search across all fields">
+                <span class="search-count" id="searchCount"></span>
+                <button onclick="toggleTOC()" title="Toggle outline sidebar (Ctrl+\)">&#9776; Outline</button>
+                <button onclick="togglePreview()" id="previewToggle" title="Toggle preview/read mode (Ctrl+Shift+P)">&#128065; Preview</button>
+                <button onclick="undo()" id="undoBtn" title="Undo (Ctrl+Z)" disabled>&#8630;</button>
+                <button onclick="redo()" id="redoBtn" title="Redo (Ctrl+Shift+Z)" disabled>&#8631;</button>
+                <button class="theme-btn" onclick="toggleTheme()" id="themeToggle" title="Toggle theme">&#127769;</button>
+                <span id="status" class="status-bar"></span>
+            </div>
+
+            <div class="breadcrumbs" id="breadcrumbs"></div>
+
+            <div id="progressSection">
+                <div class="progress-wrapper">
+                    <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+                    <span class="progress-label" id="progressLabel">0% complete</span>
+                </div>
+            </div>
+
+            <div class="box">
+                <h3>Document</h3>
+                <div class="field-row">
+                    <label class="field-label">Title:</label>
+                    <input id="title" style="flex:1; min-width:200px;" placeholder="Constitution of Nepal, 2072 (2015)">
+                </div>
+                <div class="field-row">
+                    <label class="field-label">Year (NP):</label>
+                    <input id="year_np" type="number" style="width:100px;">
+                    <label class="field-label" style="width:80px;">Year (EN):</label>
+                    <input id="year_en" type="number" style="width:100px;">
+                </div>
+            </div>
+
+            <div id="parts">
+                <div class="empty-state" id="emptyState">
+                    <div class="big-icon">&#128196;</div>
+                    <h3>No parts yet</h3>
+                    <p>Click <strong>"+ Add Part"</strong> below to start building your constitution JSON.</p>
+                    <p>Or load an existing file with <strong>"Load JSON File"</strong>.</p>
+                    <div class="shortcuts">
+                        Keyboard shortcuts:
+                        <code>Ctrl+S</code> Generate &amp; Save
+                        <code>Ctrl+Z</code> Undo
+                        <code>Ctrl+Shift+Z</code> Redo
+                        <code>?</code> Show all shortcuts
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin: 12px 0; display: flex; gap: 8px; flex-wrap: wrap;">
+                <button onclick="addPart()" style="background:var(--color-part); color:#fff; border-color:var(--color-part);">+ Add Part</button>
+                <button onclick="generateAndSave()" style="background:var(--color-success); color:#fff; border-color:var(--color-success);">Generate &amp; Save JSON</button>
+            </div>
+
+            <hr>
+            <h3>Output (Editable JSON)</h3>
+            <textarea id="output" placeholder="JSON will appear here..."></textarea>
+            <div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+                <button onclick="loadFromTextarea()">Load from JSON above</button>
+                <button onclick="copyOutput()">Copy to Clipboard</button>
+            </div>
+
+            <div id="validation-container"></div>
+
+            <div id="count-summary" class="count-summary"></div>
+        </div>
+
+        <script>
+            let isRenderingData = false;
+            let isDirty = false;
+            let undoStack = [];
+            let undoPosition = -1;
+            let previewMode = false;
+            let modalResolve = null;
+            let dragSource = null;
+            const MAX_UNDO = 30;
+
+            // Data cache: avoids DOM traversal on repeated calls
+            let _dataCache = null;
+            let _dataCacheStr = "";
+
+            // Batch resize: queue elements and measure once per rAF
+            let _resizeSet = new Set();
+            let _resizePending = false;
+            function queueResize(el) { _resizeSet.add(el); if (!_resizePending) { _resizePending = true; requestAnimationFrame(flushResize); } }
+            function flushResize() {
+                _resizeSet.forEach(el => {
+                    if (document.body.contains(el)) {
+                        el.style.height = "auto";
+                        el.style.height = Math.max(el.scrollHeight, 36) + "px";
+                    }
+                });
+                _resizeSet.clear();
+                _resizePending = false;
+            }
+
+            function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+            // Debounced versions of heavy updates
+            const debouncedUpdateCounts = debounce(() => { updateCountSummary(); updateProgress(); }, 250);
+            const debouncedAutoSave = debounce(() => doAutoSave(), 3000);
+
+            const KNOWN_FIELDS = new Set([
+                "document", "title", "year_np", "year_en", "parts",
+                "part_no", "part_title", "part_description",
+                "articles", "article_no",
+                "text", "clauses", "clause_no",
+                "sub_clauses", "letter",
+                "explanation", "provision", "proviso"
+            ]);
+
+            function toast(msg, duration) {
+                const container = document.getElementById("toastContainer");
+                const el = document.createElement("div");
+                el.className = "toast";
+                el.textContent = msg;
+                container.appendChild(el);
+                setTimeout(() => {
+                    el.classList.add("leaving");
+                    setTimeout(() => el.remove(), 200);
+                }, duration || 2000);
+            }
+
+            function markDirty() {
+                if (isRenderingData) return;
+                isDirty = true;
+                _dataCache = null;
+                const ind = document.getElementById("saveIndicator");
+                ind.textContent = "Unsaved";
+                ind.className = "save-indicator unsaved-dot";
+                document.title = "Constitution Builder v3 - Unsaved";
+                debouncedAutoSave();
+                debouncedUpdateCounts();
+            }
+
+            function doAutoSave() {
+                const ind = document.getElementById("saveIndicator");
+                ind.textContent = "Saving...";
+                ind.className = "save-indicator saving";
+                try {
+                    const data = collectData();
+                    const jsonStr = JSON.stringify(data, null, 2);
+                    localStorage.setItem("constitutionData", jsonStr);
+                    ind.textContent = "Saved";
+                    ind.className = "save-indicator saved";
+                    document.title = "Constitution Builder v3";
+                    isDirty = false;
+                    pushUndo(data);
+                    updateProgress();
+                    updateTOC();
+                } catch (e) {
+                    ind.textContent = "Save failed";
+                    ind.className = "save-indicator";
+                }
+            }
+
+            function pushUndo(data) {
+                const json = JSON.stringify(data);
+                // Skip duplicate undo state
+                const lastJson = undoPosition >= 0 ? JSON.stringify(undoStack[undoPosition]) : null;
+                if (lastJson === json) return;
+                const clone = JSON.parse(json);
+                undoStack = undoStack.slice(0, undoPosition + 1);
+                undoStack.push(clone);
+                if (undoStack.length > MAX_UNDO) undoStack.shift();
+                undoPosition = undoStack.length - 1;
+                updateUndoButtons();
+            }
+
+            function undo() {
+                if (undoPosition <= 0) { toast("Nothing to undo", 1500); return; }
+                undoPosition--;
+                const data = JSON.parse(JSON.stringify(undoStack[undoPosition]));
+                renderData(data);
+                toast("Undone", 1500);
+                updateUndoButtons();
+            }
+
+            function redo() {
+                if (undoPosition >= undoStack.length - 1) { toast("Nothing to redo", 1500); return; }
+                undoPosition++;
+                const data = JSON.parse(JSON.stringify(undoStack[undoPosition]));
+                renderData(data);
+                toast("Redone", 1500);
+                updateUndoButtons();
+            }
+
+            function resizeAllTextareas(container) {
+                (container || document).querySelectorAll("textarea:not(#output)").forEach(el => {
+                    el.style.height = "auto";
+                    el.style.height = Math.max(el.scrollHeight, 36) + "px";
+                });
+            }
+
+            function updateUndoButtons() {
+                document.getElementById("undoBtn").disabled = undoPosition <= 0;
+                document.getElementById("redoBtn").disabled = undoPosition >= undoStack.length - 1;
+            }
+
+            // Input delegation: single listener on #parts for all inputs/textareas
+            function setupInputDelegation() {
+                document.getElementById("parts").addEventListener("input", (e) => {
+                    const el = e.target;
+                    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+                        if (!isRenderingData) {
+                            markDirty();
+                            queueResize(el);
+                            validateField(el);
+                        }
+                        // Update display numbers and badges via data attributes
+                        const box = el.closest(".box");
+                        if (!box) return;
+                        if (el.classList.contains("part_no")) {
+                            box.querySelector(".part-display-no").textContent = el.value;
+                            const cp = box.querySelector(".copy-path");
+                            if (cp) cp.setAttribute("data-path", "Part " + el.value);
+                        }
+                        if (el.classList.contains("article_no")) {
+                            box.querySelector(".article-display-no").textContent = el.value;
+                            const partNo = box.closest(".part-box")?.querySelector(".part_no")?.value || "";
+                            const cp = box.querySelector(".copy-path");
+                            if (cp) cp.setAttribute("data-path", "Part " + partNo + ", Article " + el.value);
+                        }
+                        if (el.classList.contains("clause_no")) {
+                            box.querySelector(".clause-display-no").textContent = el.value;
+                        }
+                        if (el.classList.contains("letter")) {
+                            box.querySelector(".sc-letter-display").textContent = el.value;
+                        }
+                        if (el.classList.contains("part_title")) updatePartBadge(box);
+                        if (el.classList.contains("article_text") || el.matches(".article-box .article_title")) updateArticleBadge(box);
+                    }
+                }, { passive: true });
+
+                // Also delegate for document-level fields
+                document.getElementById("title").addEventListener("input", markDirty, { passive: true });
+                document.getElementById("year_np").addEventListener("input", markDirty, { passive: true });
+                document.getElementById("year_en").addEventListener("input", markDirty, { passive: true });
+            }
+
+            function setStatus(msg, type) {
+                const el = document.getElementById("status");
+                el.textContent = msg;
+                el.className = "status-bar " + (type || "info");
+                if (type !== "error") {
+                    clearTimeout(el._timeout);
+                    el._timeout = setTimeout(() => {
+                        if (el.textContent === msg) { el.textContent = ""; el.className = "status-bar"; }
+                    }, 5000);
+                }
+            }
+
+            // --- Progress ---
+            function updateProgress() {
+                const data = collectData();
+                const required = ["title", "year_np", "year_en"];
+                let filled = data.document.title ? 1 : 0;
+                if (data.document.year_np) filled++;
+                if (data.document.year_en) filled++;
+                let totalParts = 0, filledParts = 0;
+                let totalArticles = 0, filledArticles = 0;
+                let totalClauses = 0, filledClauses = 0;
+                let totalSubs = 0, filledSubs = 0;
+
+                data.parts.forEach(p => {
+                    totalParts++;
+                    if (p.part_title) filledParts++;
+                    p.articles.forEach(a => {
+                        totalArticles++;
+                        if (a.title) filledArticles++;
+                        (a.clauses || []).forEach(c => {
+                            totalClauses++;
+                            if (c.text) filledClauses++;
+                            (c.sub_clauses || []).forEach(s => {
+                                totalSubs++;
+                                if (s.text) filledSubs++;
+                            });
+                        });
+                    });
+                });
+
+                const totalFields = required.length + totalParts + totalArticles + totalClauses + totalSubs;
+                const filledFields = filled + filledParts + filledArticles + filledClauses + filledSubs;
+                const pct = totalFields ? Math.round((filledFields / totalFields) * 100) : 0;
+
+                document.getElementById("progressFill").style.width = pct + "%";
+                document.getElementById("progressLabel").textContent = pct + "% complete";
+            }
+
+            // --- Breadcrumbs ---
+            function updateBreadcrumbs(path) {
+                const el = document.getElementById("breadcrumbs");
+                if (!path) { el.innerHTML = ""; return; }
+                const parts = path.split(" > ");
+                el.innerHTML = parts.map((p, i) => {
+                    if (i === parts.length - 1) return `<span>${escapeHtml(p)}</span>`;
+                    return `<span>${escapeHtml(p)}</span><span class="sep"> &rsaquo; </span>`;
+                }).join("");
+            }
+
+            // --- Custom Modal ---
+            function showModal(title, message, danger) {
+                return new Promise((resolve) => {
+                    document.getElementById("modalTitle").textContent = title;
+                    document.getElementById("modalMessage").textContent = message;
+                    const btn = document.getElementById("modalConfirmBtn");
+                    btn.className = "modal-" + (danger ? "danger" : "confirm");
+                    btn.textContent = danger ? "Remove" : "OK";
+                    document.getElementById("modalOverlay").classList.add("open");
+                    modalResolve = resolve;
+                });
+            }
+
+            function modalConfirm() {
+                document.getElementById("modalOverlay").classList.remove("open");
+                if (modalResolve) modalResolve(true);
+                modalResolve = null;
+            }
+
+            function modalCancel() {
+                document.getElementById("modalOverlay").classList.remove("open");
+                if (modalResolve) modalResolve(false);
+                modalResolve = null;
+            }
+
+            // Close modal on escape
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") {
+                    const overlay = document.getElementById("modalOverlay");
+                    if (overlay.classList.contains("open")) modalCancel();
+                }
+            });
+
+            async function removeElement(element) {
+                const name = element.querySelector("h3, h4, h5")?.textContent || "this item";
+                const confirmed = await showModal("Remove item?", "Remove \"" + name.trim() + "\"? This cannot be undone.", true);
+                if (confirmed) {
+                    element.remove();
+                    updateCountSummary();
+                    updateProgress();
+                    markDirty();
+                }
+            }
+
+            async function showClearModal() {
+                const confirmed = await showModal("Clear All Data?", "This will remove all parts and reset the document. Unsaved changes will be lost.", true);
+                if (confirmed) clearAll();
+            }
+
+            function clearAll() {
+                document.getElementById("title").value = "";
+                document.getElementById("year_np").value = "";
+                document.getElementById("year_en").value = "";
+                document.getElementById("parts").innerHTML = '<div class="empty-state" id="emptyState"><div class="big-icon">&#128196;</div><h3>No parts yet</h3><p>Click <strong>"+ Add Part"</strong> below to start building.</p></div>';
+                document.getElementById("output").value = "";
+                document.getElementById("validation-container").innerHTML = "";
+                updateCountSummary();
+                updateProgress();
+                updateTOC();
+                markDirty();
+                toast("Cleared", 1000);
+            }
+
+            // --- Drag & Drop ---
+            function setupDrag(el, containerSelector) {
+                const handle = el.querySelector(".drag-handle");
+                if (!handle) return;
+                handle.draggable = true;
+
+                handle.addEventListener("dragstart", (e) => {
+                    dragSource = el;
+                    e.dataTransfer.effectAllowed = "move";
+                    el.classList.add("dragging");
+                    e.dataTransfer.setData("text/plain", "");
+                });
+
+                handle.addEventListener("dragend", () => {
+                    el.classList.remove("dragging");
+                    document.querySelectorAll(".drag-over-top, .drag-over-bottom").forEach(c => c.classList.remove("drag-over-top", "drag-over-bottom"));
+                    dragSource = null;
+                });
+
+                el.addEventListener("dragover", (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    if (el === dragSource) return;
+                    const rect = el.getBoundingClientRect();
+                    const mid = rect.top + rect.height / 2;
+                    el.classList.toggle("drag-over-top", e.clientY < mid);
+                    el.classList.toggle("drag-over-bottom", e.clientY >= mid);
+                });
+
+                el.addEventListener("dragleave", () => {
+                    el.classList.remove("drag-over-top", "drag-over-bottom");
+                });
+
+                el.addEventListener("drop", (e) => {
+                    e.preventDefault();
+                    el.classList.remove("drag-over-top", "drag-over-bottom");
+                    if (!dragSource || el === dragSource) return;
+                    const parent = el.parentElement;
+                    const rect = el.getBoundingClientRect();
+                    const mid = rect.top + rect.height / 2;
+                    if (e.clientY < mid) {
+                        parent.insertBefore(dragSource, el);
+                    } else {
+                        parent.insertBefore(dragSource, el.nextSibling);
+                    }
+                    markDirty();
+                    if (containerSelector) {
+                        const container = dragSource.closest(containerSelector);
+                        if (container) {
+                            const badges = ["part-count-badge", "clause-count-badge", "sc-count-badge"];
+                            badges.forEach(cls => {
+                                const badge = container.querySelector("." + cls);
+                                if (badge) updatePartBadge ? null : null;
+                            });
+                        }
+                        updatePartBadge ? updatePartBadge(container) : null;
+                    }
+                    updateCountSummary();
+                    updateProgress();
+                    toast("Reordered", 1000);
+                });
+
+                // Touch support
+                let touchStartY, touchDragging = false, touchClone = null, touchTarget = null;
+                handle.addEventListener("touchstart", (e) => {
+                    touchStartY = e.touches[0].clientY;
+                    touchDragging = false;
+                    touchTarget = el;
+                }, { passive: true });
+
+                handle.addEventListener("touchmove", (e) => {
+                    if (!touchTarget) return;
+                    e.preventDefault();
+                    if (!touchDragging) {
+                        touchDragging = true;
+                        touchClone = touchTarget.cloneNode(true);
+                        touchClone.style.position = "fixed";
+                        touchClone.style.pointerEvents = "none";
+                        touchClone.style.opacity = "0.5";
+                        touchClone.style.zIndex = "9999";
+                        touchClone.style.width = touchTarget.offsetWidth + "px";
+                        document.body.appendChild(touchClone);
+                        touchTarget.classList.add("dragging");
+                    }
+                    const y = e.touches[0].clientY;
+                    touchClone.style.left = e.touches[0].clientX - 30 + "px";
+                    touchClone.style.top = (y - 30) + "px";
+
+                    document.querySelectorAll(".drag-over-top, .drag-over-bottom").forEach(c => c.classList.remove("drag-over-top", "drag-over-bottom"));
+                    const candidates = touchTarget.parentElement.querySelectorAll(".box:not(.dragging)");
+                    candidates.forEach(c => {
+                        const r = c.getBoundingClientRect();
+                        const mid = r.top + r.height / 2;
+                        c.classList.toggle("drag-over-top", y < mid);
+                        c.classList.toggle("drag-over-bottom", y >= mid);
+                    });
+                }, { passive: false });
+
+                handle.addEventListener("touchend", () => {
+                    if (!touchDragging || !touchTarget) {
+                        touchTarget = null;
+                        return;
+                    }
+                    touchTarget.classList.remove("dragging");
+                    const dropTarget = document.querySelector(".drag-over-top, .drag-over-bottom");
+                    if (dropTarget && dropTarget !== touchTarget) {
+                        const parent = touchTarget.parentElement;
+                        const isTop = dropTarget.classList.contains("drag-over-top");
+                        parent.insertBefore(touchTarget, isTop ? dropTarget : dropTarget.nextSibling);
+                        markDirty();
+                        updateCountSummary();
+                        updateProgress();
+                        toast("Reordered", 1000);
+                    }
+                    document.querySelectorAll(".drag-over-top, .drag-over-bottom").forEach(c => c.classList.remove("drag-over-top", "drag-over-bottom"));
+                    if (touchClone) { touchClone.remove(); touchClone = null; }
+                    touchDragging = false;
+                    touchTarget = null;
+                });
+            }
+
+            // --- Inline validation ---
+            function validateField(el) {
+                if (!el || isRenderingData) return;
+                const val = el.value?.trim();
+                const placeholder = el.getAttribute("placeholder") || "";
+                el.classList.remove("has-error", "has-warn");
+                if (placeholder && !placeholder.startsWith("(") && placeholder !== "Title:" && !val) {
+                    // Optional field, no validation
+                }
+                // Check for empty required fields
+                const isRequired = el.hasAttribute("required") || el.classList.contains("part_title") || el.classList.contains("article_title") || el.classList.contains("clause_text") || el.classList.contains("subclause_text");
+                if (isRequired && !val) {
+                    el.classList.add("has-error");
+                }
+            }
+
+            function runInlineValidation() {
+                document.querySelectorAll(".part_title, .article_title, .clause_text, .subclause_text, #title").forEach(el => {
+                    validateField(el);
+                });
+                // Check for duplicate numbers
+                const partNos = new Map();
+                document.querySelectorAll("#parts > .box .part_no").forEach(el => {
+                    if (el.value) {
+                        if (partNos.has(el.value)) {
+                            el.classList.add("has-warn");
+                            partNos.get(el.value).classList.add("has-warn");
+                        } else {
+                            partNos.set(el.value, el);
+                        }
+                    }
+                });
+                document.querySelectorAll(".articles").forEach(container => {
+                    const artNos = new Map();
+                    container.querySelectorAll(".article_no").forEach(el => {
+                        if (el.value) {
+                            if (artNos.has(el.value)) {
+                                el.classList.add("has-warn");
+                                artNos.get(el.value).classList.add("has-warn");
+                            } else {
+                                artNos.set(el.value, el);
+                            }
+                        }
+                    });
+                });
+            }
+
+            // --- Search & Filter ---
+            function doSearch(query) {
+                query = query.trim().toLowerCase();
+                const countEl = document.getElementById("searchCount");
+                if (!query) {
+                    document.querySelectorAll(".search-hidden").forEach(el => el.classList.remove("search-hidden"));
+                    document.querySelectorAll(".search-match").forEach(el => {
+                        const text = el.textContent;
+                        el.innerHTML = text;
+                        el.classList.remove("search-match");
+                    });
+                    countEl.textContent = "";
+                    return;
+                }
+
+                document.querySelectorAll(".box").forEach(box => {
+                    const text = box.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    box.classList.toggle("search-hidden", !matches);
+                });
+
+                // Mark matches
+                let matchCount = 0;
+                document.querySelectorAll(".field-row input, .field-row textarea, .explanation-text, .provision-text, .part_description").forEach(el => {
+                    const text = el.value;
+                    if (!text) return;
+                    const lower = text.toLowerCase();
+                    const idx = lower.indexOf(query);
+                    if (idx !== -1) {
+                        matchCount++;
+                        // We don't modify the actual value — just highlight parent
+                        el.closest(".field-row")?.classList.add("search-match");
+                    } else {
+                        el.closest(".field-row")?.classList.remove("search-match");
+                    }
+                });
+
+                countEl.textContent = matchCount ? matchCount + " match" + (matchCount !== 1 ? "es" : "") : "0 matches";
+            }
+
+            // --- TOC / Outline ---
+            function toggleTOC() {
+                const sidebar = document.getElementById("tocSidebar");
+                sidebar.classList.toggle("open");
+                document.body.classList.toggle("sidebar-open");
+                if (sidebar.classList.contains("open")) updateTOC();
+            }
+
+            function updateTOC() {
+                const container = document.getElementById("tocContent");
+                if (!document.getElementById("tocSidebar").classList.contains("open")) return;
+                let html = "";
+                document.querySelectorAll("#parts > .part-box").forEach((part, pi) => {
+                    const pn = part.querySelector(".part_no")?.value || (pi + 1);
+                    const pt = part.querySelector(".part_title")?.value || "Part " + pn;
+                    html += `<a class="toc-item toc-part" onclick="scrollToSection(this)" data-target="${escapeHtml("part-" + pi)}">${escapeHtml(pt)}</a>`;
+                    part.querySelectorAll(".articles > .article-box").forEach((art, ai) => {
+                        const an = art.querySelector(".article_no")?.value || (ai + 1);
+                        const at = art.querySelector(".article_title")?.value || "Article " + an;
+                        html += `<a class="toc-item toc-article" onclick="scrollToSection(this)" data-target="${escapeHtml("part-" + pi + "-art-" + ai)}">${escapeHtml(at)}</a>`;
+                        art.querySelectorAll(".clauses > .clause-box").forEach((cl, ci) => {
+                            const cn = cl.querySelector(".clause_no")?.value || (ci + 1);
+                            const ct = cl.querySelector(".clause_text")?.value;
+                            const label = ct ? ct.substring(0, 40) : "Clause " + cn;
+                            html += `<a class="toc-item toc-clause" onclick="scrollToSection(this)" data-target="${escapeHtml("part-" + pi + "-art-" + ai + "-cl-" + ci)}">${escapeHtml(label)}</a>`;
+                            cl.querySelectorAll(".subclauses > .subclause-box").forEach((sub, si) => {
+                                const sl = sub.querySelector(".letter")?.value || String.fromCharCode(97 + si);
+                                const st = sub.querySelector(".subclause_text")?.value;
+                                const slabel = st ? st.substring(0, 35) : "(" + sl + ")";
+                                html += `<a class="toc-item toc-subclause" onclick="scrollToSection(this)" data-target="${escapeHtml("part-" + pi + "-art-" + ai + "-cl-" + ci + "-sub-" + si)}">${escapeHtml(slabel)}</a>`;
+                            });
+                        });
+                    });
+                });
+                container.innerHTML = html || "<p style='color:var(--text-muted);font-size:13px;'>No content yet</p>";
+
+                // Set data-target IDs
+                document.querySelectorAll("#parts > .part-box").forEach((part, pi) => {
+                    part.id = "part-" + pi;
+                    part.querySelectorAll(".articles > .article-box").forEach((art, ai) => {
+                        art.id = "part-" + pi + "-art-" + ai;
+                        art.querySelectorAll(".clauses > .clause-box").forEach((cl, ci) => {
+                            cl.id = "part-" + pi + "-art-" + ai + "-cl-" + ci;
+                            cl.querySelectorAll(".subclauses > .subclause-box").forEach((sub, si) => {
+                                sub.id = "part-" + pi + "-art-" + ai + "-cl-" + ci + "-sub-" + si;
+                            });
+                        });
+                    });
+                });
+            }
+
+            function scrollToSection(el) {
+                const targetId = el.getAttribute("data-target");
+                const target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: "smooth", block: "center" });
+                    target.classList.remove("highlight-new");
+                    void target.offsetWidth;
+                    target.classList.add("highlight-new");
+                    setTimeout(() => target.classList.remove("highlight-new"), 1500);
+                }
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    document.getElementById("tocSidebar").classList.remove("open");
+                    document.body.classList.remove("sidebar-open");
+                }
+            }
+
+            // --- Preview Mode ---
+            function togglePreview() {
+                previewMode = !previewMode;
+                document.body.classList.toggle("preview-mode", previewMode);
+                document.getElementById("previewToggle").classList.toggle("active-mode", previewMode);
+                document.getElementById("previewToggle").innerHTML = previewMode ? "&#9998; Edit" : "&#128065; Preview";
+                document.querySelectorAll("input, textarea").forEach(el => {
+                    if (previewMode) {
+                        el.setAttribute("readonly", "");
+                        el._ph = el.getAttribute("placeholder");
+                        el.removeAttribute("placeholder");
+                    } else {
+                        el.removeAttribute("readonly");
+                        if (el._ph) { el.setAttribute("placeholder", el._ph); delete el._ph; }
+                    }
+                });
+                toast(previewMode ? "Preview mode" : "Edit mode", 1000);
+            }
+
+            // --- Update count summary ---
+            function updateCountSummary() {
+                const container = document.getElementById("count-summary");
+                const data = collectData();
+                const parts = data.parts.length;
+                const articles = data.parts.reduce((s, p) => s + p.articles.length, 0);
+                const clauses = data.parts.reduce((s, p) => s + p.articles.reduce((s2, a) => s2 + ((a.clauses || []).length), 0), 0);
+                const subclauses = data.parts.reduce((s, p) => s + p.articles.reduce((s2, a) => s2 + (a.clauses || []).reduce((s3, c) => s3 + (c.sub_clauses ? c.sub_clauses.length : 0), 0), 0), 0);
+                const directTexts = data.parts.reduce((s, p) => s + p.articles.reduce((s2, a) => s2 + (a.text && !a.clauses ? 1 : 0), 0), 0);
+                container.innerHTML = parts || articles ? `
+                    <span><strong>${parts}</strong> parts</span>
+                    <span><strong>${articles}</strong> articles (${directTexts} direct-text)</span>
+                    <span><strong>${clauses}</strong> clauses</span>
+                    <span><strong>${subclauses}</strong> sub-clauses</span>
+                ` : "";
+                const empty = document.getElementById("emptyState");
+                if (empty) empty.style.display = parts ? "none" : "";
+                updateProgress();
+            }
+
+            function showStatus(msg, isError) {
+                setStatus(msg, isError ? "error" : "info");
+            }
+
+            function showValidationReport(issues) {
+                const container = document.getElementById("validation-container");
+                if (!issues || issues.length === 0) {
+                    container.innerHTML = `<div class="validation-report" style="background:var(--bg-validation-ok);border-color:#a5d6a7;">
+                        <h4 style="color:#2e7d32;">No issues found</h4>
+                    </div>`;
+                    return;
+                }
+                const errors = issues.filter(i => i.severity === "error");
+                const warnings = issues.filter(i => i.severity === "warn");
+                let html = '<div class="validation-report">';
+                if (errors.length) html += `<h4>${errors.length} error(s)</h4><ul>`;
+                errors.forEach(e => { html += `<li class="err-item">${escapeHtml(e.path)}: ${escapeHtml(e.message)}</li>`; });
+                if (errors.length) html += `</ul>`;
+                if (warnings.length) html += `<h4>${warnings.length} warning(s)</h4><ul>`;
+                warnings.forEach(e => { html += `<li class="warn-item">${escapeHtml(e.path)}: ${escapeHtml(e.message)}</li>`; });
+                if (warnings.length) html += `</ul>`;
+                html += '</div>';
+                container.innerHTML = html;
+            }
+
+            function duplicateArticle(btn) {
+                const articleEl = btn.closest(".article-box");
+                const container = articleEl.parentElement;
+                const data = collectSingleArticle(articleEl);
+                if (!data) return;
+                data.article_no = 0;
+                addArticleToContainer(container, data);
+                toast("Article duplicated", 1500);
+            }
+
+            function duplicateClause(btn) {
+                const clauseEl = btn.closest(".clause-box");
+                const container = clauseEl.parentElement;
+                const data = collectSingleClause(clauseEl);
+                if (!data) return;
+                addClauseToContainer(container, data);
+                toast("Clause duplicated", 1500);
+            }
+
+            function collectSingleArticle(articleEl) {
+                const title = articleEl.querySelector(".article_title").value.trim();
+                if (!title) { toast("Article must have a title to duplicate", 2000); return null; }
+                const article = {
+                    article_no: Number(articleEl.querySelector(".article_no").value) || 0,
+                    title: title,
+                };
+                const text = articleEl.querySelector(".article_text")?.value?.trim();
+                if (text) article.text = text;
+                const aExp = articleEl.querySelector(".article-extra .explanation-text")?.value?.trim();
+                if (aExp) article.explanation = aExp;
+                const aProv = articleEl.querySelector(".article-extra .provision-text")?.value?.trim();
+                if (aProv) article.provision = aProv;
+                const clauses = [];
+                articleEl.querySelectorAll(".clauses > .box").forEach(ce => {
+                    const ct = ce.querySelector(".clause_text").value.trim();
+                    if (!ct) return;
+                    const c = { clause_no: Number(ce.querySelector(".clause_no").value) || 0, text: ct };
+                    const cExp = ce.querySelector(".clause-extra .explanation-text")?.value?.trim();
+                    if (cExp) c.explanation = cExp;
+                    const cProv = ce.querySelector(".clause-extra .provision-text")?.value?.trim();
+                    if (cProv) c.provision = cProv;
+                    const subs = [];
+                    ce.querySelectorAll(".subclauses > .box").forEach(se => {
+                        const st = se.querySelector(".subclause_text").value.trim();
+                        if (!st) return;
+                        const s = { letter: se.querySelector(".letter").value, text: st };
+                        const sExp = se.querySelector(".subclause-extra .explanation-text")?.value?.trim();
+                        if (sExp) s.explanation = sExp;
+                        const sProv = se.querySelector(".subclause-extra .provision-text")?.value?.trim();
+                        if (sProv) s.provision = sProv;
+                        subs.push(s);
+                    });
+                    if (subs.length) c.sub_clauses = subs;
+                    clauses.push(c);
+                });
+                if (clauses.length) article.clauses = clauses;
+                return article;
+            }
+
+            function collectSingleClause(clauseEl) {
+                const text = clauseEl.querySelector(".clause_text").value.trim();
+                if (!text) { toast("Clause must have text to duplicate", 2000); return null; }
+                const c = { clause_no: 0, text: text };
+                const cExp = clauseEl.querySelector(".clause-extra .explanation-text")?.value?.trim();
+                if (cExp) c.explanation = cExp;
+                const cProv = clauseEl.querySelector(".clause-extra .provision-text")?.value?.trim();
+                if (cProv) c.provision = cProv;
+                const subs = [];
+                clauseEl.querySelectorAll(".subclauses > .box").forEach(se => {
+                    const st = se.querySelector(".subclause_text").value.trim();
+                    if (!st) return;
+                    const s = { letter: se.querySelector(".letter").value, text: st };
+                    const sExp = se.querySelector(".subclause-extra .explanation-text")?.value?.trim();
+                    if (sExp) s.explanation = sExp;
+                    const sProv = se.querySelector(".subclause-extra .provision-text")?.value?.trim();
+                    if (sProv) s.provision = sProv;
+                    subs.push(s);
+                });
+                if (subs.length) c.sub_clauses = subs;
+                return c;
+            }
+
+            function addExplanation(parentElement, existingText = "") {
+                if (parentElement.querySelector(".explanation-box")) return;
+                const div = document.createElement("div");
+                div.className = "explanation-box";
+                div.innerHTML = `<label>Explanation:</label>
+                    <button class="add-btn orange" onclick="this.parentElement.remove(); markDirty();" style="float:right;">Remove</button>
+                    <textarea class="explanation-text" rows="1" placeholder="Add explanation here...">${escapeHtml(existingText)}</textarea>`;
+                parentElement.appendChild(div);
+                queueResize(div.querySelector("textarea"));
+            }
+
+            function addProvision(parentElement, existingText = "") {
+                if (parentElement.querySelector(".provision-box")) return;
+                const div = document.createElement("div");
+                div.className = "provision-box";
+                div.innerHTML = `<label>Provision / Proviso:</label>
+                    <button class="add-btn orange" onclick="this.parentElement.remove(); markDirty();" style="float:right;">Remove</button>
+                    <textarea class="provision-text" rows="1" placeholder="Add provision or proviso here...">${escapeHtml(existingText)}</textarea>`;
+                parentElement.appendChild(div);
+                queueResize(div.querySelector("textarea"));
+            }
+
+            function toggleSection(btn) {
+                const box = btn.closest(".box");
+                if (!box) return;
+                box.classList.toggle("section-collapsed");
+                btn.textContent = box.classList.contains("section-collapsed") ? "▸" : "▾";
+                btn.setAttribute("aria-expanded", !box.classList.contains("section-collapsed"));
+            }
+
+            function collapseAll(collapse) {
+                document.querySelectorAll(".collapse-btn").forEach(btn => {
+                    const box = btn.closest(".box");
+                    if (!box) return;
+                    if (collapse) {
+                        box.classList.add("section-collapsed");
+                        btn.textContent = "▸";
+                        btn.setAttribute("aria-expanded", "false");
+                    } else {
+                        box.classList.remove("section-collapsed");
+                        btn.textContent = "▾";
+                        btn.setAttribute("aria-expanded", "true");
+                    }
+                });
+                toast(collapse ? "All collapsed" : "All expanded", 1000);
+            }
+
+            function getNextPartNo() {
+                let max = 0;
+                document.querySelectorAll("#parts > .box .part_no").forEach(el => {
+                    const v = parseInt(el.value);
+                    if (v > max) max = v;
+                });
+                return max + 1;
+            }
+
+            function getNextArticleNo(container) {
+                let max = 0;
+                container.querySelectorAll(".article_no").forEach(el => {
+                    const v = parseInt(el.value);
+                    if (v > max) max = v;
+                });
+                return max + 1;
+            }
+
+            function getNextClauseNo(container) {
+                let max = 0;
+                container.querySelectorAll(".clause_no").forEach(el => {
+                    const v = parseInt(el.value);
+                    if (v > max) max = v;
+                });
+                return max + 1;
+            }
+
+            function copyToClipboard(text) {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+                } else {
+                    fallbackCopy(text);
+                }
+            }
+
+            function fallbackCopy(text) {
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.position = "fixed";
+                ta.style.left = "-9999px";
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand("copy"); } catch (e) {}
+                document.body.removeChild(ta);
+            }
+
+            function copyPath(el) {
+                const path = el.getAttribute("data-path");
+                copyToClipboard(path);
+                toast("Copied: " + path, 2000);
+            }
+
+            function addPart(data = null) {
+                const div = document.createElement("div");
+                div.className = "box part-box";
+                const partNo = data && data.part_no != null ? escapeHtml(String(data.part_no)) : String(getNextPartNo());
+                const partTitle = data ? data.part_title || "" : "";
+                const partDesc = data ? data.part_description || "" : "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true" title="Expand/Collapse">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <h3>Part <span class="part-display-no">${partNo}</span></h3>
+                            <span class="badge part-count-badge">0 articles</span>
+                            <span class="copy-path" data-path="Part ${partNo}" onclick="copyPath(this)" title="Copy path">&#128203;</span>
+                        </div>
+                        <div>
+                            <button class="dup-btn" onclick="duplicatePart(this)" title="Duplicate Part">&#x29C9;</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove Part</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Part No:</label>
+                            <input class="part_no" style="width:70px;" value="${partNo}" placeholder="1">
+                            <label class="field-label" style="width:60px;">Title:</label>
+                            <input class="part_title" style="flex:1;min-width:150px;" value="${escapeHtml(partTitle)}" placeholder="Preliminary" required>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Description:</label>
+                            <input class="part_description" style="flex:1;min-width:200px;" value="${escapeHtml(partDesc)}" placeholder="Part description (optional)">
+                        </div>
+                        <div class="part-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.part-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.part-extra'))">+ Provision</button>
+                        </div>
+                        <div class="articles"></div>
+                        <button onclick="addArticle(this)" style="margin-top:6px;">+ Article</button>
+                    </div>`;
+                document.getElementById("parts").appendChild(div);
+                addInlineInsertSlots("parts");
+                const extra = div.querySelector(".part-extra");
+                if (data) {
+                    if (data.explanation) addExplanation(extra, data.explanation);
+                    if (data.provision) addProvision(extra, data.provision);
+                    if (data.articles) data.articles.forEach(a => addArticleToContainer(div.querySelector(".articles"), a, partNo));
+                }
+                updatePartBadge(div);
+                updateCountSummary();
+                setupDrag(div, null);
+                markDirty();
+                resizeAllTextareas(div);
+                div.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                div.classList.add("highlight-new");
+                setTimeout(() => div.classList.remove("highlight-new"), 1500);
+            }
+
+            function duplicatePart(btn) {
+                const partEl = btn.closest(".part-box");
+                const data = collectSinglePart(partEl);
+                if (!data) return;
+                addPart(data);
+                toast("Part duplicated", 1500);
+            }
+
+            function collectSinglePart(partEl) {
+                const title = partEl.querySelector(".part_title").value.trim();
+                if (!title) { toast("Part must have a title to duplicate", 2000); return null; }
+                const part = {
+                    part_no: Number(partEl.querySelector(".part_no").value) || 0,
+                    part_title: title,
+                    articles: []
+                };
+                const desc = partEl.querySelector(".part_description")?.value?.trim();
+                if (desc) part.part_description = desc;
+                const pExp = partEl.querySelector(".part-extra .explanation-text")?.value?.trim();
+                if (pExp) part.explanation = pExp;
+                const pProv = partEl.querySelector(".part-extra .provision-text")?.value?.trim();
+                if (pProv) part.provision = pProv;
+                partEl.querySelectorAll(".articles > .box").forEach(articleEl => {
+                    const a = collectSingleArticle(articleEl);
+                    if (a) part.articles.push(a);
+                });
+                return part;
+            }
+
+            function updatePartBadge(partEl) {
+                const count = partEl.querySelectorAll(".articles > .box").length;
+                const badge = partEl.querySelector(".part-count-badge");
+                if (badge) badge.textContent = count + " article" + (count !== 1 ? "s" : "");
+            }
+
+            function addArticle(btn, data = null) {
+                const container = btn.parentElement.querySelector(".articles");
+                const partEl = btn.closest(".part-box");
+                const partNo = partEl?.querySelector(".part_no")?.value || "";
+                addArticleToContainer(container, data, partNo, true);
+            }
+
+            function addArticleToContainer(container, data = null, partNo = "", autoNumber = false) {
+                const div = document.createElement("div");
+                div.className = "box article-box";
+                const articleNo = data && data.article_no != null ? escapeHtml(String(data.article_no)) : (autoNumber ? String(getNextArticleNo(container)) : "");
+                const title = data ? data.title || "" : "";
+                const directText = data ? data.text || "" : "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <h4>Article <span class="article-display-no">${articleNo}</span></h4>
+                            <span class="badge clause-count-badge">0 clauses</span>
+                            <span class="copy-path" data-path="Part ${partNo}, Article ${articleNo}" onclick="copyPath(this)" title="Copy path">&#128203;</span>
+                        </div>
+                        <div>
+                            <button class="dup-btn" onclick="duplicateArticle(this)" title="Duplicate">&#x29C9;</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Article No:</label>
+                            <input class="article_no" style="width:70px;" value="${articleNo}" placeholder="1">
+                            <label class="field-label" style="width:40px;">Title:</label>
+                            <input class="article_title" style="flex:1;min-width:150px;" value="${escapeHtml(title)}" placeholder="Constitution as the fundamental law" required>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Direct Text:</label>
+                            <textarea class="article_text" rows="1" style="flex:1;" placeholder="Use when article has direct text and no clauses...">${escapeHtml(directText)}</textarea>
+                        </div>
+                        <div class="article-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.article-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.article-extra'))">+ Provision</button>
+                        </div>
+                        <div class="clauses"></div>
+                        <button onclick="addClause(this)" style="margin-top:6px;">+ Clause</button>
+                    </div>`;
+                container.appendChild(div);
+                addInlineInsertSlots("articles", div.closest(".part-box")?.querySelector(".articles"));
+                const extra = div.querySelector(".article-extra");
+                if (data) {
+                    if (data.explanation) addExplanation(extra, data.explanation);
+                    if (data.provision) addProvision(extra, data.provision);
+                    if (data.clauses) data.clauses.forEach(c => addClauseToContainer(div.querySelector(".clauses"), c));
+                }
+                updateArticleBadge(div);
+                updatePartBadge(div.closest(".part-box"));
+                updateCountSummary();
+                setupDrag(div, ".part-box");
+                markDirty();
+                resizeAllTextareas(div);
+                div.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                div.classList.add("highlight-new");
+                setTimeout(() => div.classList.remove("highlight-new"), 1500);
+            }
+
+            function updateArticleBadge(articleEl) {
+                const count = articleEl.querySelectorAll(".clauses > .box").length;
+                const hasDirectText = articleEl.querySelector(".article_text")?.value?.trim();
+                const badge = articleEl.querySelector(".clause-count-badge");
+                if (badge) badge.textContent = hasDirectText && !count ? "direct text" : count + " clause" + (count !== 1 ? "s" : "");
+            }
+
+            function addClause(btn, data = null) {
+                const container = btn.parentElement.querySelector(".clauses");
+                addClauseToContainer(container, data, true);
+            }
+
+            function addClauseToContainer(container, data = null, autoNumber = false) {
+                const div = document.createElement("div");
+                div.className = "box clause-box";
+                const clauseNo = data && data.clause_no != null ? escapeHtml(String(data.clause_no)) : (autoNumber ? String(getNextClauseNo(container)) : "");
+                const text = data ? data.text || "" : "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <h5>Clause <span class="clause-display-no">${clauseNo}</span></h5>
+                            <span class="badge sc-count-badge">0 sub</span>
+                        </div>
+                        <div>
+                            <button class="dup-btn" onclick="duplicateClause(this)" title="Duplicate">&#x29C9;</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Clause No:</label>
+                            <input class="clause_no" style="width:70px;" value="${clauseNo}" placeholder="1">
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Text:</label>
+                            <textarea class="clause_text" rows="1" style="flex:1;" placeholder="Clause text..." required>${escapeHtml(text)}</textarea>
+                        </div>
+                        <div class="clause-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.clause-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.clause-extra'))">+ Provision</button>
+                        </div>
+                        <div class="subclauses"></div>
+                        <button onclick="addSubClause(this)" style="margin-top:6px;">+ Sub-Clause</button>
+                    </div>`;
+                container.appendChild(div);
+                addInlineInsertSlots("clauses", div.closest(".article-box")?.querySelector(".clauses"));
+                const extra = div.querySelector(".clause-extra");
+                if (data) {
+                    if (data.explanation) addExplanation(extra, data.explanation);
+                    if (data.provision) addProvision(extra, data.provision);
+                    if (data.sub_clauses) data.sub_clauses.forEach(s => addSubClauseToContainer(div.querySelector(".subclauses"), s));
+                }
+                updateClauseBadge(div);
+                updateArticleBadge(div.closest(".article-box"));
+                updateCountSummary();
+                setupDrag(div, ".article-box");
+                markDirty();
+                resizeAllTextareas(div);
+                div.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                div.classList.add("highlight-new");
+                setTimeout(() => div.classList.remove("highlight-new"), 1500);
+            }
+
+            function updateClauseBadge(clauseEl) {
+                const count = clauseEl.querySelectorAll(".subclauses > .box").length;
+                const badge = clauseEl.querySelector(".sc-count-badge");
+                if (badge) badge.textContent = count + " sub" + (count !== 1 ? "s" : "");
+            }
+
+            function addSubClause(btn, data = null) {
+                const container = btn.parentElement.querySelector(".subclauses");
+                addSubClauseToContainer(container, data);
+            }
+
+            function getNextSubLetter(container) {
+                let max = 0;
+                container.querySelectorAll(".letter").forEach(el => {
+                    const v = el.value ? el.value.charCodeAt(0) - 96 : 0;
+                    if (v > max) max = v;
+                });
+                return max < 26 ? String.fromCharCode(97 + max) : "a";
+            }
+
+            function addSubClauseToContainer(container, data = null) {
+                const div = document.createElement("div");
+                div.className = "box subclause-box";
+                const letter = data && data.letter ? data.letter : getNextSubLetter(container);
+                const text = data ? data.text || "" : "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <span style="font-weight:600;font-size:14px;">Sub-Clause <span class="sc-letter-display">${escapeHtml(letter)}</span></span>
+                        </div>
+                        <div>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Letter:</label>
+                            <input class="letter" style="width:70px;" value="${escapeHtml(letter)}" placeholder="a">
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Text:</label>
+                            <textarea class="subclause_text" rows="1" style="flex:1;" placeholder="Sub-clause text..." required>${escapeHtml(text)}</textarea>
+                        </div>
+                        <div class="subclause-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.subclause-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.subclause-extra'))">+ Provision</button>
+                        </div>
+                    </div>`;
+                container.appendChild(div);
+                addInlineInsertSlots("subclauses", div.closest(".clause-box")?.querySelector(".subclauses"));
+                const extra = div.querySelector(".subclause-extra");
+                if (data) {
+                    if (data.explanation) addExplanation(extra, data.explanation);
+                    if (data.provision) addProvision(extra, data.provision);
+                }
+                updateClauseBadge(div.closest(".clause-box"));
+                updateCountSummary();
+                setupDrag(div, ".clause-box");
+                markDirty();
+                resizeAllTextareas(div);
+                div.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                div.classList.add("highlight-new");
+                setTimeout(() => div.classList.remove("highlight-new"), 1500);
+            }
+
+            // --- Inline insert slots ---
+            function addInlineInsertSlots(containerClass, specificContainer) {
+                const containers = specificContainer ? [specificContainer] : document.querySelectorAll("#" + containerClass + ", ." + containerClass);
+                containers.forEach(container => {
+                    if (!container || !container.parentElement) return;
+                    // Remove existing insert slots for this container
+                    container.querySelectorAll(".inline-insert").forEach(el => el.remove());
+                    const items = container.querySelectorAll(":scope > .box");
+                    items.forEach(item => {
+                        const insert = document.createElement("div");
+                        insert.className = "inline-insert";
+                        const parentClass = container.closest(".part-box") ? "part" :
+                            container.closest(".article-box") ? "article" :
+                            container.closest(".clause-box") ? "clause" : "subclause";
+                        const levelNames = { part: "Part", article: "Article", clause: "Clause", subclause: "Sub-Clause" };
+                        insert.title = "Add " + (levelNames[parentClass] || "item") + " here";
+                        insert.addEventListener("click", () => {
+                            const parentBox = container.closest(".part-box,.article-box,.clause-box");
+                            if (parentClass === "part") addPart();
+                            else if (parentClass === "article") {
+                                const btn = parentBox?.querySelector("button[onclick*='addArticle']");
+                                if (btn) addArticle(btn);
+                            } else if (parentClass === "clause") {
+                                const btn = parentBox?.querySelector("button[onclick*='addClause']");
+                                if (btn) addClause(btn);
+                            } else if (parentClass === "subclause") {
+                                const btn = parentBox?.querySelector("button[onclick*='addSubClause']");
+                                if (btn) addSubClause(btn);
+                            }
+                        });
+                        item.parentElement.insertBefore(insert, item.nextSibling);
+                    });
+                });
+            }
+
+            function escapeHtml(str) {
+                if (!str) return "";
+                return String(str).replace(/[&<>"]/g, function (m) {
+                    if (m === "&") return "&amp;";
+                    if (m === "<") return "&lt;";
+                    if (m === ">") return "&gt;";
+                    if (m === '"') return "&quot;";
+                    return m;
+                });
+            }
+
+            function collectData() {
+                if (_dataCache) return _dataCache;
+
+                const data = {
+                    document: {
+                        title: document.getElementById("title").value,
+                        year_np: Number(document.getElementById("year_np").value) || 0,
+                        year_en: Number(document.getElementById("year_en").value) || 0,
+                    },
+                    parts: [],
+                };
+
+                document.querySelectorAll("#parts > .box").forEach((partEl) => {
+                    const partTitle = partEl.querySelector(".part_title").value.trim();
+                    if (!partTitle) return;
+
+                    const part = { part_no: Number(partEl.querySelector(".part_no").value) || 0, part_title: partTitle, articles: [] };
+
+                    const desc = partEl.querySelector(".part_description")?.value?.trim();
+                    if (desc) part.part_description = desc;
+
+                    const pExp = partEl.querySelector(".part-extra .explanation-text")?.value?.trim();
+                    if (pExp) part.explanation = pExp;
+                    const pProv = partEl.querySelector(".part-extra .provision-text")?.value?.trim();
+                    if (pProv) part.provision = pProv;
+
+                    partEl.querySelectorAll(".articles > .box").forEach((articleEl) => {
+                        const articleTitle = articleEl.querySelector(".article_title").value.trim();
+                        if (!articleTitle) return;
+
+                        const article = {
+                            article_no: Number(articleEl.querySelector(".article_no").value) || 0,
+                            title: articleTitle,
+                        };
+
+                        const directText = articleEl.querySelector(".article_text")?.value?.trim();
+                        if (directText) article.text = directText;
+
+                        article.clauses = [];
+
+                        const aExp = articleEl.querySelector(".article-extra .explanation-text")?.value?.trim();
+                        if (aExp) article.explanation = aExp;
+                        const aProv = articleEl.querySelector(".article-extra .provision-text")?.value?.trim();
+                        if (aProv) article.provision = aProv;
+
+                        articleEl.querySelectorAll(".clauses > .box").forEach((clauseEl) => {
+                            const clauseText = clauseEl.querySelector(".clause_text").value.trim();
+                            if (!clauseText) return;
+
+                            const clause = {
+                                clause_no: Number(clauseEl.querySelector(".clause_no").value) || 0,
+                                text: clauseText,
+                            };
+
+                            const cExp = clauseEl.querySelector(".clause-extra .explanation-text")?.value?.trim();
+                            if (cExp) clause.explanation = cExp;
+                            const cProv = clauseEl.querySelector(".clause-extra .provision-text")?.value?.trim();
+                            if (cProv) clause.provision = cProv;
+
+                            const subClauses = [];
+                            clauseEl.querySelectorAll(".subclauses > .box").forEach((subEl) => {
+                                const subText = subEl.querySelector(".subclause_text").value.trim();
+                                if (!subText) return;
+
+                                const subClause = { letter: subEl.querySelector(".letter").value, text: subText };
+
+                                const sExp = subEl.querySelector(".subclause-extra .explanation-text")?.value?.trim();
+                                if (sExp) subClause.explanation = sExp;
+                                const sProv = subEl.querySelector(".subclause-extra .provision-text")?.value?.trim();
+                                if (sProv) subClause.provision = sProv;
+
+                                subClauses.push(subClause);
+                            });
+
+                            if (subClauses.length > 0) clause.sub_clauses = subClauses;
+                            article.clauses.push(clause);
+                        });
+
+                        if (article.clauses.length > 0) part.articles.push(article);
+                        else if (article.text) { delete article.clauses; part.articles.push(article); }
+                    });
+
+                    if (part.articles.length > 0) data.parts.push(part);
+                });
+
+                _dataCache = data;
+                return data;
+            }
+
+            function collectSinglePartForRender(partData, partNo) {
+                const old = isRenderingData; isRenderingData = true;
+                const div = document.createElement("div");
+                div.className = "box part-box";
+                const pNo = partData && partData.part_no != null ? escapeHtml(String(partData.part_no)) : String(partNo);
+                const partTitle = partData ? partData.part_title || "" : "";
+                const partDesc = partData ? partData.part_description || "" : "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true" title="Expand/Collapse">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <h3>Part <span class="part-display-no">${pNo}</span></h3>
+                            <span class="badge part-count-badge">0 articles</span>
+                            <span class="copy-path" data-path="Part ${pNo}" onclick="copyPath(this)" title="Copy path">&#128203;</span>
+                        </div>
+                        <div>
+                            <button class="dup-btn" onclick="duplicatePart(this)" title="Duplicate Part">&#x29C9;</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove Part</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Part No:</label>
+                            <input class="part_no" style="width:70px;" value="${pNo}" placeholder="1">
+                            <label class="field-label" style="width:60px;">Title:</label>
+                            <input class="part_title" style="flex:1;min-width:150px;" value="${escapeHtml(partTitle)}" placeholder="Preliminary" required>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Description:</label>
+                            <input class="part_description" style="flex:1;min-width:200px;" value="${escapeHtml(partDesc)}" placeholder="Part description (optional)">
+                        </div>
+                        <div class="part-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.part-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.part-extra'))">+ Provision</button>
+                        </div>
+                        <div class="articles"></div>
+                        <button onclick="addArticle(this)" style="margin-top:6px;">+ Article</button>
+                    </div>`;
+                const articlesContainer = div.querySelector(".articles");
+                if (partData) {
+                    if (partData.explanation) addExplanation(div.querySelector(".part-extra"), partData.explanation);
+                    if (partData.provision) addProvision(div.querySelector(".part-extra"), partData.provision);
+                    if (partData.articles) partData.articles.forEach(a => {
+                        const aDiv = collectSingleArticleForRender(a, pNo);
+                        if (aDiv) articlesContainer.appendChild(aDiv);
+                    });
+                }
+                updatePartBadge(div);
+                setupDrag(div, null);
+                isRenderingData = old;
+                return div;
+            }
+
+            function collectSingleArticleForRender(data, partNo) {
+                if (!data) return null;
+                const div = document.createElement("div");
+                div.className = "box article-box";
+                const articleNo = data.article_no != null ? escapeHtml(String(data.article_no)) : "";
+                const title = data.title || "";
+                const directText = data.text || "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <h4>Article <span class="article-display-no">${articleNo}</span></h4>
+                            <span class="badge clause-count-badge">0 clauses</span>
+                            <span class="copy-path" data-path="Part ${partNo}, Article ${articleNo}" onclick="copyPath(this)" title="Copy path">&#128203;</span>
+                        </div>
+                        <div>
+                            <button class="dup-btn" onclick="duplicateArticle(this)" title="Duplicate">&#x29C9;</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Article No:</label>
+                            <input class="article_no" style="width:70px;" value="${articleNo}" placeholder="1">
+                            <label class="field-label" style="width:40px;">Title:</label>
+                            <input class="article_title" style="flex:1;min-width:150px;" value="${escapeHtml(title)}" placeholder="Constitution as the fundamental law" required>
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Direct Text:</label>
+                            <textarea class="article_text" rows="1" style="flex:1;" placeholder="Use when article has direct text and no clauses...">${escapeHtml(directText)}</textarea>
+                        </div>
+                        <div class="article-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.article-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.article-extra'))">+ Provision</button>
+                        </div>
+                        <div class="clauses"></div>
+                        <button onclick="addClause(this)" style="margin-top:6px;">+ Clause</button>
+                    </div>`;
+                const clausesContainer = div.querySelector(".clauses");
+                if (data) {
+                    if (data.explanation) addExplanation(div.querySelector(".article-extra"), data.explanation);
+                    if (data.provision) addProvision(div.querySelector(".article-extra"), data.provision);
+                    if (data.clauses) data.clauses.forEach(c => {
+                        const cDiv = collectSingleClauseForRender(c);
+                        if (cDiv) clausesContainer.appendChild(cDiv);
+                    });
+                }
+                updateArticleBadge(div);
+                setupDrag(div, ".part-box");
+                return div;
+            }
+
+            function collectSingleClauseForRender(data) {
+                if (!data) return null;
+                const div = document.createElement("div");
+                div.className = "box clause-box";
+                const clauseNo = data.clause_no != null ? escapeHtml(String(data.clause_no)) : "";
+                const text = data.text || "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <h5>Clause <span class="clause-display-no">${clauseNo}</span></h5>
+                            <span class="badge sc-count-badge">0 sub</span>
+                        </div>
+                        <div>
+                            <button class="dup-btn" onclick="duplicateClause(this)" title="Duplicate">&#x29C9;</button>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Clause No:</label>
+                            <input class="clause_no" style="width:70px;" value="${clauseNo}" placeholder="1">
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Text:</label>
+                            <textarea class="clause_text" rows="1" style="flex:1;" placeholder="Clause text..." required>${escapeHtml(text)}</textarea>
+                        </div>
+                        <div class="clause-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.clause-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.clause-extra'))">+ Provision</button>
+                        </div>
+                        <div class="subclauses"></div>
+                        <button onclick="addSubClause(this)" style="margin-top:6px;">+ Sub-Clause</button>
+                    </div>`;
+                const subsContainer = div.querySelector(".subclauses");
+                if (data) {
+                    if (data.explanation) addExplanation(div.querySelector(".clause-extra"), data.explanation);
+                    if (data.provision) addProvision(div.querySelector(".clause-extra"), data.provision);
+                    if (data.sub_clauses) data.sub_clauses.forEach(s => {
+                        const sDiv = collectSingleSubClauseForRender(s);
+                        if (sDiv) subsContainer.appendChild(sDiv);
+                    });
+                }
+                updateClauseBadge(div);
+                setupDrag(div, ".article-box");
+                return div;
+            }
+
+            function collectSingleSubClauseForRender(data) {
+                if (!data) return null;
+                const div = document.createElement("div");
+                div.className = "box subclause-box";
+                const letter = data.letter || "a";
+                const text = data.text || "";
+                div.innerHTML = `
+                    <div class="section-header">
+                        <div class="header-left">
+                            <button class="collapse-btn" onclick="toggleSection(this)" aria-expanded="true">▾</button>
+                            <span class="drag-handle" draggable="true" title="Drag to reorder">&#9776;</span>
+                            <span style="font-weight:600;font-size:14px;">Sub-Clause <span class="sc-letter-display">${escapeHtml(letter)}</span></span>
+                        </div>
+                        <div>
+                            <button class="remove-btn" onclick="removeElement(this.parentElement.parentElement.parentElement)">Remove</button>
+                        </div>
+                    </div>
+                    <div class="section-body">
+                        <div class="field-row">
+                            <label class="field-label">Letter:</label>
+                            <input class="letter" style="width:70px;" value="${escapeHtml(letter)}" placeholder="a">
+                        </div>
+                        <div class="field-row">
+                            <label class="field-label">Text:</label>
+                            <textarea class="subclause_text" rows="1" style="flex:1;" placeholder="Sub-clause text..." required>${escapeHtml(text)}</textarea>
+                        </div>
+                        <div class="subclause-extra"></div>
+                        <div style="margin: 6px 0;">
+                            <button class="add-btn" onclick="addExplanation(this.parentElement.querySelector('.subclause-extra'))">+ Explanation</button>
+                            <button class="add-btn" onclick="addProvision(this.parentElement.querySelector('.subclause-extra'))">+ Provision</button>
+                        </div>
+                    </div>`;
+                if (data) {
+                    if (data.explanation) addExplanation(div.querySelector(".subclause-extra"), data.explanation);
+                    if (data.provision) addProvision(div.querySelector(".subclause-extra"), data.provision);
+                }
+                setupDrag(div, ".clause-box");
+                return div;
+            }
+
+            function renderData(data) {
+                isRenderingData = true;
+                document.getElementById("title").value = data.document?.title || "";
+                document.getElementById("year_np").value = data.document?.year_np || "";
+                document.getElementById("year_en").value = data.document?.year_en || "";
+
+                const partsContainer = document.getElementById("parts");
+
+                if (data.parts && data.parts.length) {
+                    const frag = document.createDocumentFragment();
+                    data.parts.forEach((partData, pi) => {
+                        const el = collectSinglePartForRender(partData, pi + 1);
+                        frag.appendChild(el);
+                    });
+                    partsContainer.innerHTML = "";
+                    partsContainer.appendChild(frag);
+                } else {
+                    partsContainer.innerHTML = '<div class="empty-state" id="emptyState"><div class="big-icon">&#128196;</div><h3>No parts yet</h3><p>Click <strong>"+ Add Part"</strong> below to start building.</p></div>';
+                }
+
+                isRenderingData = false;
+                document.getElementById("output").value = JSON.stringify(data, null, 2);
+                localStorage.setItem("constitutionData", JSON.stringify(data));
+                resizeAllTextareas();
+                updateCountSummary();
+                updateProgress();
+                updateTOC();
+                const ind = document.getElementById("saveIndicator");
+                ind.textContent = "Saved";
+                ind.className = "save-indicator saved";
+                document.title = "Constitution Builder v3";
+                isDirty = false;
+                _dataCache = null;
+                pushUndo(data);
+                addInlineInsertSlots("parts");
+            }
+
+            function generateAndSave() {
+                const data = collectData();
+                const jsonStr = JSON.stringify(data, null, 2);
+                document.getElementById("output").value = jsonStr;
+                localStorage.setItem("constitutionData", jsonStr);
+
+                const parts = data.parts.length;
+                const articles = data.parts.reduce((s, p) => s + p.articles.length, 0);
+                const clauses = data.parts.reduce((s, p) => s + p.articles.reduce((s2, a) => s2 + ((a.clauses || []).length), 0), 0);
+                const directTexts = data.parts.reduce((s, p) => s + p.articles.reduce((s2, a) => s2 + (a.text && !a.clauses ? 1 : 0), 0), 0);
+                setStatus(`Saved: ${parts} part(s), ${articles} article(s), ${clauses} clause(s), ${directTexts} direct-text article(s)`, "info");
+                const ind = document.getElementById("saveIndicator");
+                ind.textContent = "Saved";
+                ind.className = "save-indicator saved";
+                document.title = "Constitution Builder v3";
+                isDirty = false;
+                pushUndo(data);
+                updateProgress();
+                updateTOC();
+                toast("JSON generated", 1500);
+            }
+
+            function copyOutput() {
+                const ta = document.getElementById("output");
+                copyToClipboard(ta.value);
+                toast("Copied to clipboard", 1500);
+            }
+
+            async function loadFromTextarea() {
+                try {
+                    const jsonText = document.getElementById("output").value;
+                    if (!jsonText.trim()) { setStatus("Nothing to load", "error"); return; }
+                    const data = JSON.parse(jsonText);
+                    const issues = validateStructuredData(data);
+                    if (issues.some(i => i.severity === "error")) {
+                        showValidationReport(issues);
+                        const confirmed = await showModal("Errors found", "Errors found in JSON. Load anyway?", true);
+                        if (!confirmed) return;
+                    } else {
+                        showValidationReport(issues);
+                    }
+                    renderData(data);
+                    setStatus("Loaded from textarea", "info");
+                } catch (e) {
+                    setStatus("Invalid JSON: " + e.message, "error");
+                }
+            }
+
+            function loadFromLocalStorage() {
+                const saved = localStorage.getItem("constitutionData");
+                if (!saved) { setStatus("No saved data found", "error"); return; }
+                try {
+                    const data = JSON.parse(saved);
+                    const issues = validateStructuredData(data);
+                    showValidationReport(issues);
+                    renderData(data);
+                    setStatus("Loaded last session", "info");
+                } catch (e) {
+                    setStatus("Error loading saved data", "error");
+                }
+            }
+
+            function loadFromFile() {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "application/json";
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        try {
+                            const data = JSON.parse(event.target.result);
+                            const issues = validateStructuredData(data);
+                            if (issues.some(i => i.severity === "error")) {
+                                showValidationReport(issues);
+                                const confirmed = await showModal("Errors found", "Errors found in \"" + file.name + "\". Load anyway?", true);
+                                if (!confirmed) return;
+                            } else {
+                                showValidationReport(issues);
+                            }
+                            renderData(data);
+                            setStatus("Loaded: " + file.name, "info");
+                        } catch (err) {
+                            setStatus("Invalid JSON file", "error");
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+
+            function saveToFile() {
+                const data = collectData();
+                const jsonStr = JSON.stringify(data, null, 2);
+                document.getElementById("output").value = jsonStr;
+                const blob = new Blob([jsonStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                const title = data.document?.title ? data.document.title.replace(/[^a-zA-Z0-9]/g, "_").substring(0, 30) : "constitution";
+                a.download = title + ".json";
+                a.click();
+                URL.revokeObjectURL(url);
+                setStatus("File saved", "info");
+                toast("File downloaded", 1500);
+            }
+
+            function validateAll() {
+                const data = collectData();
+                const issues = validateStructuredData(data);
+                showValidationReport(issues);
+                if (issues.length === 0) setStatus("No issues found", "info");
+                else setStatus(issues.filter(i => i.severity === "error").length + " error(s), " + issues.filter(i => i.severity === "warn").length + " warning(s)", "warn");
+                if (issues.length === 0) toast("No issues found", 1500);
+                else toast(issues.length + " issue(s) found", 2000);
+                runInlineValidation();
+            }
+
+            function validateStructuredData(data) {
+                const issues = [];
+
+                function checkUnexpectedFields(obj, path, known) {
+                    if (!obj || typeof obj !== "object" || Array.isArray(obj)) return;
+                    for (const key of Object.keys(obj)) {
+                        if (!known.has(key)) {
+                            issues.push({ severity: "warn", path: path + "." + key, message: `Unexpected field "${key}" — not in known schema. May cause data loss.` });
+                        }
+                    }
+                }
+
+                if (!data || typeof data !== "object") {
+                    issues.push({ severity: "error", path: "root", message: "Root must be a JSON object" });
+                    return issues;
+                }
+
+                checkUnexpectedFields(data, "root", new Set(["document", "parts"]));
+
+                if (!data.document || typeof data.document !== "object") {
+                    issues.push({ severity: "error", path: "root.document", message: "Missing 'document' object" });
+                } else {
+                    checkUnexpectedFields(data.document, "root.document", new Set(["title", "year_np", "year_en"]));
+                    if (typeof data.document.title !== "string") issues.push({ severity: "warn", path: "root.document.title", message: "Document title should be a string" });
+                }
+
+                if (!Array.isArray(data.parts)) {
+                    issues.push({ severity: "error", path: "root.parts", message: "'parts' must be an array" });
+                    return issues;
+                }
+
+                const partNos = new Set();
+                data.parts.forEach((part, pi) => {
+                    const pPath = "parts[" + pi + "]";
+                    checkUnexpectedFields(part, pPath, new Set(["part_no", "part_title", "part_description", "explanation", "provision", "proviso", "articles"]));
+
+                    if (part.part_no == null) issues.push({ severity: "error", path: pPath + ".part_no", message: "Missing part_no" });
+                    else if (typeof part.part_no !== "number") issues.push({ severity: "warn", path: pPath + ".part_no", message: "part_no should be a number" });
+                    else if (partNos.has(part.part_no)) issues.push({ severity: "warn", path: pPath + ".part_no", message: "Duplicate part_no: " + part.part_no });
+                    else partNos.add(part.part_no);
+
+                    if (!part.part_title) issues.push({ severity: "error", path: pPath + ".part_title", message: "Missing part_title" });
+                    else if (typeof part.part_title !== "string") issues.push({ severity: "warn", path: pPath + ".part_title", message: "part_title should be a string" });
+
+                    if (!Array.isArray(part.articles)) {
+                        issues.push({ severity: "error", path: pPath + ".articles", message: "Missing or non-array articles" });
+                        return;
+                    }
+
+                    const artNos = new Set();
+                    part.articles.forEach((article, ai) => {
+                        const aPath = pPath + ".articles[" + ai + "]";
+                        checkUnexpectedFields(article, aPath, new Set(["article_no", "title", "text", "explanation", "provision", "proviso", "clauses"]));
+
+                        if (article.article_no == null) issues.push({ severity: "error", path: aPath + ".article_no", message: "Missing article_no" });
+                        else if (typeof article.article_no !== "number") issues.push({ severity: "warn", path: aPath + ".article_no", message: "article_no should be a number" });
+                        else if (artNos.has(article.article_no)) issues.push({ severity: "warn", path: aPath + ".article_no", message: "Duplicate article_no " + article.article_no + " in Part " + part.part_no });
+                        else artNos.add(article.article_no);
+
+                        if (!article.title) issues.push({ severity: "error", path: aPath + ".title", message: "Missing title" });
+                        else if (typeof article.title !== "string") issues.push({ severity: "warn", path: aPath + ".title", message: "title should be a string" });
+
+                        const hasDirectText = !!article.text && typeof article.text === "string" && article.text.trim();
+                        const hasClauses = Array.isArray(article.clauses) && article.clauses.length > 0;
+
+                        if (!hasDirectText && !hasClauses) {
+                            issues.push({ severity: "error", path: aPath, message: "Article has no content — provide either 'text' or 'clauses'" });
+                        }
+
+                        if (hasDirectText && hasClauses) {
+                            issues.push({ severity: "warn", path: aPath, message: "Article has both 'text' and 'clauses' — 'clauses' takes priority" });
+                        }
+
+                        if (article.explanation !== undefined && typeof article.explanation !== "string") {
+                            issues.push({ severity: "warn", path: aPath + ".explanation", message: "explanation should be a string" });
+                        }
+                        if (article.provision !== undefined && typeof article.provision !== "string") {
+                            issues.push({ severity: "warn", path: aPath + ".provision", message: "provision should be a string" });
+                        }
+
+                        if (Array.isArray(article.clauses)) {
+                            article.clauses.forEach((clause, ci) => {
+                                const cPath = aPath + ".clauses[" + ci + "]";
+                                checkUnexpectedFields(clause, cPath, new Set(["clause_no", "text", "explanation", "provision", "proviso", "sub_clauses"]));
+
+                                if (clause.clause_no == null) issues.push({ severity: "error", path: cPath + ".clause_no", message: "Missing clause_no" });
+                                if (!clause.text || typeof clause.text !== "string" || !clause.text.trim()) {
+                                    issues.push({ severity: "error", path: cPath + ".text", message: "Missing or empty clause text" });
+                                }
+
+                                if (clause.explanation !== undefined && typeof clause.explanation !== "string") {
+                                    issues.push({ severity: "warn", path: cPath + ".explanation", message: "explanation should be a string" });
+                                }
+                                if (clause.provision !== undefined && typeof clause.provision !== "string") {
+                                    issues.push({ severity: "warn", path: cPath + ".provision", message: "provision should be a string" });
+                                }
+
+                                if (Array.isArray(clause.sub_clauses)) {
+                                    clause.sub_clauses.forEach((sub, si) => {
+                                        const sPath = cPath + ".sub_clauses[" + si + "]";
+                                        checkUnexpectedFields(sub, sPath, new Set(["letter", "text", "explanation", "provision", "proviso"]));
+
+                                        if (!sub.letter) issues.push({ severity: "error", path: sPath + ".letter", message: "Missing letter" });
+                                        if (!sub.text || typeof sub.text !== "string" || !sub.text.trim()) {
+                                            issues.push({ severity: "error", path: sPath + ".text", message: "Missing or empty sub-clause text" });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+
+                return issues;
+            }
+
+            function toggleTheme() {
+                const html = document.documentElement;
+                const current = html.getAttribute("data-theme") || "light";
+                const next = current === "dark" ? "light" : "dark";
+                html.setAttribute("data-theme", next);
+                localStorage.setItem("builderTheme", next);
+                document.getElementById("themeToggle").innerHTML = next === "dark" ? "&#9728;" : "&#127769;";
+                toast(next === "dark" ? "Dark mode" : "Light mode", 1000);
+            }
+
+            function initTheme() {
+                const saved = localStorage.getItem("builderTheme");
+                if (saved) {
+                    document.documentElement.setAttribute("data-theme", saved);
+                    document.getElementById("themeToggle").innerHTML = saved === "dark" ? "&#9728;" : "&#127769;";
+                } else {
+                    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                    if (prefersDark) {
+                        document.documentElement.setAttribute("data-theme", "dark");
+                        document.getElementById("themeToggle").innerHTML = "&#9728;";
+                    }
+                }
+            }
+
+            // --- Scroll button visibility ---
+            window.addEventListener("scroll", () => {
+                const scrollY = window.scrollY;
+                const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                document.getElementById("scrollTopBtn").classList.toggle("show", scrollY > 300);
+                document.getElementById("scrollBottomBtn").classList.toggle("show", maxScroll > 300 && scrollY < maxScroll - 100);
+                const toolbar = document.getElementById("mainToolbar");
+                toolbar.classList.toggle("stuck", scrollY > 50);
+            }, { passive: true });
+
+            window.addEventListener("beforeunload", (e) => {
+                if (isDirty) {
+                    e.preventDefault();
+                    e.returnValue = "";
+                }
+            });
+
+            window.addEventListener("DOMContentLoaded", () => {
+                setupInputDelegation();
+                initTheme();
+                // Show skeleton briefly then load
+                const partsContainer = document.getElementById("parts");
+                partsContainer.innerHTML = '<div class="skeleton-wrapper"><div class="skeleton" style="width:80%"></div><div class="skeleton" style="width:60%"></div><div class="skeleton" style="width:70%"></div></div>';
+                setTimeout(() => {
+                    const saved = localStorage.getItem("constitutionData");
+                    if (saved) {
+                        try {
+                            const data = JSON.parse(saved);
+                            const issues = validateStructuredData(data);
+                            showValidationReport(issues);
+                            renderData(data);
+                        } catch (e) {
+                            partsContainer.innerHTML = '<div class="empty-state" id="emptyState"><div class="big-icon">&#128196;</div><h3>No parts yet</h3><p>Click <strong>"+ Add Part"</strong> below to start building.</p></div>';
+                        }
+                    } else {
+                        partsContainer.innerHTML = '<div class="empty-state" id="emptyState"><div class="big-icon">&#128196;</div><h3>No parts yet</h3><p>Click <strong>"+ Add Part"</strong> below to start building.</p></div>';
+                    }
+                    updateProgress();
+                    addInlineInsertSlots("parts");
+                }, 400);
+            });
+        </script>
+    </body>
+</html>
