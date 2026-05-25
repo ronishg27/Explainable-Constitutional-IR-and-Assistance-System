@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Constitution of Nepal, 2072 (2015)</title>
+		<style>
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				font-family: 'Times New Roman', Times, serif;
+				font-size: 14px;
+				line-height: 1.6;
+				color: #1a1a1a;
+				background: #f5f3ef;
+				display: flex;
+			}
+			#nav {
+				position: fixed;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				width: 260px;
+				background: #fff;
+				border-right: 1px solid #ddd;
+				overflow-y: auto;
+				padding: 16px 0;
+				z-index: 100;
+			}
+			#nav h3 {
+				padding: 8px 16px;
+				font-size: 13px;
+				color: #888;
+				text-transform: uppercase;
+				letter-spacing: 1px;
+			}
+			#nav a {
+				display: block;
+				padding: 4px 16px 4px 24px;
+				font-size: 13px;
+				color: #444;
+				text-decoration: none;
+				border-left: 3px solid transparent;
+			}
+			#nav a:hover,
+			#nav a.active {
+				background: #f0eee9;
+				color: #1a1a1a;
+				border-left-color: #8b4513;
+			}
+			#nav .part-link {
+				padding-left: 16px;
+				font-weight: 600;
+				color: #333;
+				margin-top: 4px;
+			}
+			#nav .art-link {
+				padding-left: 32px;
+				font-size: 12px;
+				color: #666;
+			}
+			#content {
+				margin-left: 260px;
+				padding: 40px 60px;
+				max-width: 900px;
+				flex: 1;
+			}
+			.doc-title {
+				font-size: 22px;
+				font-weight: 700;
+				text-align: center;
+				margin-bottom: 4px;
+				color: #8b0000;
+			}
+			.doc-subtitle {
+				text-align: center;
+				font-size: 15px;
+				color: #555;
+				margin-bottom: 40px;
+			}
+			.part {
+				margin-bottom: 32px;
+				page-break-before: auto;
+			}
+			.part-header {
+				background: #8b4513;
+				color: #fff;
+				padding: 10px 16px;
+				margin-bottom: 16px;
+				border-radius: 4px;
+			}
+			.part-header .part-no {
+				font-size: 12px;
+				opacity: 0.8;
+			}
+			.part-header h2 {
+				font-size: 16px;
+				font-weight: 700;
+				margin: 0;
+			}
+			.article {
+				margin-bottom: 20px;
+				padding-left: 8px;
+				border-left: 3px solid #e0ddd6;
+			}
+			.article-header {
+				margin-bottom: 6px;
+				cursor: pointer;
+			}
+			.article-header .art-no {
+				font-weight: 700;
+				color: #8b0000;
+				font-size: 15px;
+			}
+			.article-header .art-title {
+				font-weight: 600;
+				font-size: 15px;
+			}
+			.article-body {
+				padding-left: 8px;
+			}
+			.clause {
+				margin-bottom: 6px;
+			}
+			.clause .clause-label {
+				font-weight: 600;
+				color: #555;
+				margin-right: 4px;
+			}
+			.clause .clause-text {
+				text-align: justify;
+			}
+			.sub-clause {
+				padding-left: 24px;
+				margin-bottom: 2px;
+			}
+			.sub-clause .sc-label {
+				font-weight: 600;
+				color: #777;
+				margin-right: 4px;
+			}
+			.nested-list {
+				padding-left: 28px;
+				margin: 2px 0;
+				border-left: 2px solid #e8e5de;
+			}
+			.nested-clause {
+				margin-bottom: 2px;
+			}
+			.nested-label {
+				font-weight: 600;
+				color: #999;
+				margin-right: 4px;
+				font-size: 12px;
+			}
+			.proviso {
+				font-style: italic;
+				color: #555;
+				padding-left: 16px;
+				margin: 4px 0;
+			}
+			.explanation {
+				font-style: italic;
+				color: #666;
+				font-size: 13px;
+				padding-left: 16px;
+				margin: 4px 0;
+			}
+			.explanation::before {
+				content: 'Explanation: ';
+				font-weight: 600;
+			}
+			.article-text {
+				text-align: justify;
+			}
+			.inline-list {
+				margin-left: 16px;
+			}
+			hr {
+				border: none;
+				border-top: 1px solid #e0ddd6;
+				margin: 24px 0;
+			}
+			#search-box {
+				width: calc(100% - 32px);
+				margin: 8px 16px;
+				padding: 6px 10px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				font-size: 12px;
+			}
+			.highlight {
+				background: #fff3cd;
+			}
+			@media print {
+				#nav {
+					display: none;
+				}
+				#content {
+					margin-left: 0;
+					padding: 20px;
+				}
+				.part-header {
+					background: #8b4513 !important;
+					-webkit-print-color-adjust: exact;
+					print-color-adjust: exact;
+				}
+			}
+			@media (max-width: 700px) {
+				#nav {
+					display: none;
+				}
+				#content {
+					margin-left: 0;
+					padding: 16px;
+				}
+				#show-nav {
+					display: block !important;
+				}
+			}
+			#show-nav {
+				display: none;
+				position: fixed;
+				bottom: 16px;
+				right: 16px;
+				background: #8b4513;
+				color: #fff;
+				border: none;
+				border-radius: 50%;
+				width: 48px;
+				height: 48px;
+				font-size: 20px;
+				cursor: pointer;
+				z-index: 200;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+			}
+		</style>
+	</head>
+	<body>
+		<button
+			id="show-nav"
+			onclick="document.getElementById('nav').style.display = 'block'"
+		>
+			☰
+		</button>
+
+		<nav id="nav">
+			<h3>Constitution of Nepal</h3>
+			<input
+				id="search-box"
+				placeholder="Search articles..."
+				oninput="filterNav(this.value)"
+			/>
+			<div id="nav-links"></div>
+		</nav>
+
+		<div id="content">
+			<div class="doc-title">Constitution of Nepal, 2072 (2015)</div>
+			<div class="doc-subtitle">नया नेपालको संविधान २०७२</div>
+			<hr />
+			<div id="parts-container"></div>
+		</div>
+
+		<script>
+			let data = {};
+
+			(async function loadData() {
+				try {
+					const resp = await fetch(
+						'./data/nepal_constitution_extracted.json'
+					);
+					data = await resp.json();
+					render();
+				} catch (e) {
+					document.getElementById('parts-container').innerHTML =
+						`<p style="color:red;padding:40px;text-align:center;">Failed to load JSON file. Make sure <code>nepal_constitution_extracted.json</code> is in the same directory.<br>Error: ${e.message}</p>`;
+				}
+			})();
+
+			function render() {
+				let navHtml = '';
+				let contentHtml = '';
+
+				data.parts?.forEach((part, pi) => {
+					navHtml += `<a class="part-link" href="#part-${part.part_no}">Part ${part.part_no}: ${part.part_title}</a>`;
+
+					contentHtml += `<div class="part" id="part-${part.part_no}">`;
+					contentHtml += `<div class="part-header"><div class="part-no">Part ${part.part_no}</div><h2>${part.part_title}</h2></div>`;
+
+					part.articles?.forEach((art) => {
+						navHtml += `<a class="art-link" href="#art-${art.article_no}">Article ${art.article_no}: ${art.title}</a>`;
+
+						contentHtml += `<div class="article" id="art-${art.article_no}">`;
+						contentHtml += `<div class="article-header"><span class="art-no">${art.article_no}. </span><span class="art-title">${art.title}</span></div>`;
+						contentHtml += `<div class="article-body">`;
+
+						if (art.text) {
+							contentHtml += renderText(art.text);
+						}
+
+						if (art.provision) {
+							contentHtml += `<div class="proviso">Provided that ${art.provision.replace(/^Provided that /i, '')}</div>`;
+						}
+						if (art.explanation) {
+							contentHtml += `<div class="explanation">${art.explanation.replace(/^Explanation: /i, '')}</div>`;
+						}
+
+						if (art.clauses) {
+							art.clauses.forEach((clause) => {
+								contentHtml += `<div class="clause">`;
+
+								let clauseText = clause.text || '';
+
+								if (clause.sub_clauses?.length) {
+									// Extract the intro text before sub-clauses (the colon part)
+									// Sub-clauses are rendered separately
+									contentHtml += `<span class="clause-label">(${clause.clause_no}) </span><span class="clause-text">${clauseText}</span>`;
+									contentHtml += `<div class="inline-list">`;
+									clause.sub_clauses.forEach((sc) => {
+										contentHtml += `<div class="sub-clause"><span class="sc-label">(${sc.letter}) </span>${sc.text || ''}${sc.provision ? ` <span class="proviso">Provided that ${sc.provision.replace(/^Provided that /i, '')}</span>` : ''}`;
+										if (sc.sub_clauses?.length) {
+											contentHtml += `<div class="nested-list">`;
+											sc.sub_clauses.forEach((nested) => {
+												contentHtml += `<div class="nested-clause"><span class="nested-label">(${nested.clause_no}) </span>${nested.text || ''}${nested.provision ? ` <span class="proviso">Provided that ${nested.provision.replace(/^Provided that /i, '')}</span>` : ''}${nested.explanation ? ` <span class="explanation">${nested.explanation.replace(/^Explanation: /i, '')}</span>` : ''}</div>`;
+											});
+											contentHtml += `</div>`;
+										}
+										contentHtml += `</div>`;
+									});
+									contentHtml += `</div>`;
+								} else {
+									contentHtml += `<span class="clause-label">(${clause.clause_no}) </span><span class="clause-text">${clauseText}</span>`;
+								}
+
+								const clauseProvision =
+									clause.proviso || clause.provision;
+								if (clauseProvision) {
+									contentHtml += `<div class="proviso">Provided that ${clauseProvision.replace(/^Provided that /i, '')}</div>`;
+								}
+								if (clause.explanation) {
+									contentHtml += `<div class="explanation">${clause.explanation.replace(/^Explanation: /i, '')}</div>`;
+								}
+
+								contentHtml += `</div>`;
+							});
+						}
+
+						if (art.sub_clauses?.length) {
+							contentHtml += `<div class="inline-list">`;
+							art.sub_clauses.forEach((sc) => {
+								contentHtml += `<div class="sub-clause"><span class="sc-label">(${sc.letter}) </span>${sc.text || ''}`;
+								if (sc.sub_clauses?.length) {
+									contentHtml += `<div class="nested-list">`;
+									sc.sub_clauses.forEach((nested) => {
+										contentHtml += `<div class="nested-clause"><span class="nested-label">(${nested.clause_no}) </span>${nested.text || ''}${nested.provision ? ` <span class="proviso">Provided that ${nested.provision.replace(/^Provided that /i, '')}</span>` : ''}${nested.explanation ? ` <span class="explanation">${nested.explanation.replace(/^Explanation: /i, '')}</span>` : ''}</div>`;
+									});
+									contentHtml += `</div>`;
+								}
+								contentHtml += `</div>`;
+							});
+							contentHtml += `</div>`;
+						}
+
+						contentHtml += `</div></div>`;
+					});
+
+					contentHtml += `</div>`;
+				});
+
+				document.getElementById('nav-links').innerHTML = navHtml;
+				document.getElementById('parts-container').innerHTML =
+					contentHtml;
+			}
+
+			function renderText(t) {
+				// Detect inline lists like (a) (b) (c) or (i) (ii) etc
+				let lines = t.split(/(?=\([a-z]\))/g).filter(Boolean);
+				if (lines.length <= 1)
+					return `<div class="article-text">${t}</div>`;
+
+				let html = '';
+				lines.forEach((line, i) => {
+					if (i === 0 && !line.match(/^\([a-z]\)/)) {
+						html += `<div class="article-text">${line}</div>`;
+					} else {
+						html += `<div class="sub-clause">${line}</div>`;
+					}
+				});
+				return html;
+			}
+
+			function filterNav(val) {
+				const links = document.querySelectorAll('#nav-links a');
+				const q = val.toLowerCase();
+				links.forEach((a) => {
+					a.style.display =
+						!q || a.textContent.toLowerCase().includes(q)
+							? 'block'
+							: 'none';
+				});
+			}
+
+			// Highlight search in content
+			document.addEventListener('click', (e) => {
+				const link = e.target.closest('#nav-links a');
+				if (link) {
+					document
+						.querySelectorAll('.highlight')
+						.forEach((el) => el.classList.remove('highlight'));
+					setTimeout(() => {
+						const target = document.querySelector(
+							link.getAttribute('href')
+						);
+						if (target)
+							target.scrollIntoView({
+								behavior: 'smooth',
+								block: 'start',
+							});
+					}, 50);
+				}
+			});
+		</script>
+	</body>
+</html>
