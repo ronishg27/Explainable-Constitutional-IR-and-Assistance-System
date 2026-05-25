@@ -7757,14 +7757,9 @@
           ]
         },
         {
-          "article_no": 308,
-          "title": "Repeal",
-          "clauses": [
-            {
-              "clause_no": 1,
-              "text": "The Interim Constitution of Nepal, 2007 (2063) is hereby repealed."
-            }
-          ]
+    "article_no": 308,
+    "title": "Repeal",
+    "text": "The Interim Constitution of Nepal, 2007 (2063) is hereby repealed."
         }
       ]
     }
