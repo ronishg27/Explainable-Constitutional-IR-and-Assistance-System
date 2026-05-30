@@ -24,3 +24,5 @@ node_modules/
 
 backend/data/output/*
 *.7z
+
+AGENTS.md

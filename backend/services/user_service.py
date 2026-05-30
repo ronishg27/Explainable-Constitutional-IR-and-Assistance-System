@@ -7,6 +7,8 @@ from mongoengine.errors import ValidationError, DoesNotExist, NotUniqueError
 logger = logging.getLogger(__name__)
 
 JWT_SECRET = os.getenv("JWT_SECRET")
+if not JWT_SECRET:
+    raise RuntimeError("JWT_SECRET environment variable is required")
 
 
 class UserService:

@@ -16,7 +16,15 @@ class Database:
     
     def connect(self, db_name="ECIRAS", host='mongodb://localhost:27017', alias='default'):
         try:
-            connect(db=db_name, host=host, alias=alias )
+            connect(
+                db=db_name,
+                host=host,
+                alias=alias,
+                maxPoolSize=10,
+                minPoolSize=2,
+                connectTimeoutMS=5000,
+                serverSelectionTimeoutMS=5000
+            )
             logger.info(f"Connected to MongoDB database: {db_name}")
             return True
         except Exception as e:
