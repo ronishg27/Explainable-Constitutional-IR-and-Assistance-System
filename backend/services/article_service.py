@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class ArticleService:
     
     @staticmethod
-    async def create_article(title:str, citation:str, doc_id:str, relevance_score:float):
+    def create_article(title:str, citation:str, doc_id:str, relevance_score:float):
         """Create a new referenced article."""
         try:
             article = ReferencedArticle(
@@ -39,7 +39,7 @@ class ArticleService:
             }
             
     @staticmethod
-    async def get_article(article_id:str):
+    def get_article(article_id:str):
         """Retrieve an article by its ID."""
         try:
             article = ReferencedArticle.objects.get(id=article_id)
@@ -60,7 +60,7 @@ class ArticleService:
             }
             
     @staticmethod 
-    async def list_articles():
+    def list_articles():
         """List all referenced articles."""
         try:
             articles = ReferencedArticle.objects()
@@ -75,7 +75,7 @@ class ArticleService:
             }
     
     @staticmethod
-    async def delete_article(article_id:str):
+    def delete_article(article_id:str):
         """Delete an article by its ID."""
         try:
             article = ReferencedArticle.objects.get(id=article_id)

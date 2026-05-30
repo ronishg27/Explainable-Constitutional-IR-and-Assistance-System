@@ -47,7 +47,7 @@ class QAService:
                 "articles": retrieve_only_result.get("retrieved_articles", []),
             }, 200
 
-        # LLM requested → check connectivity and model availability
+        # LLM requested -> check connectivity and model availability
         is_connected, status_message = workflow.check_ollama_connection()
         if not is_connected:
             logger.warning("Ollama unavailable: %s", status_message)

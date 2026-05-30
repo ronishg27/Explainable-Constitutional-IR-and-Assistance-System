@@ -15,7 +15,7 @@ class MessageService:
     """Handles chat messages with referenced articles."""
     
     @staticmethod
-    async def create_message(
+    def create_message(
             user_id:str,
             query:str,
             answer:str,
@@ -74,7 +74,7 @@ class MessageService:
             }
             
     @staticmethod
-    async def get_user_messages(user_id:str, limit:int=20, skip:int=0):
+    def get_user_messages(user_id:str, limit:int=20, skip:int=0):
         """Get all messages for a specific user."""
         try:
             # 1. Get the user
@@ -107,7 +107,7 @@ class MessageService:
             }
             
     @staticmethod
-    async def get_message(message_id:str):
+    def get_message(message_id:str):
         """Get a single message by ID."""
         try:
             message = Message.objects.get(id=message_id)
@@ -122,7 +122,7 @@ class MessageService:
             }
             
     @staticmethod
-    async def update_message_answer(message_id:str, new_answer:str):
+    def update_message_answer(message_id:str, new_answer:str):
         """Update the answer of a message."""
         try:
             message = Message.objects.get(id=message_id)
@@ -141,7 +141,7 @@ class MessageService:
             
     
     @staticmethod
-    async def search_messages(user_id:str, search_term:str):
+    def search_messages(user_id:str, search_term:str):
         """Search messages by query text"""
         try:
             user = User.objects.get(id=user_id)
@@ -164,7 +164,7 @@ class MessageService:
             }
             
     @staticmethod
-    async def delete_message(message_id:str):
+    def delete_message(message_id:str):
         """Delete a message by ID."""
         try:
             message = Message.objects.get(id=message_id)
@@ -180,7 +180,7 @@ class MessageService:
             }
     
     @staticmethod
-    async def delete_user_messages(user_id:str):
+    def delete_user_messages(user_id:str):
         """Delete all messages for a specific user."""
         try:
             user = User.objects.get(id=user_id)
