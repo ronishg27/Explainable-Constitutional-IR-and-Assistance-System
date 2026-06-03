@@ -1,325 +1,1190 @@
-# Explainable Constitutional IR and Assistance System - Project Documentation
+# Constitution Assistant — Complete System Documentation
 
-**Project Name:** Explainable Constitutional IR and Assistance System  
-**Version:** 2.0.1 (documentation refresh)  
+**Project:** Explainable Constitutional IR and Assistance System  
+**Version:** 2.0.2 (documentation refresh)  
 **Last Updated:** April 19, 2026  
-**Purpose:** Retrieval-Augmented constitutional question answering for Nepal's Constitution, combining BM25 search with LLM-based response generation.  
-**Author:** Ronish Ghimire, Devraj Khatiwada, Nayan Nepal
+**Authors:** Ronish Ghimire, Devraj Khatiwada, Nayan Nepal  
+**Domain:** Legal Information Retrieval — Constitution of Nepal (2072 / 2015)
+
+---
+
+## Table of Contents
+
+1. [Project Overview](#1-project-overview)
+2. [System Architecture](#2-system-architecture)
+3. [Codebase Structure](#3-codebase-structure)
+4. [API Documentation](#4-api-documentation)
+5. [Database Documentation](#5-database-documentation)
+6. [Business Logic](#6-business-logic)
+7. [Feature Breakdown](#7-feature-breakdown)
+8. [Setup & Environment](#8-setup--environment)
+9. [Issues & Technical Debt](#9-issues--technical-debt)
+10. [Appendix: Mermaid Diagrams](#10-appendix-mermaid-diagrams)
 
 ---
 
 ## 1. Project Overview
 
-### What the System Does
-This project is a constitutional assistant API that accepts natural language questions and returns:
-- A generated answer from an LLM
-- Retrieved constitutional references used as evidence
-- Ranked citations based on lexical relevance (BM25 with title boosting)
+### 1.1 What the System Does
 
-The current implementation is **RAG-first** (retrieval + generation), not retrieval-only.
+**Constitution Assistant** is a Retrieval-Augmented Generation (RAG) system that answers natural-language questions about the **Constitution of Nepal (2072 / 2015)**. Users ask legal questions in plain English and receive:
 
-### Core User Flow
-1. User sends a question to `POST /api/v1/ask`
-2. Backend retrieves top constitutional passages using BM25
-3. Retrieved passages are formatted into context
-4. Ollama model generates a grounded answer from that context
-5. API returns answer + retrieved article metadata
+1. **Ranked constitutional provisions** from a custom hybrid search engine (BM25 + term proximity + title boost).
+2. **Optionally, an LLM-generated answer** grounded strictly in the retrieved provisions (using Ollama + Gemma3:1b).
 
-### Primary Technologies
-- **Backend:** Flask 3.x
-- **Cross-origin support:** flask-cors
-- **Env management:** python-dotenv
-- **Retrieval:** BM25 (custom implementation)
-- **Generation:** Ollama client (`ollama` Python package)
-- **Data format:** JSON corpus + JSON metadata
+### 1.2 Problem It Solves
 
----
+The Constitution of Nepal is a lengthy legal document (over 300 articles across 35 parts). Finding relevant provisions for a specific legal question using keyword search or manual browsing is slow and error-prone. This system:
 
-## 2. Current Architecture (Actual)
+- Provides **instant, ranked retrieval** of constitution articles/clauses relevant to a user query.
+- Uses **BM25 + term proximity + title boost** to rank provisions by both lexical relevance and phrase-level closeness.
+- Optionally generates a **concise, citation-backed answer** using an LLM that is strictly grounded in retrieved articles — reducing hallucination in legal contexts.
 
-```
-Client (Postman / UI)
-        |
-        v
-Flask API (backend/app.py)
-  - GET /api/v1
-  - GET /api/v1/health
-  - POST /api/v1/ask
-        |
-        v
-RAGWorkflow (backend/src/llm/rag_workflow.py)
-  |- load_documents(...flattened_nepal_constitution.json)
-  |- BM25 index build (backend/src/core/bm25.py)
-  |- retrieve top-k with title boost
-  |- build prompt with retrieved constitutional context
-  |- call Ollama chat model
-        |
-        v
-Response JSON
-  - query
-  - response (LLM answer)
-  - articles (retrieved evidence docs)
-```
+### 1.3 Core Features
 
-### Important Reality Check
-The API endpoint is **already integrated** with retrieval and generation logic. It is no longer a placeholder-only route.
+- **Hybrid Search Engine**: Custom BM25 scoring + term proximity scoring + title boost for constitution-specific retrieval.
+- **RAG (Retrieval-Augmented Generation)**: Ollama-powered LLM answer generation with strict grounding.
+- **Graceful Degradation**: If Ollama is unavailable, the system falls back to retrieval-only mode with informative status.
+- **User Authentication**: JWT-based registration/login with bcrypt password hashing.
+- **Message Persistence (infrastructure)**: `MessageService` / `ArticleService` ready for use; not wired to the `/ask` endpoint in the current scope.
+- **Offline Ingestion Pipeline**: Flatten nested constitution JSON → build term frequency / positional / document-stats indexes.
+- **Frontend UI**: React 19 + Vite 8 single-page application with search, LLM toggle, and expandable result cards.
+
+### 1.4 Document Conventions
+
+- `backend/` refers to `c:\Users\Rons\OneDrive\Desktop\Constitution_assistant\backend`
+- `frontend/` refers to `c:\Users\Rons\OneDrive\Desktop\Constitution_assistant\frontend`
+- File paths are given relative to these roots unless otherwise noted.
+- Marked **`[Assumption]`** where details were inferred rather than explicitly confirmed in code.
 
 ---
 
-## 3. Repository Structure Snapshot
+## 2. System Architecture
+
+### 2.1 High-Level Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                   Frontend (React 19 + Vite 8)                │
+│  Navbar │ SearchBar │ MainSearchBar │ ResultDisplay │ Suggs.  │
+└──────────────────────────┬───────────────────────────────────┘
+                           │ POST /api/v1/ask
+                           ▼
+┌──────────────────────────────────────────────────────────────┐
+│                    Backend (Flask / Python 3.13)               │
+│                                                               │
+│  ┌──────────┐  ┌────────────┐  ┌──────────────────────────┐  │
+│  │  Routes   │  │Controllers │  │      Services             │  │
+│  │(Blueprints)│  │(validation)│  │  QAService (singleton)    │  │
+│  └──────────┘  └────────────┘  └──────────┬───────────────┘  │
+│                                            │                  │
+│                    ┌───────────────────────┼──────────────┐   │
+│                    │     RAGWorkflow       │              │   │
+│                    │  ┌─────────────────┐  │              │   │
+│                    │  │  SearchEngine    │  │              │   │
+│                    │  │  (BM25 + prox)   │  │              │   │
+│                    │  └─────────────────┘  │              │   │
+│                    │  ┌─────────────────┐  │              │   │
+│                    │  │ Ollama LLM       │  │              │   │
+│                    │  │ (Gemma3:1b)      │  │              │   │
+│                    │  └─────────────────┘  │              │   │
+│                    └───────────────────────┘              │   │
+│                                                               │
+│  ┌──────────┐  ┌────────────┐  ┌──────────────────────────┐  │
+│  │  Config   │  │   Models   │  │      Preprocessing        │  │
+│  │ (MongoDB) │  │(User/Message│  │  (flatten + index build)  │  │
+│  └──────────┘  │ /Article)   │  └──────────────────────────┘  │
+│                └────────────┘                                │
+└──────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+              ┌───────────────────────────┐
+              │      MongoDB 8             │
+              │  users / messages /         │
+              │  referenced_articles        │
+              └───────────────────────────┘
+```
+
+### 2.2 Component Interaction Flow
+
+**Online Q&A Flow:**
+1. User submits query via React frontend or direct API call.
+2. Flask API validates input (JSON, query length ≤ 500 chars).
+3. `QAService` (lazy singleton) delegates to `RAGWorkflow`.
+4. `RAGWorkflow.retrieve()` calls `SearchEngine.search()`:
+   - Tokenizes query with two processors (BM25: lemmatized+no stopwords, Proximity: raw+stopwords kept).
+   - Generates candidate set from BM25 term-frequency index (union of doc IDs containing any query term).
+   - Scores each candidate: `BM25 + title_boost(×5.0 per title match) + proximity_weight(×1.0 × avg pair score)`.
+   - Returns top-k ranked article dicts.
+5. If `use_llm=true` and Ollama is reachable, formats articles as context → builds strict prompt → calls Ollama with retry → returns answer + citations.
+6. Response returned as JSON.
+
+**Offline Ingestion Flow:**
+1. `flatten_constitution.py` reads nested JSON (`data/nepal_constitution_new.json`) and produces flat document list.
+2. `IngestionWorkflow` builds three JSON indexes: `tf_index.json`, `pos_index.json`, `doc_stats.json`.
+3. `generate_safe_lemma_dict.py` builds a rule-based lemma dictionary for corpus-specific vocabulary.
+
+### 2.3 Tech Stack
+
+| Layer          | Technology                          | Details                              |
+|----------------|-------------------------------------|--------------------------------------|
+| Backend        | Python 3.13 + Flask 3.x             | Flask with CORS, Blueprints          |
+| Frontend       | React 19 + Vite 8                   | Tailwind CSS v4, JSX                 |
+| Database       | MongoDB 8 (mongoengine ODM)         | Users, messages, article refs        |
+| IR Engine      | Custom Python                       | BM25 + term proximity + title boost  |
+| NLP            | spaCy (`en_core_web_sm`)            | Lemmatization, tokenization          |
+| LLM            | Ollama (local)                      | Default: `gemma3:1b`                 |
+| Auth           | JWT (HS256, 12h expiry)             | httpOnly SameSite=Strict cookies + Bearer fallback |
+| Build Tools    | Prettier, ESLint, Vite HMR          |                                      |
+
+---
+
+## 3. Codebase Structure
+
+### 3.1 Root Directory
+
+```
+Constitution_assistant/
+├── backend/                 # Flask API + retrieval engine + preprocessing
+├── frontend/                # React 19 SPA
+├── docs/                    # Documentation
+│   ├── design.md            # Design document (canonical reference)
+│   ├── algorithm_details.md # Pseudo-code for retrieval algorithm
+│   ├── PROJECT_DOCUMENTATION.md  # This file
+│   └── mermaid/             # Mermaid diagram sources and rendered outputs
+├── references/              # Academic papers (PDFs)
+├── postman/                 # Postman collections for API testing
+├── Makefile                 # Quick-start commands for backend/frontend
+├── .gitignore
+├── .prettierrc
+└── AGENTS.md                # AI agent instructions
+```
+
+### 3.2 Backend Structure (`backend/`)
 
 ```
 backend/
-  app.py
-  requirements.txt
-  bm25.py
-  boolean_search.py
-  ii_tf.py
-  text_processing.py
-  demo_rag.py
-  data/
-    Constitution-of-Nepal_2072.pdf
-    flattened_nepal_constitution.json
-    inverted_index_mvp.json
-    nepal_constitution_mvp.json
-  preprocessing_scripts/
-    build_inverted_index_mvp.py
-    filter_lemma_dict.py
-    flatten_articles.py
-    flatten_mvp_constitution.py
-    generate_safe_lemma_dict.py
-  src/
-    constants/
-      stopwords.py
-    core/
-      bm25.py
-      preprocessing.py
-    llm/
-      ollama_llm.py
-      rag_workflow.py
-
-postman/
-  collections/
-  environments/
-
-frontend/
-  .gitkeep
+├── app.py                          # Entry point: create_app(), --rebuild-data flag, main()
+├── requirements.txt                # Python dependencies (UTF-16 encoded)
+├── .env                            # Environment variables (gitignored)
+├── .env.sample                     # Template for .env
+├── README.md                       # Backend documentation
+├── Makefile                        # Build commands
+│
+├── routes/                         # Flask Blueprints (URL routing)
+│   ├── api_routes.py               #   /api/v1, /api/v1/health, /api/v1/ask
+│   └── auth_routes.py              #   /api/v1/auth/register, /login, /logout, /me
+│
+├── controllers/                    # Request validation and response formatting
+│   ├── api_controller.py           #   home(), health(), ask()
+│   ├── auth_controller.py          #   register(), login(), logout(), get_current_user()
+│   └── decorators.py               #   @token_required JWT decorator
+│
+├── services/                       # Business logic orchestration
+│   ├── qa_service.py               #   QAService (singleton, double-checked locking)
+│   ├── user_service.py             #   UserService (CRUD + authenticate)
+│   ├── message_service.py          #   MessageService (CRUD + pagination + search)
+│   └── article_service.py          #   ArticleService (CRUD)
+│
+├── models/                         # MongoDB ODM (mongoengine)
+│   ├── user_model.py               #   User document
+│   ├── message_model.py            #   Message document
+│   └── referenced_article_model.py #   ReferencedArticle document
+│
+├── config/                         # Database configuration
+│   └── db_connect.py               #   Database singleton (connect/disconnect)
+│
+├── src/
+│   ├── core/                       # Information retrieval engine (no Flask deps)
+│   │   ├── __init__.py             #   Public API exports
+│   │   ├── document.py             #   Document dataclass
+│   │   ├── text_processor.py       #   TextProcessor (normalize, lemmatize, stopwords)
+│   │   ├── index_builder.py        #   IndexBuilder (tf, positional, doc stats)
+│   │   ├── bm25_scorer.py          #   BM25Scorer (k1=1.5, b=0.75)
+│   │   ├── proximity.py            #   ProximityScorer (ordered term pairs)
+│   │   ├── search_engine.py        #   SearchEngine (candidate generation + scoring)
+│   │   ├── engine_factory.py       #   EngineFactory (loads artifacts from disk)
+│   │   └── app_bootstrap.py        #   rebuild_document_artifacts(), preload_spacy(), connect_database()
+│   │
+│   ├── llm/                        # RAG and LLM integration
+│   │   ├── ollama_llm.py           #   createOllamaClient() factory
+│   │   ├── rag_formatter.py        #   RAGFormatter (context + prompt builder)
+│   │   └── rag_workflow.py         #   RAGWorkflow (retrieve + ask + streaming)
+│   │
+│   ├── constants/                  # Shared constants
+│   │   ├── contraction_map.py      #   57 English contractions → expansions
+│   │   └── stopwords.py            #   ~120 English stopwords
+│   │
+│   └── workflows/                  # Offline processing
+│       └── ingestion_workflow.py   #   IngestionWorkflow (load → build → save indexes)
+│
+├── preprocessing_scripts/          # One-off pipeline scripts
+│   ├── run_ingestion.py            #   Orchestrates all 3 steps
+│   ├── flatten_constitution.py     #   Nested JSON → flat document list
+│   ├── build_index.py              #   Load flattened docs → build indexes
+│   └── generate_safe_lemma_dict.py #   Rule-based lemma dictionary
+│
+├── data/                           # Data files
+│   ├── Constitution-of-Nepal_2072.pdf      # Source PDF
+│   ├── nepal_constitution_new.json         # Nested format input
+│   ├── nepal_constitution.json             # Alternative input format
+│   └── output/                             # Generated artifacts (gitignored)
+│       ├── flattened_nepal_constitution.json   # ~700+ flat documents
+│       ├── tf_index.json                      # Term → {doc_id: tf}
+│       ├── pos_index.json                     # Term → {doc_id: [positions]}
+│       ├── doc_stats.json                     # doc_lengths + avgdl
+│       └── lemma_dict_v3.json                 # Rule-based lemma map
+│
+├── json_builder_tools/             # Constitution JSON schema and tools
+│   ├── constitution_schema.md      # Canonical JSON schema
+│   ├── constitution_preview.html   # Preview tool
+│   ├── json_builder_v2.html        # JSON builder (browser-based)
+│   └── json_builder_v3.html        # Updated JSON builder
+│
+└── temp/                           # Temporary files (gitignored)
 ```
 
-### Notes
-- The active runtime path for API retrieval is `backend/src/core/bm25.py` via `backend/src/llm/rag_workflow.py`.
-- `frontend/` currently contains no application implementation.
-- There are duplicate/legacy retrieval modules in root `backend/` that are useful for experimentation but are not the main API path.
+### 3.3 Frontend Structure (`frontend/`)
+
+```
+frontend/
+├── index.html                      # SPA entry point
+├── package.json                    # React 19, Vite 8, Tailwind v4
+├── vite.config.js                  # Vite config (React + Tailwind plugins)
+├── eslint.config.js                # ESLint flat config
+├── README.md                       # Generated Vite template docs (stale)
+│
+├── public/
+│   ├── favicon.svg                 # App favicon
+│   └── icons.svg                   # Social media icons
+│
+└── src/
+    ├── main.jsx                    # React root mount
+    ├── index.css                   # Tailwind v4 import + base styles
+    ├── App.jsx                     # Root component (layout assembly)
+    ├── App.css                     # (Stale Vite boilerplate, not used)
+    │
+    ├── components/
+    │   ├── Navbar.jsx              # Top navigation bar
+    │   ├── SearchBar.jsx           # Hero section heading
+    │   ├── mainsearchbar.jsx       # Main search input + LLM toggle + submission
+    │   ├── Suggestion.jsx          # Quick-suggestion pills
+    │   └── Resultdisplay.jsx       # Expandable result cards with related articles
+    │
+    └── data/
+        ├── constitution_flattened.json      # Local copy of flattened constitution
+        └── constitution_flattened_old.json  # Older format copy
+```
+
+### 3.4 Entry Points
+
+| Entry Point | Path | Purpose |
+|-------------|------|---------|
+| Flask Server | `backend/app.py` | `$ python app.py` — starts the API server |
+| Flask Server (rebuild) | `backend/app.py` | `$ python app.py --rebuild-data` — rebuilds indexes then starts server |
+| Frontend Dev Server | `frontend/` | `$ npm run dev` — starts Vite dev server |
+| Manual Ingestion | `backend/preprocessing_scripts/run_ingestion.py` | `$ python -m preprocessing_scripts.run_ingestion` |
+| Build Indexes Only | `backend/preprocessing_scripts/build_index.py` | `$ python -m preprocessing_scripts.build_index` |
+| RAG Demo | `backend/src/llm/rag_workflow.py` | `$ python -m src.llm.rag_workflow` (standalone demo) |
 
 ---
 
-## 4. API Interface (Implemented)
+## 4. API Documentation
 
-## Base URL
+### 4.1 Base URL
+
 `http://localhost:5000/api/v1`
 
-## Endpoint: Home
-- **Method:** `GET`
-- **Path:** `/api/v1`
-- **Purpose:** API landing metadata
+### 4.2 Authentication
 
-## Endpoint: Health
-- **Method:** `GET`
-- **Path:** `/api/v1/health`
-- **Purpose:** Basic liveliness check
+All auth endpoints return JWT tokens stored in **httpOnly, Secure, SameSite=Strict cookies** with 12-hour expiry. The `@token_required` decorator (`controllers/decorators.py`) checks for tokens in:
+1. `Authorization: Bearer <token>` header (primary)
+2. `token` cookie (fallback)
 
-## Endpoint: Ask (Main)
-- **Method:** `POST`
-- **Path:** `/api/v1/ask`
-- **Request body:**
+### 4.3 Endpoints
+
+---
+
+#### `GET /api/v1`
+
+API landing page listing available endpoints.
+
+**Response 200:**
 ```json
 {
-  "query": "Discuss the concept of sovereignty and state power in Nepal."
+  "message": "Welcome to the API!",
+  "endpoints": {
+    "/api/v1/health": "Check the health of the API.",
+    "/api/v1/ask": "Submit a query to get a response.",
+    "/api/v1/auth/register": "Register a new user.",
+    "/api/v1/auth/login": "Login with email and password.",
+    "/api/v1/auth/logout": "Logout the current user.",
+    "/api/v1/auth/me":"Get the current logged in user",
+  },
+  "version": "1.0.0"
 }
 ```
 
-- **Success response shape (current):**
+---
+
+#### `GET /api/v1/health`
+
+Liveness check for the API server.
+
+**Response 200:**
 ```json
 {
-  "query": "...",
-  "response": "LLM answer text...",
+  "status": "healthy"
+}
+```
+
+#### Quick Test with curl
+
+```bash
+# Health check
+curl http://localhost:5000/api/v1/health
+
+# Retrieval-only query (no LLM)
+curl -X POST http://localhost:5000/api/v1/ask \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Right to education", "use_llm": false}'
+
+# Full RAG query (requires Ollama running)
+curl -X POST http://localhost:5000/api/v1/ask \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Can police take my phone?", "use_llm": true}'
+
+# Register a user
+curl -X POST http://localhost:5000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"fullname": "Test User", "email": "test@example.com", "password": "pass123"}'
+
+# Login (stores token as cookie)
+curl -X POST http://localhost:5000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{"email": "test@example.com", "password": "pass123"}'
+
+# Get current user (requires cookie from login)
+curl http://localhost:5000/api/v1/auth/me -b cookies.txt
+```
+
+---
+
+#### `POST /api/v1/ask`
+
+Main Q&A endpoint. Accepts a natural language query and returns ranked constitutional provisions, optionally with an LLM-generated answer.
+
+**Request Body:**
+```json
+{
+  "query": "Can police take my phone?",
+  "use_llm": true
+}
+```
+
+**Validation Rules:**
+- Content-Type must be `application/json` → else **400**
+- Request body must be valid JSON → else **400**
+- `query` field is required, must be a string, max 500 characters → else **400**
+
+**Behavior Matrix:**
+
+| `use_llm` | Ollama Available | HTTP Status | Response Includes |
+|:---------:|:----------------:|:-----------:|-------------------|
+| `false`   | —                | 200         | `query` + `articles` |
+| `true`    | Yes, model loaded | 200        | `query` + `articles` + `response` + `ollama_status` |
+| `true`    | Yes, model missing | 200       | `query` + `articles` + `ollama_status` (no LLM answer) |
+| `true`    | Unreachable      | 503         | `error`: "Ollama service is unavailable." |
+| `true`    | LLM call fails after retries | 200 | `query` + `articles` + `response` (contains error text) + `error` field |
+
+**Response 200 (Retrieval Only):**
+```json
+{
+  "query": "Can police take my phone?",
   "articles": [
     {
-      "doc_id": "...",
-      "article_no": 1,
-      "title": "...",
-      "citation": "Part X, Article Y...",
-      "score": 12.34
+      "doc_id": "12",
+      "title": "Right to privacy",
+      "citation": "Part 3, Article 12",
+      "score": 8.47
     }
   ]
 }
 ```
 
-- **Current failure behavior:**
-  - If Ollama connection is unavailable at request time, returns `503` with `{"error": "Ollama service is unavailable."}`
-  - If request payload is invalid, returns `400` with validation message (content type, JSON payload, query presence/type/length)
-  - Unexpected runtime failures return `500` with `{"error": "An error occurred while processing the query."}`
+**Response 200 (With LLM):**
+```json
+{
+  "query": "Can police take my phone?",
+  "response": "Under the Constitution of Nepal... [Part 3, Article 12]...",
+  "articles": [
+    {
+      "doc_id": "12",
+      "title": "Right to privacy",
+      "citation": "Part 3, Article 12",
+      "score": 8.47
+    }
+  ],
+  "ollama_status": {
+    "connected": true,
+    "model": "gemma3:1b",
+    "model_available": true
+  }
+}
+```
+
+**Response 200 (Model Missing):**
+```json
+{
+  "query": "Can police take my phone?",
+  "articles": [...],
+  "ollama_status": {
+    "connected": true,
+    "model": "gemma3:1b",
+    "model_available": false,
+    "message": "Model 'gemma3:1b' is unavailable.",
+    "available_models": ["llama3.2:3b", ...]
+  }
+}
+```
+
+**Response 400 (Validation Error):**
+```json
+{
+  "error": "Query is too long. Maximum length is 500 characters."
+}
+```
+
+**Response 500 (Server Error):**
+```json
+{
+  "error": "An error occurred while processing the query."
+}
+```
+
+**Response 503 (Ollama Unavailable):**
+```json
+{
+  "error": "Ollama service is unavailable."
+}
+```
 
 ---
 
-## 5. Retrieval and Ranking Logic
+#### `POST /api/v1/auth/register`
 
-### Active BM25 Engine
-Implemented in `backend/src/core/bm25.py`:
-- Default params: `k1=1.5`, `b=0.75`
-- Uses pre-tokenized `body_tokens` when available, else tokenizes text
-- Computes IDF with BM25 standard variant
-- Supports title boosting through `score_with_boost(...)`
+Create a new user account.
 
-### Query Preprocessing
-Runtime preprocessing is done through `NLP.tokenize(...)` from `backend/src/core/preprocessing.py`.
-- Lowercasing and punctuation normalization
-- Stopword filtering using `backend/src/constants/stopwords.py`
+**Request Body:**
+```json
+{
+  "fullname": "John Doe",
+  "email": "john@example.com",
+  "password": "securepass123",
+  "role": "user"
+}
+```
 
-### Title Boosting
-Final ranking score is:
-- BM25 body score
-- Plus `title_boost * overlap(query_tokens, title_tokens)`
+**Validation:**
+- `fullname` and `email` are required
+- `password` must be at least 6 characters
+- `role` defaults to `"user"` (options: `"user"`, `"admin"`)
+- Email must be unique → **400** if duplicate
 
-Default `title_boost` currently used in workflow: `5.0`.
+**Response 201 (Success):**
+```json
+{
+  "message": "User created successfully",
+  "user": { "id": "...", "fullname": "John Doe", "email": "john@example.com", ... }
+}
+```
 
----
-
-## 6. RAG Workflow Details
-
-Implemented in `backend/src/llm/rag_workflow.py`.
-
-### Steps
-1. Load constitution corpus from `backend/data/flattened_nepal_constitution.json`
-2. Build BM25 index in memory
-3. Retrieve top-k relevant documents (`max_context_articles`, default `5`)
-4. Format retrieved passages into a structured constitutional context
-5. Build instruction prompt constrained to provided articles
-6. Call Ollama chat model (default: `gemma3:1b`)
-7. Return answer and citations
-
-### Model Options in Code
-Enum includes:
-- `llama2:7b-chat`
-- `qwen3:4b`
-- `qwen3:8b`
-- `gemma3:1b`
-- `glm-5:cloud`
-
-### Ollama Client Setup
-In `backend/src/llm/ollama_llm.py`:
-- `OLLAMA_HOST` env var supported (default `http://127.0.0.1:11434`)
-- Optional bearer token from `OLLAMA_API_KEY`
-- Authorization header is only sent when `OLLAMA_API_KEY` is non-empty (prevents invalid empty `Bearer` header failures)
+**Response 400 (Error):**
+```json
+{
+  "error": "Validation Error: ...",
+  "message": "Invalid user data provided."
+}
+```
 
 ---
 
-## 7. Data Pipeline and Assets
+#### `POST /api/v1/auth/login`
 
-### Canonical Data Files (current)
-- `backend/data/nepal_constitution_mvp.json` (structured source)
-- `backend/data/flattened_nepal_constitution.json` (main retrieval corpus)
-- `backend/data/inverted_index_mvp.json` (prebuilt lexical index)
-- `backend/data/Constitution-of-Nepal_2072.pdf` (source reference)
+Authenticate and receive a JWT cookie.
 
-### Preprocessing Scripts
-- `flatten_mvp_constitution.py`: creates normalized flat docs (article/clause/sub-clause levels)
-- `build_inverted_index_mvp.py`: builds token -> document-frequency postings
-- `flatten_articles.py`: alternate flattening utility for different input schema variants
-- `filter_lemma_dict.py`, `generate_safe_lemma_dict.py`: lemma-related utilities
+**Request Body:**
+```json
+{
+  "email": "john@example.com",
+  "password": "securepass123"
+}
+```
 
-### Output Document Schema (flattened corpus)
-Typical fields include:
-- `doc_id`
-- `part_no`
-- `article_no`
-- `clause_no`
-- `subclause_id`
-- `level`
-- `title`
-- `text`
-- `citation`
-- `title_tokens`
-- `body_tokens`
+**Response 200 (Success):**
+```json
+{
+  "message": "Login successful",
+  "user": { "id": "...", "fullname": "John Doe", ... },
+  "authenticated": true
+}
+```
+Sets `token` cookie (httpOnly, Secure, SameSite=Strict, 12-hour expiry).
 
----
-
-## 8. Implementation Status (Accurate as of April 2026)
-
-### Implemented
-- Flask API routes (`/api/v1`, `/api/v1/health`, `/api/v1/ask`)
-- BM25 retrieval with title boosting
-- RAG orchestration (retrieve + prompt + LLM answer)
-- Ollama connectivity check before answering (performed per request for fresh status)
-- Input validation for `/ask` (content type, JSON body, query type, query length)
-- Postman collection and environment for quick API testing
-
-### Partially Implemented / In Progress
-- Better runtime efficiency under load (single-process startup caching exists; no cross-worker shared cache yet)
-- Unified preprocessing stack across all modules (duplicate utilities still exist)
-- More granular error categories (e.g., model missing vs host unavailable vs timeout)
-
-### Not Yet Implemented
-- Fully built frontend experience
-- Automated test suite (unit/integration coverage)
-- Production-grade observability (structured logs/metrics/traces)
-- Multi-language query support (e.g., Nepali)
+**Response 401 (Failure):**
+```json
+{
+  "error": "Invalid credentials",
+  "message": "Incorrect email or password."
+}
+```
 
 ---
 
-## 9. Known Issues and Technical Debt
+#### `POST /api/v1/auth/logout`
 
-1. **Workflow startup overhead and memory footprint**
-- `RAGWorkflow()` is initialized at app startup, which avoids per-request rebuilds.
-- Initial startup can still be slow for larger corpora, and memory remains resident for process lifetime.
+Clear the authentication cookie.
 
-2. **Input validation gaps**
-- Core validation is implemented, but sanitization and stricter semantic constraints are still limited.
+**Auth:** Required (`@token_required`)
 
-3. **Preprocessing duplication**
-- Multiple tokenizer/search implementations exist (`backend/bm25.py`, `backend/ii_tf.py`, `backend/src/core/bm25.py`).
-- This increases maintenance burden and risks inconsistent behavior.
-
-4. **Lemmatization path is inconsistent**
-- Lemma scripts exist, but active runtime path is mostly tokenization + stopword removal.
-
-5. **requirements.txt encoding caution**
-- File appears to be UTF-16 encoded; tools assuming UTF-8 may misread it.
+**Response 200:**
+```json
+{
+  "message": "Logout successful."
+}
+```
+Clears `token` cookie by setting `max_age=-1`.
 
 ---
 
-## 10. Recommendations for Project Report and Next Milestone
+#### `GET /api/v1/auth/me`
 
-### A. Immediate (High Priority)
-1. Add retrieval + generation latency timing in logs for each `/ask` call.
-2. Improve error messages for model/data failures (e.g., missing model vs host unreachable).
-3. Add fallback model strategy when the configured model is unavailable.
+Get the currently authenticated user's information.
 
-### B. Short Term
-1. Consolidate retrieval code into one canonical module (`backend/src/core`).
-2. Add logging for retrieval latency, generation latency, and failure reason.
-3. Add unit tests for preprocessing and BM25 scoring.
+**Auth:** Required (`@token_required`)
 
-### C. Medium Term
-1. Add retrieval-only mode in API for explainability/debugging.
-2. Add answer grounding signals (which context chunks influenced the answer).
-3. Add Nepali language support path and query normalization strategy.
+**Response 200:**
+```json
+{
+  "user": {
+    "success": true,
+    "data": { "id": "...", "fullname": "John Doe", ... },
+    "message": "User retrieved successfully"
+  }
+}
+```
+
+**Response 404:**
+```json
+{
+  "error": "User not found."
+}
+```
+
+### 4.4 Endpoint Summary
+
+| Method | Path | Auth | Description |
+|--------|------|:----:|-------------|
+| GET | `/api/v1` | No | API landing + endpoints list |
+| GET | `/api/v1/health` | No | Liveness check |
+| POST | `/api/v1/ask` | No | Main Q&A endpoint |
+| POST | `/api/v1/auth/register` | No | User registration |
+| POST | `/api/v1/auth/login` | No | Login, sets JWT cookie |
+| POST | `/api/v1/auth/logout` | Yes | Clears JWT cookie |
+| GET | `/api/v1/auth/me` | Yes | Current user info |
+
+**`[Assumption]`**: The `/ask` endpoint is unauthenticated in the current implementation — there is no `@token_required` decorator on it. The `MessageService` for persisting queries to MongoDB exists but is **not wired** into the `/ask` flow. Queries are returned but never saved to the `messages` collection via this endpoint.
 
 ---
 
-## 11. Report-Ready Summary
+## 5. Database Documentation
 
-This project currently functions as a **Retrieval-Augmented Constitutional Assistant** rather than a plain IR prototype. The backend retrieves relevant constitutional provisions using BM25 with title boosting, then uses an Ollama-hosted model to generate concise, citation-aware answers. The architecture is practical and operational for demos and academic evaluation, with clear improvement opportunities in validation, performance optimization, and code consolidation.
+### 5.1 Database: `ECIRAS` (MongoDB via mongoengine)
+
+Three collections managed by the ODM layer. Connection is handled by `config/db_connect.py` (singleton pattern, `maxPoolSize=10`, `minPoolSize=2`, 5s timeouts).
+
+### 5.2 Collection: `users`
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `_id` | ObjectId | auto | Primary key |
+| `fullname` | String | required, min_length=3, max_length=50 | User's display name |
+| `email` | String | required, unique | Login identifier |
+| `password_hash` | String | required | bcrypt hash (60 chars) |
+| `role` | Enum (`user`, `admin`) | default=`user` | Authorization level |
+| `created_at` | DateTime | auto-set on creation | Timestamp |
+| `updated_at` | DateTime | auto-updated on save | Timestamp |
+
+**Indexes:** `email` (unique), `(fullname, created_at)` (composite)  
+**Default ordering:** `-created_at` (newest first)  
+**Methods:**
+- `set_password(password)`: Hashes password with bcrypt `gensalt()`.
+- `check_password(password)`: Verifies against stored hash.
+- `to_json()`: Returns dict excluding `password_hash` and `role`.
+
+### 5.3 Collection: `messages`
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `_id` | ObjectId | auto | Primary key |
+| `query` | String | required | User's natural language question |
+| `answer` | String | optional | LLM-generated answer text |
+| `user` | Reference (User) | required, CASCADE on delete | Owning user |
+| `articles` | List[Reference(ReferencedArticle)] | default=[], NULLIFY on delete | Referenced constitutional articles |
+| `created_at` | DateTime | auto-set | Timestamp |
+| `updated_at` | DateTime | auto-updated | Timestamp |
+
+**Indexes:** `query`, `user`, `(query, created_at)` (composite)  
+**Default ordering:** `-created_at` (newest first)  
+**`[Observation]`**: The `articles` field references `ReferencedArticle` documents. The `reverse_delete_rule=3` (NULLIFY) means deleting a referenced article removes it from the list but does not cascade to the message.
+
+### 5.4 Collection: `referenced_articles`
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `_id` | ObjectId | auto | Primary key |
+| `title` | String | required | Article title (e.g., "Right to privacy") |
+| `citation` | String | required | Citation string (e.g., "Part 3, Article 12") |
+| `doc_id` | String | required | Document ID from the flattened constitution |
+| `relevance_score` | Float | required, min_value=0.0 | BM25 + proximity combined score |
+| `created_at` | DateTime | auto-set | Timestamp |
+| `updated_at` | DateTime | auto-updated | Timestamp |
+
+**Indexes:** `title`, `citation`, `doc_id`, `(title, created_at)` (composite)  
+**Default ordering:** `-created_at`
+
+### 5.5 Entity Relationships
+
+```
+User (1) ─────── creates ──────→ Message (0..*)
+Message (0..*) ── references ──→ ReferencedArticle (0..*)
+```
+
+- A `User` can have many `Message` documents.
+- Each `Message` belongs to exactly one `User` (CASCADE delete — deleting user removes their messages).
+- A `Message` can reference zero or more `ReferencedArticle` documents (NULLIFY delete — deleting an article just removes the reference).
+- `ReferencedArticle` documents are standalone and can be shared across multiple messages.
+
+### 5.6 `[Assumption]`: Service-to-API Wiring
+
+The `MessageService`, `UserService`, and `ArticleService` classes are fully implemented but **not connected** to the primary `/api/v1/ask` flow. The `QAService.answer_query()` method returns query results directly without persisting them to MongoDB. The auth endpoints (`/register`, `/login`, `/me`, `/logout`) do use `UserService`. The message/article persistence appears to be intended for future use (e.g., saving chat history).
 
 ---
 
-## Appendix: Quick Run Checklist
+## 6. Business Logic
 
-1. Create and activate virtual environment in `backend/`
-2. Install dependencies from `backend/requirements.txt`
-3. Ensure Ollama is running (`ollama serve`) and model is available locally
-4. Start API (`python app.py`)
-5. Test:
-   - `GET /api/v1`
-   - `GET /api/v1/health`
-   - `POST /api/v1/ask`
+### 6.1 Retrieval Pipeline (SearchEngine)
+
+The core retrieval logic is in `src/core/search_engine.py` with tunable constants:
+
+| Constant | Default | Description |
+|----------|:-------:|-------------|
+| `DEFAULT_PROXIMITY_WEIGHT` | 1.0 | Factor for proximity score vs. BM25 |
+| `DEFAULT_TITLE_BOOST` | 5.0 | Bonus per matching query token in article title |
+| `DEFAULT_MAX_WINDOW` | 30 | Maximum token distance for proximity pairs |
+| `BM25_k1` | 1.5 | BM25 term frequency saturation |
+| `BM25_b` | 0.75 | BM25 document length normalization |
+
+#### Algorithm: Retrieve(query, top_k)
+
+```
+INPUT:  query (string), top_k (integer)
+OUTPUT: List of (doc_id, score, metadata) sorted descending
+
+1. bm25_tokens   ← TextProcessor.process(query, lemmatize=true,  remove_stopwords=true)
+2. raw_tokens    ← TextProcessor.process(query, lemmatize=false, remove_stopwords=false)
+3. candidates    ← empty set
+4. FOR each token in bm25_tokens:
+5.     candidates.update(tf_index[token].keys())
+6. query_pairs   ← ProximityScorer.generate_query_pairs(raw_tokens)
+7. scored        ← empty list
+8. FOR each doc in documents WHERE doc.doc_id IN candidates:
+9.     bm25       ← BM25Scorer.score(bm25_tokens, doc.doc_id)
+10.    IF bm25 == 0: CONTINUE
+11.    title_bonus ← count(bm25_tokens ∩ title_tokens[doc.doc_id]) × TITLE_BOOST
+12.    prox_score  ← ProximityScorer.score(doc.doc_id, query_pairs, max_window=30)
+13.    final       ← bm25 + title_bonus + PROXIMITY_WEIGHT × prox_score
+14.    IF final > 0: scored.append((final, doc))
+15. SORT scored DESCENDING by final
+16. RETURN top_k entries with full metadata
+```
+
+**Edge Cases:**
+- **Empty query**: Caught at controller level before reaching SearchEngine → HTTP 400.
+- **Query with only stopwords** (e.g., "the and of"): BM25 processor removes stopwords → zero tokens → empty candidate set → empty results.
+- **Single-token query**: No proximity pairs can be formed → `prox_score = 0.0`. Final score = BM25 + title bonus only.
+- **Document with BM25 = 0**: Skipped entirely (algorithm line 10) — term exists in index but has zero TF for this doc due to tokenization mismatch.
+
+### 6.2 Two-Phase Candidate Generation
+
+**Phase 1 — Candidate Generation:**
+- Union of all document IDs from `tf_index` that contain at least one lemmatized query token (with stopwords removed).
+- This is the broadest possible recall set.
+
+**Phase 2 — Scoring:**
+- Every candidate document is scored on three dimensions.
+- Documents with BM25 = 0 are excluded (token present in index but not found — edge case for stopword-mismatched tokens).
+- Final sort is by combined score.
+
+### 6.3 BM25 Scoring
+
+```
+BM25 Formula (k1=1.5, b=0.75):
+  score(D, Q) = Σ IDF(t) × [tf(t,D) × (k1+1)] / [tf(t,D) + k1 × (1-b + b × |D|/avgdl)]
+
+IDF(t) = log((N - df(t) + 0.5) / (df(t) + 0.5) + 1)
+```
+
+- `tf(t,D)`: term frequency of term `t` in document `D`
+- `df(t)`: document frequency (number of documents containing `t`)
+- `N`: total number of documents
+- `|D|`: length of document `D`
+- `avgdl`: average document length across corpus
+
+**Edge Cases:**
+- `doc_len = 0`: Returns 0.0 immediately (no content to score).
+- `df(term) = 0` (term not in any document): `idf = 0.0` via explicit guard → contributes nothing.
+- `tf(term, doc) = 0`: IDF is computed but term contributes 0 to the sum.
+
+### 6.4 Proximity Scoring
+
+**Pair Generation Heuristic:**
+- **≤ 5 query tokens**: All unordered pairs → `O(n²/2)` pairs
+- **> 5 query tokens**: Adjacent pairs only (sliding window of 2) → `O(n-1)` pairs
+
+**Distance Metric:**
+- `_min_ordered_distance(pos1, pos2)`: Minimum distance where term1 occurs **before** term2.
+- Two-pointer sweep over sorted position lists.
+
+**Score Function:**
+```python
+score = avg(1 / (distance + 1)²) for all valid pairs
+```
+- Quadratic inverse: close pairs contribute much more than distant ones.
+- Pairs with distance > `max_window` (default 30) are discarded.
+- Terms with no co-occurrence contribute zero.
+
+**Edge Cases:**
+- **Single-token query**: `generate_query_pairs` returns `[]` → `score()` returns 0.0.
+- **Same-term pair** (e.g., ("right", "right")): Explicitly skipped (self-pair adds no signal).
+- **No co-occurrence in document**: `doc_id` not found in positional index for either term → pair contributes 0.
+- **Distance > max_window (30)**: Pair discarded, contributes 0 to average.
+
+### 6.5 RAG Workflow
+
+```
+ask(query, retrieve_only=False):
+
+1. retrieved_articles = SearchEngine.search(query, top_k=max_context_articles)
+2. result = { query, retrieved_articles: [{doc_id, title, citation, score}], ... }
+
+3. IF retrieve_only: RETURN result
+
+4. context = RAGFormatter.format_context(retrieved_articles)
+5. prompt  = RAGFormatter.build_prompt(query, context)
+6. messages = [{role: "user", content: prompt}]
+
+7. TRY (with RETRY_ATTEMPTS=3, RETRY_DELAY=0.5s):
+8.     response = Ollama.chat(model, messages)
+9.     result["answer"] = response.content
+10.    result["citations"] = [{article, title, doc_id}]
+11. EXCEPT:
+12.    result["answer"] = "Error querying LLM: {error}"
+13.    result["error"] = str(error)
+
+14. RETURN result
+```
+
+### 6.6 Prompt Engineering
+
+```
+You are an expert in constitutional law, specifically the Constitution of Nepal.
+Answer based ONLY on the provided constitutional articles.
+
+CONSTITUTION ARTICLES:
+[Article 1]
+Citation: Part 3, Article 12
+Title: Right to privacy
+Content: ...
+
+QUESTION: Can police take my phone?
+
+RULES:
+- Answer strictly from provided articles only.
+- Cite articles precisely as [Part X, Article Y(Z)].
+- If the Constitution does not address the question, explicitly state so.
+- Do not reference external knowledge.
+```
+
+### 6.7 Query Processing Flow (QAService)
+
+```
+answer_query(query, useLLM=False):
+
+1. workflow = _get_workflow()  [lazy singleton init]
+
+2. IF NOT useLLM:
+3.     result = workflow.ask(query, retrieve_only=True)
+4.     RETURN { query, articles } → 200
+
+5. IF useLLM:
+6.     connected, msg = workflow.check_ollama_connection()
+7.     IF NOT connected:
+8.         RETURN { error: "Ollama service unavailable." } → 503
+
+9.     model_ok, status, available = workflow.check_model_availability()
+10.    IF NOT model_ok:
+11.        result = workflow.ask(query, retrieve_only=True)
+12.        RETURN { query, articles, ollama_status } → 200
+
+13.    result = workflow.ask(query, stream=False, retrieve_only=False)
+14.    RETURN { query, response, articles, ollama_status } → 200
+```
+
+### 6.8 Offline Ingestion Pipeline
+
+```
+run_ingestion():
+1. flatten_constitution()
+   - Reads:  data/nepal_constitution_new.json
+   - Output: data/output/flattened_nepal_constitution.json
+
+2. build_index()
+   - Reads:  data/output/flattened_nepal_constitution.json
+   - Output: data/output/tf_index.json
+             data/output/pos_index.json
+             data/output/doc_stats.json
+
+3. generate_safe_lemma_dict()
+   - Reads:  data/output/flattened_nepal_constitution.json
+   - Output: data/output/lemma_dict_v3.json
+```
+
+### 6.9 Text Processing Pipeline
+
+```
+process_text(text):
+1. Normalize:
+   - Lowercase
+   - Expand contractions (57 contractions → expansions)
+   - Keep only alphabetic characters and whitespace
+
+2. Optional Lemmatization (spaCy en_core_web_sm):
+   - Join tokens → spaCy Doc → extract lemma_ for each token
+   - Skip spaces, punctuation
+   - Handle missing lemmas ("-pron-" → original token)
+
+3. Optional Stopword Removal (~120 stopwords)
+
+Two Processor Configurations:
+- BM25 Processor:  lemmatization=ON,  stopwords=REMOVED
+- Proximity Processor: lemmatization=OFF, stopwords=KEPT
+```
+
+**Edge Cases:**
+- `process_text("")` or `None`: Returns `[]` immediately.
+- **spaCy model missing** (`en_core_web_sm` not installed): Falls back to `spacy.blank("en")` — tokenization works, lemmatization produces identity forms.
+- **Contraction at sentence boundary** (e.g., "can't."): Alpha-only filter removes the period after expansion → "cannot" is preserved as a token.
+
+### 6.10 JWT Authentication Flow
+
+```
+@token_required decorator:
+1. Extract token from:
+   - Authorization: Bearer <token> header, OR
+   - token cookie
+2. IF no token: RETURN 401 "Token is missing!"
+3. IF JWT_SECRET not set: RETURN 500 server error
+4. TRY decode with jwt.decode(token, JWT_SECRET, HS256)
+5. Attach payload to request.user
+6. ON jwt.ExpiredSignatureError: RETURN 401 "Token has expired!"
+7. ON jwt.InvalidTokenError: RETURN 401 "Invalid token!"
+```
+
+---
+
+## 7. Feature Breakdown
+
+### 7.1 Implemented Features
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| **Hybrid Search Engine** | ✅ Complete | BM25 + term proximity + title boost in `src/core/` |
+| **Offline Ingestion Pipeline** | ✅ Complete | 3-step: flatten → build indexes → lemma dict |
+| **Flask API Server** | ✅ Complete | Blueprint-based routing, CORS enabled |
+| **Ask Endpoint** | ✅ Complete | `POST /api/v1/ask` with full validation + graceful degradation |
+| **RAG with Ollama** | ✅ Complete | Retrieval → strict prompt → LLM call with 3x retry |
+| **Graceful LLM Degradation** | ✅ Complete | 3 cases: OK → answer; model missing → retrieval-only; unreachable → 503 |
+| **User Authentication** | ✅ Complete | Register, login (JWT), logout, get current user |
+| **JWT Decorator** | ✅ Complete | `@token_required` with Bearer header + cookie fallback |
+| **React Frontend SPA** | ✅ Complete | Search, LLM toggle, suggestion pills, expandable cards |
+| **Automated Tests** | ✅ Partial | 10 test files at `backend/temp/tests/` (unit + integration) |
+
+### 7.2 Known Gaps (Scope Decisions)
+
+| Gap | Status | Reason |
+|-----|--------|--------|
+| **Auth on `/ask`** | ❌ Not applied | Unauthenticated for demo simplicity — auth infrastructure exists and is ready |
+| **Message Persistence wired to `/ask`** | ❌ Not wired | Services exist; integration deferred as non-critical for core retrieval demo |
+| **Admin API routes** | ❌ Not exposed | `UserService.list_users()` / `delete_user()` exist but no admin blueprint |
+| **LLM Streaming exposed** | ❌ Not exposed | `ask_streaming()` method exists; no API route wired up |
+
+### 7.3 Out of Scope (Academic Project)
+
+The following production-grade concerns are intentionally excluded — they do not affect the core system behavior or academic contribution:
+CI/CD pipeline, Docker/containerization, rate limiting, structured logging/tracing, multi-language support, WSGI deployment, frontend state management library (Redux/Zustand), Python linter/formatter.
+
+---
+
+## 8. Setup & Environment
+
+### 8.1 Prerequisites
+
+- Python 3.13+
+- Node.js 22+ (for frontend)
+- MongoDB 8.0+ (local or remote)
+- Ollama (for LLM features) — [ollama.ai](https://ollama.ai)
+
+### 8.2 Quick Start
+
+**1. Clone and navigate:**
+```bash
+cd backend
+```
+
+**2. Create and activate virtual environment:**
+```powershell
+# PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+**3. Install Python dependencies:**
+```powershell
+pip install -r requirements.txt
+```
+> ⚠️ `requirements.txt` is UTF-16 encoded. If tools misread it, save a UTF-8 copy.
+
+**4. Configure environment:**
+```bash
+cp .env.sample .env
+# Edit .env with your values
+```
+
+**5. Start MongoDB** (ensure `mongod` is running on `localhost:27017`)
+
+**6. Start Ollama** (ensure model is pulled):
+```bash
+ollama serve
+ollama pull gemma3:1b
+```
+
+**7. Build indexes (first time only):**
+```powershell
+python app.py --rebuild-data
+```
+
+**8. Start the API server:**
+```powershell
+python app.py
+```
+Server starts on `http://127.0.0.1:5000`
+
+**9. Start the frontend (separate terminal):**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+Frontend starts on `http://localhost:5173`
+
+### 8.3 Environment Variables
+
+From `backend/.env`:
+
+| Variable | Default | Required | Description |
+|----------|---------|:--------:|-------------|
+| `OLLAMA_HOST` | `http://127.0.0.1:11434` | No | Ollama server URL |
+| `OLLAMA_API_KEY` | (empty) | No | Bearer token for Ollama auth |
+| `OLLAMA_MODEL` | `gemma3:1b` | No | Default LLM model name |
+| `MONGO_URI` | `mongodb://localhost:27017` | No | MongoDB connection string |
+| `MONGO_DB_NAME` | `ECIRAS` | No | Database name (set in code, not .env) |
+| `JWT_SECRET` | (must set) | **Yes** | HS256 signing key for JWT tokens |
+
+### 8.4 Dependency List
+
+**Python (backend/requirements.txt — UTF-16 encoded):**
+
+| Package | Purpose |
+|---------|---------|
+| flask | Web framework |
+| flask-cors | Cross-Origin Resource Sharing |
+| mongoengine | MongoDB ODM |
+| pymongo | MongoDB driver |
+| spacy | NLP (lemmatization, tokenization) |
+| en_core_web_sm | spaCy English model |
+| ollama | Ollama LLM client |
+| bcrypt | Password hashing |
+| PyJWT | JSON Web Token handling |
+| python-dotenv | Environment variable loading |
+| PyPDF2 | PDF parsing |
+| nltk | Natural Language Toolkit |
+| torch | PyTorch |
+| httpx | HTTP client |
+| typer | CLI framework |
+| rich | Terminal formatting |
+
+**Frontend (package.json):**
+
+| Package | Purpose |
+|---------|---------|
+| react 19 | UI library |
+| react-dom 19 | React DOM renderer |
+| tailwindcss 4 | Utility CSS framework |
+| @tailwindcss/vite | Tailwind Vite plugin |
+| @vitejs/plugin-react | Vite React plugin |
+| vite 8 | Build tool / dev server |
+| eslint | Linting |
+| pptxgenjs | PPTX generation (installed but unused) |
+
+### 8.5 Useful Commands
+
+```powershell
+# Backend
+python app.py                          # Start server
+python app.py --rebuild-data           # Rebuild indexes + start server
+python -m preprocessing_scripts.run_ingestion  # Manual full pipeline
+python -m preprocessing_scripts.build_index     # Indexes only
+python -m src.llm.rag_workflow         # Run RAG demo
+
+# Frontend
+npm run dev                            # Dev server with HMR
+npm run build                          # Production build
+npm run lint                           # ESLint check
+npm run preview                        # Preview production build
+
+# Both
+# From project root:
+# Open two terminals:
+# Terminal 1: python backend/app.py
+# Terminal 2: cd frontend && npm run dev
+
+# Or use Makefile:
+make backend    # Start backend
+make frontend   # Start frontend
+make run        # Start both (separate windows)
+```
+
+---
+
+## 9. Known Limitations
+
+### 9.1 Resolved Bugs
+
+The following bugs were identified during documentation review and have been fixed:
+
+| # | Bug | Fix Applied |
+|---|-----|-------------|
+| 1 | `query_iscontains` typo in `message_service.py:152` — should be `query__icontains` | ✅ Changed to `query__icontains` |
+| 2 | `register()` / `login()` called `.strip()` on `data.get()` without null guard | ✅ Wrapped with `(data.get("field") or "")` |
+
+### 9.2 Scope Decisions
+
+| Decision | Detail |
+|----------|--------|
+| **Message persistence not wired** | `MessageService` + `ArticleService` fully implemented but `/ask` returns results without saving. Deliberate: core retrieval demo does not require chat history. |
+| **`ArticleService` unused** | CRUD for referenced articles exists but not called from any route. Available for future message history feature. |
+| **`/me` response nesting** | Response wraps `UserService.get_user()` output inside `"user"` key — service dict (`success`/`data`/`message`) appears nested. Works correctly but adds one level of indirection. |
+| **`/ask` unauthenticated** | Auth system is functional; `/ask` intentionally left open for demo convenience. |
+| **`to_json()` excludes role** | `User.to_json()` returns id, fullname, email, timestamps — role is excluded by design for default serialization. |
+
+### 9.3 Cleanup Notes
+
+- `frontend/src/App.css` contains ~150 lines of unused Vite boilerplate CSS.
+- `frontend/package.json` lists `pptxgenjs` as a dependency that is never imported.
+- `backend/app_bootstrap.py:12` log message mentions `data/nepal_constitution.json` but the actual script reads `data/nepal_constitution_new.json`.
+
+---
+
+## 10. Appendix: Mermaid Diagrams
+
+Mermaid diagram sources and rendered outputs are in `docs/mermaid/`.
+
+### Available Diagrams
+
+| Diagram | File | Description |
+|---------|------|-------------|
+| System Architecture | `inputs/sys_architecture.mmd` | High-level component relationship |
+| Workflow | `inputs/work_flow.mmd` | Offline ingestion + online retrieval |
+| Class Diagram | `inputs/class_diagram.mmd` | Core class relationships |
+| Sequence Diagram | `inputs/sequence_diagram.mmd` | Full Q&A request flow |
+| Component Diagram | `inputs/component_diagram.mmd` | Deployment component view |
+| Activity Diagram | `inputs/activity_diagram.mmd` | Process flow |
+| State Diagram | `inputs/state_diagram.mmd` | System states |
+| Object Diagram | `inputs/object_diagram.mmd` | Object relationships |
+| Deployment Diagram | `inputs/deployment_diagram.mmd` | Physical deployment topology |
+
+### Rendering
+
+Open the `.mmd` files at [mermaid.live](https://mermaid.live) or use the render script:
+```batch
+docs\mermaid\render.bat
+```
+Outputs as `.svg` and `.png` in `docs/mermaid/outputs/`.
+
+---
+
+## 11. Design Decisions (Rationale)
+
+### 11.1 Why RAG instead of pure LLM?
+
+Legal question-answering demands **factual grounding**. A pure LLM can generate plausible-sounding but incorrect citations (hallucination). RAG forces the LLM to answer strictly from retrieved articles, with explicit citations. This is essential for legal contexts where incorrect answers have real consequences.
+
+### 11.2 Why two text processors?
+
+| Processor | Lemmatization | Stopwords | Purpose |
+|-----------|:-------------:|:---------:|---------|
+| BM25 | ON | REMOVED | Term frequency matching benefits from normalization — "rights" and "right" should match. Stopwords add noise to IDF. |
+| Proximity | OFF | KEPT | Phrase proximity preserves original word order — "right to education" ≠ "education right". Stopwords are structural for distance. |
+
+A single processor cannot serve both purposes.
+
+### 11.3 Why the proximity pair heuristic?
+
+| Query length | Strategy | Complexity | Rationale |
+|:------------:|----------|:----------:|-----------|
+| ≤ 5 tokens | All unordered pairs | O(n²/2) | Short queries benefit from full cross-term proximity |
+| > 5 tokens | Adjacent pairs only | O(n−1) | Distant term pairs in long queries contribute negligible signal; adjacent pairs capture key phrase structure |
+
+This heuristic is supported by IR research showing that phrase-level proximity matters most for adjacent or near-adjacent terms.
+
+### 11.4 Why lazy singleton for QAService?
+
+- **spaCy** (`en_core_web_sm`) takes ~1–2 seconds to load.
+- **Index files** (tf_index, pos_index, doc_stats) are ~5 MB combined and require parsing.
+- Lazy initialization means the server starts immediately; the first query pays the one-time load cost.
+- Double-checked locking (`_workflow_lock`) ensures thread safety without locking on every request.
+
+### 11.5 Why is `/ask` unauthenticated?
+
+Core Q&A is the primary feature. Requiring authentication before every query would add friction to the demo experience. The auth system is fully functional for user management; applying `@token_required` to `/ask` is a one-line change when needed.
+
+### 11.6 Why isn't message persistence wired to `/ask`?
+
+The service layer (`MessageService`, `ArticleService`) was built to separate concerns — the Q&A logic should not depend on persistence. Wiring them requires ~3 additional lines in `QAService.answer_query()`. This was deferred because the retrieval and RAG logic were the primary academic contribution; persistence is auxiliary.
+
+### 11.7 Failure Mode Summary
+
+| Failure | Behavior | User Sees |
+|---------|----------|-----------|
+| MongoDB offline | Server crashes on startup (intentional fail-fast) | Connection error on server start |
+| Ollama not running, `use_llm=true` | Detection → HTTP 503 | `{"error": "Ollama service is unavailable."}` |
+| Ollama running, model not pulled | Detection → HTTP 200 + articles | `ollama_status.model_available=false` |
+| LLM call fails mid-generation after 3 retries | Catches exception → HTTP 200 | `response` field contains error text; `error` field set |
+| Invalid JSON payload | Validation → HTTP 400 | `{"error": "Invalid JSON payload."}` |
+| Query > 500 characters | Validation → HTTP 400 | `{"error": "Query is too long..."}` |
+| spaCy model missing (`en_core_web_sm`) | Falls back to blank `en` | Tokenization works; lemmatization becomes identity |
+
+---
+
+*Document generated by codebase analysis. All assumptions explicitly marked with `[Assumption]`.*

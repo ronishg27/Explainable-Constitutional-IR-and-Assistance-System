@@ -149,7 +149,7 @@ class MessageService:
             # case-insensitive search in the query field
             messages = Message.objects(
                 user=user,
-                query_iscontains=search_term
+                query__icontains=search_term
             ).order_by('-created_at')
             
             return {
