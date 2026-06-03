@@ -12,10 +12,10 @@ def register():
     if not data:
         return jsonify({"error": "Invalid JSON payload."}), 400
     
-    fullname = data.get("fullname").strip()
-    email = data.get("email").strip().lower()
-    password = data.get("password").strip()
-    role = data.get("role", "user").strip().lower()
+    fullname = (data.get("fullname") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = (data.get("password") or "").strip()
+    role = (data.get("role") or "user").strip().lower()
     
     if not fullname or not email :
         return jsonify({"error": "Missing required fields."}), 400
@@ -41,8 +41,8 @@ def login():
     """Handle user login."""
     data = request.get_json(silent=True)
     
-    email = data.get("email").strip().lower()
-    password = data.get("password").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = (data.get("password") or "").strip()
     
     result = UserService.authenticate_user(email, password)
     if result['success']:
@@ -73,9 +73,9 @@ def logout():
 
 def get_current_user():
     print(request.user)
-    user_id = request.user.get('user_id')
+    user_id = (request.user or {}).get('user_id')
     print(f"Getting current user with ID: {user_id}")
-    print(f"Request user info: {request.user.get('email')}")
+    print(f"Request user info: { (request.user or {}).get('email') }")
     user = UserService.get_user(user_id)
     if user:
         return jsonify({
