@@ -1,25 +1,84 @@
 sequenceDiagram
     actor U as User
     participant FE as React Frontend
-    participant API as Flask API (/api/v1/ask)
+    participant API as Flask API
+    participant CTRL as ApiController
     participant QAS as QAService
     participant RAG as RAGWorkflow
     participant SE as SearchEngine
+    participant BM as BM25Scorer
+    participant PS as ProximityScorer
     participant LLM as Ollama LLM
-    
+
     U->>FE: types query & clicks "Analyze"
-    FE->>API: POST { query, use_llm: true }
-    API->>QAS: answer_query(query, useLLM=true)
-    QAS->>RAG: ask(query, retrieve_only=False)
-    RAG->>SE: search(query, top_k=5)
-    SE-->>RAG: ranked article list
-    RAG->>SE: check_model_availability()
-    SE-->>RAG: model available
-    RAG->>LLM: chat(prompt with article context)
-    LLM-->>RAG: generated answer
-    RAG-->>QAS: {answer, retrieved_articles}
-    QAS-->>API: payload with response
-    API-->>FE: JSON response
-    FE-->>U: displays answer & articles
+    FE->>API: POST /api/v1/ask { query, use_llm }
+    API->>CTRL: ask()
 
+    alt Invalid JSON or missing query
+        CTRL-->>FE: 400 Bad Request
+        FE-->>U: Shows validation error
+    end
 
+    CTRL->>QAS: answer_query(query, useLLM)
+    Note over QAS: Lazy singleton init on first call
+    QAS->>RAG: ask(query, retrieve_only=not useLLM)
+
+    alt useLLM = false
+        RAG->>SE: search(query, top_k=5)
+        SE->>BM: score(query_tokens, doc_id)
+        SE->>PS: score(doc_id, query_pairs, max_window=30)
+        BM-->>SE: per-doc BM25 score
+        PS-->>SE: per-doc proximity score
+        SE-->>RAG: ranked article list
+        RAG-->>QAS: { articles }
+        QAS-->>CTRL: { query, articles }
+        CTRL-->>FE: 200 JSON with articles
+        FE-->>U: displays ranked articles
+    end
+
+    alt useLLM = true
+        RAG->>RAG: check_ollama_connection()
+
+        alt Ollama unreachable
+            RAG-->>QAS: raise / signal unavailable
+            QAS-->>CTRL: { error: "Ollama unavailable" }
+            CTRL-->>FE: 503 Service Unavailable
+            FE-->>U: Shows Ollama offline message
+        else Reachable
+            RAG->>RAG: check_model_availability()
+
+            alt Model not found
+                RAG->>SE: search(query)
+                SE-->>RAG: articles
+                RAG-->>QAS: { query, articles, ollama_status }
+                QAS-->>CTRL: articles + status
+                CTRL-->>FE: 200 articles + model_available=false
+                FE-->>U: Articles + "LLM model missing"
+            else Model available
+                RAG->>SE: search(query, top_k=5)
+                SE->>BM: score BM25
+                SE->>PS: score proximity
+                BM-->>SE: scores
+                PS-->>SE: scores
+                SE-->>RAG: ranked articles
+                RAG->>RAG: format_context(articles)
+                RAG->>RAG: build_prompt(query, context)
+                RAG->>LLM: chat(model, prompt)
+                Note over LLM: Up to 3 retries with 0.5s delay
+
+                alt LLM success
+                    LLM-->>RAG: generated answer
+                    RAG-->>QAS: { answer, articles, ollama_status }
+                    QAS-->>CTRL: full payload
+                    CTRL-->>FE: 200 JSON with answer + articles
+                    FE-->>U: displays answer & citations
+                else LLM fails after retries
+                    LLM-->>RAG: error
+                    RAG-->>QAS: { error, articles }
+                    QAS-->>CTRL: partial payload
+                    CTRL-->>FE: 200 JSON with error
+                    FE-->>U: Articles + error message
+                end
+            end
+        end
+    end

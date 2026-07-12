@@ -109,11 +109,11 @@ class SearchEngine:
         for doc in self.documents:
             if doc.doc_id not in candidates:
                 continue
-            final = self._score_document(
+            final, bm25_s, prox_s, title_matches = self._score_document(
                 doc, bm25_tokens, query_pairs, title_boost, proximity_weight
             )
             if final > 0:
-                scored.append((final, doc))
+                scored.append((final, bm25_s, prox_s, title_matches, doc))
 
         # 4. Sort descending and cut top‑k
         scored.sort(key=lambda x: x[0], reverse=True)
@@ -143,15 +143,18 @@ class SearchEngine:
         query_pairs: list[tuple[str, str]],
         title_boost: float,
         proximity_weight: float,
-    ) -> float:
+    ) -> tuple[float, float, float, int]:
         """
         Compute combined score for a single document.
 
         Score = BM25 + (title_matches * title_boost) + proximity_weight * proximity_score
+
+        Returns:
+            (final_score, bm25_score, proximity_score, title_match_count)
         """
         bm25 = self.bm25_scorer.score(bm25_tokens, doc.doc_id)
         if bm25 == 0.0:
-            return 0.0
+            return 0.0, 0.0, 0.0, 0
 
         # Title boost: extra weight for query terms appearing in the title
         title_match_count = len(set(bm25_tokens) & set(self.title_tokens[doc.doc_id]))
@@ -165,12 +168,13 @@ class SearchEngine:
             ordered=True,
         )
 
-        return boosted_bm25 + proximity_weight * prox
+        return boosted_bm25 + proximity_weight * prox, bm25, prox, title_match_count
 
-    def _format_results(self, scored_docs: list[tuple[float, Document]]) -> list[dict]:
+    def _format_results(self, scored_docs: list[tuple[float, float, float, int, Document]]) -> list[dict]:
         """Convert scored Document objects to dictionaries for API/CLI output."""
         results = []
-        for score, doc in scored_docs:
+        for entry in scored_docs:
+            _, bm25_score, prox_score, title_match_count, doc = entry
             results.append({
                 "doc_id": doc.doc_id,
                 "part_no": doc.part_no,
@@ -181,6 +185,10 @@ class SearchEngine:
                 "level": doc.level,
                 "clause_no": doc.clause_no,
                 "subclause_id": doc.subclause_id,
-                "score": score,
+                "score": _,
+                "bm25_score": bm25_score,
+                "proximity_score": prox_score,
+                "title_match_count": title_match_count,
+                "boost": doc.boost,
             })
         return results

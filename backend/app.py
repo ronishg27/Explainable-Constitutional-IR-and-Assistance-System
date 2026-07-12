@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from src.core.app_bootstrap import connect_database, rebuild_document_artifacts, preload_spacy
 
-load_dotenv(dotenv_path=".env")
+load_dotenv(dotenv_path=".env", override=True)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ def create_app():
     from routes.auth_routes import auth_bp
 
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     connect_database()
 

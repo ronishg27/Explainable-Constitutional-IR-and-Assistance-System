@@ -3,7 +3,11 @@ import logging
 from threading import Lock
 
 from src.core.engine_factory import EngineFactory
+from src.core.reranker import Reranker
+from src.workflows.retrieval_workflow import RetrievalWorkflow
+from src.llm.rag_repository import RAGRepository
 from src.llm.rag_workflow import RAGWorkflow
+from src.llm.rag_formatter import RAGFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -26,16 +30,18 @@ class QAService:
         if _workflow is None:
             with _workflow_lock:
                 if _workflow is None:
-                    # Build the engine once and inject it into RAGWorkflow
                     engine = EngineFactory.from_artifacts(
                         _DEFAULT_DOCS_PATH, _DEFAULT_INDEX_DIR
                     )
-                    _workflow = RAGWorkflow(engine)
+                    reranker = Reranker(engine.bm25_scorer.tf_index)
+                    retrieval_workflow = RetrievalWorkflow(engine, reranker)
+                    repository = RAGRepository(retrieval_workflow)
+                    _workflow = RAGWorkflow(repository, RAGFormatter())
                     logger.info("RAG workflow initialised lazily on first use.")
         return _workflow
 
     @staticmethod
-    def answer_query(query: str, useLLM: bool = False) -> tuple[dict, int]:
+    def answer_query(query: str, useLLM: bool = False, stream: bool = False) -> tuple[dict, int]:
         """Return API response payload and HTTP status for a user query."""
         workflow = QAService._get_workflow()
 
@@ -70,7 +76,7 @@ class QAService:
             }, 200
 
         # Full RAG
-        result = workflow.ask(query, stream=False, retrieve_only=False)
+        result = workflow.ask(query, retrieve_only=False)
         return {
             "query": query,
             "response": result.get("answer"),
@@ -81,3 +87,37 @@ class QAService:
                 "model_available": True,
             },
         }, 200
+
+    @staticmethod
+    def answer_query_streaming(query: str):
+        """Generator that yields streaming event dicts for a user query.
+
+        On connectivity / model errors it yields a single error event and returns
+        (still in streaming format so the client can handle it uniformly).
+        """
+        workflow = QAService._get_workflow()
+
+        is_connected, status_message = workflow.check_ollama_connection()
+        if not is_connected:
+            yield {"type": "error", "content": "Ollama service is unavailable."}
+            return
+
+        is_model_available, model_status, available_models = workflow.check_model_availability()
+        if not is_model_available:
+            retrieve_only_result = workflow.ask(query, retrieve_only=True)
+            yield {
+                "type": "articles",
+                "articles": retrieve_only_result.get("retrieved_articles", []),
+            }
+            yield {
+                "type": "status",
+                "connected": True,
+                "model": workflow.model,
+                "model_available": False,
+                "message": model_status,
+                "available_models": available_models,
+            }
+            yield {"type": "done"}
+            return
+
+        yield from workflow.ask_streaming(query)

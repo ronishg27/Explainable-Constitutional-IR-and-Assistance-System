@@ -78,9 +78,7 @@ def get_current_user():
     print(f"Request user info: { (request.user or {}).get('email') }")
     user = UserService.get_user(user_id)
     if user:
-        return jsonify({
-            "user": user
-        }), 200
+        return jsonify(user), 200
     
     return jsonify({
         "error": "User not found."

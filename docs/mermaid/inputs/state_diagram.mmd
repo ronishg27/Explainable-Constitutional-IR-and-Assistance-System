@@ -1,10 +1,51 @@
 stateDiagram-v2
-    [*] --> Guest
-    Guest --> LoggedIn : login(email, password) / success
-    Guest --> Guest : login failed
-    LoggedIn --> Guest : logout / token expired
-    LoggedIn --> Guest : token invalid / 401
-    state LoggedIn {
-        [*] --> Active
-        Active --> Active : request protected resource
+    [*] --> Idle
+
+    state Idle {
+        [*] --> Guest
+        Guest --> LoggedIn : login() / JWT issued
+        Guest --> Guest : login failed / invalid credentials
+        LoggedIn --> Guest : logout() / token cleared
+        LoggedIn --> Guest : 401 / token expired
     }
+
+    Idle --> Processing : POST /api/v1/ask
+    Processing --> Retrieving : useLLM=false
+    Processing --> CheckingLLM : useLLM=true
+
+    state Retrieving {
+        [*] --> Searching
+        Searching --> ScoringBM25
+        Searching --> ScoringProximity
+        ScoringBM25 --> Combining
+        ScoringProximity --> Combining
+        Combining --> Ranking
+        Ranking --> [*]
+    }
+
+    state CheckingLLM {
+        [*] --> OllamaCheck
+        OllamaCheck --> Reachable
+        OllamaCheck --> Unreachable
+        Reachable --> ModelCheck
+        ModelCheck --> ModelAvailable
+        ModelCheck --> ModelMissing
+    }
+
+    CheckingLLM --> Retrieving : ModelMissing → retrieval-only
+    CheckingLLM --> Generating : ModelAvailable
+
+    state Generating {
+        [*] --> FormattingContext
+        FormattingContext --> BuildingPrompt
+        BuildingPrompt --> LLMCall
+        LLMCall --> Retry
+        Retry --> LLMCall : retries < 3
+        Retry --> Error : retries ≥ 3
+        LLMCall --> Success
+    }
+
+    Retrieving --> Idle : return articles
+    Generating --> Idle : return answer + articles
+    CheckingLLM --> Idle : 503 Ollama unreachable
+    Idle --> [*]
