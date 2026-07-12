@@ -287,7 +287,7 @@ class Document:
 
 ```json
 {
-  "query": "Can police take my phone?",
+  "query": "What is the right to education?",
   "use_llm": true
 }
 ```
@@ -298,13 +298,13 @@ class Document:
 
 ```json
 {
-  "query": "Can police take my phone?",
+  "query": "What is the right to education?",
   "articles": [
     {
-      "doc_id": "art_12",
-      "title": "Right to privacy",
-      "citation": "Article 12",
-      "score": 8.47
+      "doc_id": "31",
+      "title": "Right relating to education",
+      "citation": "Part 3, Article 31",
+      "score": 9.12
     }
   ]
 }
@@ -314,14 +314,14 @@ class Document:
 
 ```json
 {
-  "query": "Can police take my phone?",
-  "response": "Under the Constitution of Nepal...",
+  "query": "What is the right to education?",
+  "response": "Under the Constitution of Nepal, every citizen has the right to basic education...",
   "articles": [
     {
-      "doc_id": "art_12",
-      "title": "Right to privacy",
-      "citation": "Article 12",
-      "score": 8.47
+      "doc_id": "31",
+      "title": "Right relating to education",
+      "citation": "Part 3, Article 31",
+      "score": 9.12
     }
   ],
   "ollama_status": {

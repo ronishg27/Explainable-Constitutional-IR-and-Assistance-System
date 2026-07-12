@@ -10,8 +10,16 @@ class ArticleService:
     
     @staticmethod
     def create_article(title:str, citation:str, doc_id:str, relevance_score:float):
-        """Create a new referenced article."""
+        """Create a new referenced article, deduplicating by doc_id."""
         try:
+            existing = ReferencedArticle.objects(doc_id=doc_id).first()
+            if existing:
+                return {
+                    'success': True,
+                    'message': 'Article already exists',
+                    'data': existing.to_json()
+                }
+
             article = ReferencedArticle(
                 title=title,
                 citation=citation,

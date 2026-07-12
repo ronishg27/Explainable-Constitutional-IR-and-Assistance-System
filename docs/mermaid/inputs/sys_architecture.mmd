@@ -1,11 +1,33 @@
 architecture-beta
-    group api(cloud)[API]
+    group client(cloud)[Client Layer]
+    service browser(cloud)[Browser] in client
+    service vite(server)[Vite Dev Server] in client
 
-    service db(database)[Database] in api
-    service disk1(disk)[Storage] in api
-    service disk2(disk)[Storage] in api
-    service server(server)[Server] in api
+    group backend(cloud)[Backend Layer]
+    service flask(server)[Flask API<br/>Python 3.13] in backend
+    service qa(server)[QAService] in backend
+    service rag(server)[RAGWorkflow] in backend
+    service search(server)[SearchEngine] in backend
+    service bm25(server)[BM25Scorer] in backend
+    service prox(server)[ProximityScorer] in backend
 
-    db:L -- R:server
-    disk1:T -- B:server
-    disk2:T -- B:db
+    group data(cloud)[Data Layer]
+    service mongo(database)[MongoDB 8<br/>ECIRAS] in data
+    service indexes(disk)[File Indexes<br/>tf/pos/doc_stats] in data
+    service flat(disk)[Flattened<br/>Constitution JSON] in data
+
+    group llm(cloud)[LLM Layer]
+    service ollama(server)[Ollama<br/>gemma3:1b] in llm
+
+    browser:R -- L:flask
+    vite:R -- L:flask
+    flask:L -- R:qa
+    flask:T -- B:ollama
+    qa:B -- T:rag
+    rag:B -- T:search
+    search:L -- R:bm25
+    search:L -- R:prox
+    rag:R -- L:ollama
+    search:T -- B:indexes
+    flask:B -- T:mongo
+    flat:R -- L:indexes

@@ -1,27 +1,63 @@
 classDiagram
     direction TB
-    class user {
-        String id
-        String fullname
-        String email
+
+    class user_john {
+        String id = "6612a..."
+        String fullname = "John Doe"
+        String email = "john@example.com"
+        String role = "user"
     }
-    class message {
-        String id
-        String query
-        String answer
+
+    class msg_q1 {
+        String id = "6612b..."
+        String query = "Right to education"
+        String answer = "Article 31..."
     }
-    class art1 {
-        String title
-        String citation
-        String doc_id
-        Float relevance_score
+
+    class msg_q2 {
+        String id = "6612c..."
+        String query = "What is the right to privacy?"
+        String answer = "Article 28..."
     }
-    class art2 {
-        String title
-        String citation
-        String doc_id
-        Float relevance_score
+
+    class msg_q3 {
+        String id = "6612d..."
+        String query = "Right to clean environment"
+        String answer = "Article 30..."
     }
-    user --> message : user ref
-    message --> art1
-    message --> art2
+
+    class art_privacy {
+        String title = "Right to privacy"
+        String citation = "Part 3, Article 28"
+        String doc_id = "28"
+        Float relevance_score = 8.47
+    }
+
+    class art_education {
+        String title = "Right relating to education"
+        String citation = "Part 3, Article 31"
+        String doc_id = "31"
+        Float relevance_score = 9.12
+    }
+
+    class art_info {
+        String title = "Right to information"
+        String citation = "Part 3, Article 27"
+        String doc_id = "27"
+        Float relevance_score = 7.85
+    }
+
+    class art_environment {
+        String title = "Right to clean environment"
+        String citation = "Part 3, Article 30"
+        String doc_id = "30"
+        Float relevance_score = 8.91
+    }
+
+    user_john --> msg_q1 : user ref
+    user_john --> msg_q2 : user ref
+    user_john --> msg_q3 : user ref
+    msg_q1 --> art_education
+    msg_q2 --> art_privacy
+    msg_q2 --> art_info
+    msg_q3 --> art_environment

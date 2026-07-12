@@ -1,29 +1,58 @@
 flowchart TD
 
-subgraph OFFLINE 
-A[Raw Documents] --> B[TextProcessor]
-B --> C[Tokenized Docs]
-C --> D[IndexBuilder]
-D --> E[Inverted Index Stored]
+subgraph OFFLINE["Offline Ingestion Pipeline"]
+    A["Raw Constitution JSON<br/>(nepal_constitution_new.json)"] --> B["flatten_constitution.py<br/>(nested → flat documents)"]
+    B --> C["IngestionWorkflow.load_documents()"]
+    C --> D["TextProcessor (2 configs):<br/>1. BM25: lemmatize+no-stop<br/>2. Proximity: raw+stopwords"]
+    D --> E["IndexBuilder.build_tf_index()"]
+    D --> F["IndexBuilder.build_positional_index()"]
+    D --> G["IndexBuilder.compute_doc_stats()"]
+    E --> H["tf_index.json<br/>(term → {doc_id: tf})"]
+    F --> I["pos_index.json<br/>(term → {doc_id: [pos]})"]
+    G --> J["doc_stats.json<br/>(doc_lengths + avgdl)"]
+    C --> K["generate_safe_lemma_dict.py<br/>(rule-based lemmatization)"]
+    K --> L["lemma_dict_v3.json"]
 end
 
-subgraph ONLINE 
-F[User Query] --> G[TextProcessor]
-G --> H[SearchEngine]
-H --> I[Retriever]
+subgraph ONLINE["Online Q&A Pipeline"]
+    direction TB
+    M["User Query"] --> N["ApiController.ask()<br/>(validate JSON, query length)"]
+    N --> O{"use_llm?"}
+    O -->|false| P["SearchEngine.search()"]
+    O -->|true| Q["RAGWorkflow.ask()<br/>(retrieve_only=False)"]
 
-I --> J[BM25 Candidate Retrieval]
-J --> K[Scoring Layer]
+    Q --> R["check_ollama_connection()"]
+    R -->|unreachable| S["503: Service Unavailable"]
+    R -->|reachable| T["check_model_availability()"]
+    T -->|model missing| U["SearchEngine.search()<br/>(retrieval-only fallback)"]
+    T -->|available| V["SearchEngine.search()"]
 
-K --> K1[BM25 Score]
-K --> K2[Proximity Score]
-K1 --> K3[Combined Ranking]
-K2 --> K3
+    P --> W["Candidate Generation<br/>(union of doc_ids from tf_index)"]
+    U --> W
+    V --> W
 
-K3 --> L[Top-K Results]
-L --> M[Generator LLM]
-M --> N[Final Answer]
+    W --> X["BM25Scorer.score()"]
+    W --> Y["ProximityScorer.score()"]
+    W --> Z["Title Boost<br/>(×5.0 per title match)"]
+
+    X --> AA["Final Score =<br/>BM25 + title_boost + proximity_weight × prox_score"]
+    Y --> AA
+    Z --> AA
+
+    AA --> AB["Sort by score DESC"]
+    AB --> AC["Top-K Results<br/>(default k=5)"]
+
+    AC --> AD{"RAG mode?"}
+    AD -->|No| AE["Return articles"]
+    AD -->|Yes| AF["RAGFormatter.format_context()"]
+    AF --> AG["RAGFormatter.build_prompt()<br/>(strict grounding instructions)"]
+    AG --> AH["Ollama.chat()<br/>(with 3x retry / 0.5s delay)"]
+    AH --> AI{"Success?"}
+    AI -->|Yes| AJ["Return answer + articles<br/>+ ollama_status"]
+    AI -->|No| AK["Return error text + articles"]
 end
 
-%% Force vertical stacking
-E -.-> F
+H -.-> W
+I -.-> Y
+J -.-> X
+L -.-> D

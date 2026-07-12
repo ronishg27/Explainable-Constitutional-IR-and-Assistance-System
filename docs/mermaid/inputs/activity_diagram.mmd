@@ -1,16 +1,25 @@
 flowchart TD
-    Start([User submits query]) --> Validate
-    Validate -->|valid| Process[QAService.answer_query]
-    Process --> UseLLM{useLLM?}
-    UseLLM -->|No| Retrieve[Engine.search → articles]
-    Retrieve --> Return[Return articles only]
-    UseLLM -->|Yes| CheckOllama{Ollama reachable?}
-    CheckOllama -->|No| Retrieve
-    CheckOllama -->|Yes| CheckModel{Model available?}
-    CheckModel -->|No| Retrieve --> ReturnWithStatus[Return articles + warning]
-    CheckModel -->|Yes| RagFull[RAGWorkflow.ask: retrieve + LLM]
-    RagFull --> LLMCall[Ollama generates answer]
-    LLMCall --> ReturnFull[Return answer + articles]
-    ReturnFull --> End([Response sent])
-    Return --> End
-    ReturnWithStatus --> End
+    Start(["User submits query"]) --> ValidateJSON{"Valid JSON?"}
+    ValidateJSON -->|No| BadRequest(["400: Invalid JSON"])
+    ValidateJSON -->|Yes| CheckQuery{"query present<br/>and ≤ 500 chars?"}
+    CheckQuery -->|No| BadQuery(["400: Query too long or missing"])
+    CheckQuery -->|Yes| GetEngine["QAService._get_workflow<br/>lazy singleton init"]
+    GetEngine --> DecideLLM{"useLLM?"}
+
+    DecideLLM -->|No| Retrieve["SearchEngine.search<br/>top-k articles"]
+    Retrieve --> RetOnly(["200: query + articles"])
+
+    DecideLLM -->|Yes| CheckOllama{"RAGWorkflow<br/>check_ollama_connection()"}
+    CheckOllama -->|Unreachable| OllamaDown(["503: Ollama unavailable"])
+    CheckOllama -->|Reachable| CheckModel{"RAGWorkflow<br/>check_model_availability()"}
+
+    CheckModel -->|Missing| RetrieveW["RAGWorkflow.ask<br/>retrieve_only=True"]
+    RetrieveW --> ModelWarn(["200: articles + status<br/>model_available=false"])
+
+    CheckModel -->|Available| RagFull["RAGWorkflow.ask<br/>retrieve_only=False"]
+    RagFull --> Format["RAGFormatter.format_context"]
+    Format --> BuildPrompt["RAGFormatter.build_prompt"]
+    BuildPrompt --> LLMCall["Ollama.chat with 3x retry"]
+    LLMCall --> LLMSuccess{"Success?"}
+    LLMSuccess -->|Yes| ReturnFull(["200: answer + articles<br/>+ ollama_status"])
+    LLMSuccess -->|No after 3 retries| ReturnError(["200: query + articles<br/>+ error text in response"])

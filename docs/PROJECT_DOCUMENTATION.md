@@ -352,7 +352,7 @@ curl -X POST http://localhost:5000/api/v1/ask \
 # Full RAG query (requires Ollama running)
 curl -X POST http://localhost:5000/api/v1/ask \
   -H "Content-Type: application/json" \
-  -d '{"query": "Can police take my phone?", "use_llm": true}'
+  -d '{"query": "What is the right to education?", "use_llm": true}'
 
 # Register a user
 curl -X POST http://localhost:5000/api/v1/auth/register \
@@ -378,7 +378,7 @@ Main Q&A endpoint. Accepts a natural language query and returns ranked constitut
 **Request Body:**
 ```json
 {
-  "query": "Can police take my phone?",
+  "query": "What is the right to education?",
   "use_llm": true
 }
 ```
@@ -401,13 +401,13 @@ Main Q&A endpoint. Accepts a natural language query and returns ranked constitut
 **Response 200 (Retrieval Only):**
 ```json
 {
-  "query": "Can police take my phone?",
+  "query": "What is the right to education?",
   "articles": [
     {
-      "doc_id": "12",
-      "title": "Right to privacy",
-      "citation": "Part 3, Article 12",
-      "score": 8.47
+      "doc_id": "31",
+      "title": "Right relating to education",
+      "citation": "Part 3, Article 31",
+      "score": 9.12
     }
   ]
 }
@@ -416,14 +416,14 @@ Main Q&A endpoint. Accepts a natural language query and returns ranked constitut
 **Response 200 (With LLM):**
 ```json
 {
-  "query": "Can police take my phone?",
-  "response": "Under the Constitution of Nepal... [Part 3, Article 12]...",
+  "query": "What is the right to education?",
+  "response": "Under the Constitution of Nepal, every citizen has the right to basic education... [Part 3, Article 31]...",
   "articles": [
     {
-      "doc_id": "12",
-      "title": "Right to privacy",
-      "citation": "Part 3, Article 12",
-      "score": 8.47
+      "doc_id": "31",
+      "title": "Right relating to education",
+      "citation": "Part 3, Article 31",
+      "score": 9.12
     }
   ],
   "ollama_status": {
@@ -437,7 +437,7 @@ Main Q&A endpoint. Accepts a natural language query and returns ranked constitut
 **Response 200 (Model Missing):**
 ```json
 {
-  "query": "Can police take my phone?",
+  "query": "What is the right to education?",
   "articles": [...],
   "ollama_status": {
     "connected": true,
@@ -644,8 +644,8 @@ Three collections managed by the ODM layer. Connection is handled by `config/db_
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
 | `_id` | ObjectId | auto | Primary key |
-| `title` | String | required | Article title (e.g., "Right to privacy") |
-| `citation` | String | required | Citation string (e.g., "Part 3, Article 12") |
+| `title` | String | required | Article title (e.g., "Right relating to education") |
+| `citation` | String | required | Citation string (e.g., "Part 3, Article 31") |
 | `doc_id` | String | required | Document ID from the flattened constitution |
 | `relevance_score` | Float | required, min_value=0.0 | BM25 + proximity combined score |
 | `created_at` | DateTime | auto-set | Timestamp |
@@ -804,11 +804,11 @@ Answer based ONLY on the provided constitutional articles.
 
 CONSTITUTION ARTICLES:
 [Article 1]
-Citation: Part 3, Article 12
-Title: Right to privacy
+Citation: Part 3, Article 31
+Title: Right relating to education
 Content: ...
 
-QUESTION: Can police take my phone?
+QUESTION: What is the right to education?
 
 RULES:
 - Answer strictly from provided articles only.

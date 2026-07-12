@@ -1,6 +1,130 @@
 classDiagram
+    class Document {
+        +doc_id: String
+        +part_no: String
+        +article_no: String
+        +title: String
+        +text: String
+        +citation: String
+        +level: String
+        +clause_no: String
+        +subclause_id: String
+        +is_primary: Boolean
+        +parent_id: String
+        +boost: Float
+    }
+
+    class TextProcessor {
+        -use_lemmatization: Boolean
+        -remove_stopwords: Boolean
+        -_nlp: Language
+        +normalize_text(text) String
+        +lemmatize_tokens(tokens) List
+        +process_text(text) List
+        -_filter_stopwords(tokens) List
+    }
+
+    class IndexBuilder {
+        -bm25_processor: TextProcessor
+        -proximity_processor: TextProcessor
+        +build_tf_index(documents) Dict
+        +build_positional_index(documents) Dict
+        +compute_doc_stats(documents) Tuple
+        +run(documents, output_dir)
+    }
+
+    class BM25Scorer {
+        -tf_index: Dict
+        -doc_lengths: Dict
+        -avgdl: Float
+        -k1: Float
+        -b: Float
+        -N: Int
+        +idf(term) Float
+        +score(query_tokens, doc_id) Float
+        +score_with_title_boost(query_tokens, doc_id, title_tokens, title_boost) Float
+    }
+
+    class ProximityScorer {
+        -index: Dict
+        +generate_query_pairs(tokens) List
+        +score(doc_id, pairs, max_window, ordered) Float
+    }
+
+    class SearchEngine {
+        -bm25_scorer: BM25Scorer
+        -proximity_scorer: ProximityScorer
+        -bm25_processor: TextProcessor
+        -proximity_processor: TextProcessor
+        -documents: List~Document~
+        -proximity_weight: Float
+        -title_boost: Float
+        -default_top_k: Int
+        -max_window: Int
+        +search(query, top_k, proximity_weight, title_boost) List
+    }
+
+    class EngineFactory {
+        +from_artifacts(documents_path, index_dir) SearchEngine
+    }
+
+    class RAGFormatter {
+        +format_context(articles) String
+        +build_prompt(query, context) String
+    }
+
+    class RAGWorkflow {
+        -engine: SearchEngine
+        -model: String
+        -client: Client
+        -formatter: RAGFormatter
+        -max_context_articles: Int
+        -_ollama_available: Boolean
+        -_available_models: List
+        +check_ollama_connection() Tuple
+        +check_model_availability() Tuple
+        +retrieve(query, top_k) List
+        +ask(query, stream, retrieve_only) Dict
+        +ask_streaming(query) Generator
+    }
+
+    class QAService {
+        +answer_query(query, useLLM) Tuple~Dict, Int~
+        +_get_workflow() RAGWorkflow
+    }
+
+    class UserService {
+        +create_user(fullname, email, password, role) Dict
+        +authenticate_user(email, password) Dict
+        +get_user(user_id) Dict
+        +list_users() Dict
+        +delete_user(user_id) Dict
+    }
+
+    class MessageService {
+        +create_message(user_id, query, answer, articles) Dict
+        +get_user_messages(user_id, limit, skip) Dict
+        +search_messages(user_id, search_term) Dict
+        +delete_message(message_id) Dict
+    }
+
+    class ArticleService {
+        +create_article(title, citation, doc_id, score) Dict
+        +get_article(article_id) Dict
+        +list_articles() Dict
+        +delete_article(article_id) Dict
+    }
+
+    class IngestionWorkflow {
+        -doc_path: Path
+        -bm25_proc: TextProcessor
+        -prox_proc: TextProcessor
+        +load_documents() List~Document~
+        +build_indexes() Tuple
+        +save_indexes(output_dir)
+    }
+
     class User {
-        +id: ObjectId
         +fullname: String
         +email: String
         +password_hash: String
@@ -9,62 +133,44 @@ classDiagram
         +updated_at: DateTime
         +set_password(password)
         +check_password(password) bool
+        +to_json() Dict
+    }
+
+    class Message {
+        +query: String
+        +answer: String
+        +user: Reference~User~
+        +articles: List~Reference~ReferencedArticle~~
+        +created_at: DateTime
+        +updated_at: DateTime
+        +to_json() Dict
     }
 
     class ReferencedArticle {
-        +id: ObjectId
         +title: String
         +citation: String
         +doc_id: String
         +relevance_score: Float
-    }
-
-    class Message {
-        +id: ObjectId
-        +query: String
-        +answer: String
-        +user: User
-        +articles: List~ReferencedArticle~
         +created_at: DateTime
         +updated_at: DateTime
+        +to_json() Dict
     }
 
-    class QAService {
-        +answer_query(query, useLLM) Tuple
-        -_get_workflow() RAGWorkflow
-    }
-
-    class RAGWorkflow {
-        -engine: SearchEngine
-        -model: String
-        -client: OllamaClient
-        +ask(query, stream, retrieve_only) Dict
-        +retrieve(query) List
-    }
-
-    class SearchEngine {
-        -bm25_scorer: BM25Scorer
-        -proximity_scorer: ProximityScorer
-        -documents: List~Document~
-        +search(query, top_k) List
-    }
-
-    class BM25Scorer {
-        -tf_index: Dict
-        -doc_lengths: Dict
-        -avgdl: Float
-        +score(query_tokens, doc_id) Float
-    }
-
-    class ProximityScorer {
-        -positional_index: Dict
-        +score(doc_id, pairs, max_window) Float
+    class Database {
+        +connect(db_name, host) bool
+        +disconnect() bool
     }
 
     User "1" --> "0..*" Message : creates
     Message "0..*" --> "0..*" ReferencedArticle : references
     QAService --> RAGWorkflow : uses
     RAGWorkflow --> SearchEngine : uses
-    SearchEngine --> BM25Scorer
-    SearchEngine --> ProximityScorer
-    QAService ..> Message : stores results
+    RAGWorkflow --> RAGFormatter : uses
+    SearchEngine --> BM25Scorer : uses
+    SearchEngine --> ProximityScorer : uses
+    SearchEngine --> TextProcessor : uses 2x
+    EngineFactory --> SearchEngine : builds
+    IndexBuilder --> TextProcessor : uses 2x
+    IngestionWorkflow --> TextProcessor : uses 2x
+    IngestionWorkflow --> Document : produces
+    IndexBuilder --> Document : consumes

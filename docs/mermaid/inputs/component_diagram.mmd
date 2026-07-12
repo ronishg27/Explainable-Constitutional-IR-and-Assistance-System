@@ -1,28 +1,60 @@
 graph TD
     subgraph Client
-        ReactApp["React SPA<br/>(SearchBar, ResultDisplay)"]
+        ReactApp["React 19 SPA<br/>(SearchBar, MainSearchBar,<br/>ResultDisplay, Suggestion, Navbar)"]
     end
 
-    subgraph Backend
-        FlaskAPI["Flask REST API<br/>(routes: /ask, /auth)"]
-        Services["Service Layer<br/>(QAService, UserService, MessageService)"]
-        Engine["Search Engine<br/>(BM25 + Proximity)"]
-        LLMClient["Ollama Client"]
+    subgraph "Backend API (Flask)"
+        Routes["Routes<br/>(api_routes, auth_routes)"]
+        Controllers["Controllers<br/>(api_controller, auth_controller,<br/>JWT decorator)"]
+        Services["Services<br/>(QAService, UserService,<br/>MessageService, ArticleService)"]
     end
 
-    subgraph Data
-        MongoDB[("MongoDB<br/>(users, messages, articles)")]
-        FileIndex["File Indexes<br/>(tf_index, pos_index, docs)"]
+    subgraph "Search & Retrieval"
+        TextProc["TextProcessor<br/>(normalize, lemmatize, stopwords)"]
+        IndexBuilder["IndexBuilder<br/>(tf, positional, doc_stats indexes)"]
+        BM25Scorer["BM25Scorer<br/>(k1=1.5, b=0.75)"]
+        ProxScorer["ProximityScorer<br/>(ordered term pairs, window=30)"]
+        SearchEngine["SearchEngine<br/>(candidates → BM25 + proximity + title_boost)"]
+    end
+
+    subgraph "LLM / RAG"
+        RAGFormatter["RAGFormatter<br/>(context + prompt builder)"]
+        RAGWorkflow["RAGWorkflow<br/>(retrieve → format → LLM call)"]
+        OllamaClient["Ollama Client<br/>(httpx-based)"]
+    end
+
+    subgraph "Offline Pipeline"
+        Flatten["flatten_constitution.py<br/>(nested JSON → flat docs)"]
+        Ingestion["IngestionWorkflow<br/>(load → build → save indexes)"]
+        LemmaDict["generate_safe_lemma_dict.py<br/>(rule-based lemmatization)"]
+    end
+
+    subgraph Storage
+        MongoDB[("MongoDB 8<br/>(users, messages,<br/>referenced_articles)")]
+        IndexFiles["File Indexes<br/>(tf_index.json, pos_index.json,<br/>doc_stats.json, lemma_dict.json)"]
+        FlatDocs["Flattened Docs<br/>(flattened_nepal_constitution.json)"]
     end
 
     subgraph External
-        OllamaService["Ollama LLM Server"]
+        OllamaServer["Ollama LLM Server<br/>(gemma3:1b)"]
     end
 
-    ReactApp -->|HTTP/REST| FlaskAPI
-    FlaskAPI --> Services
+    ReactApp -->|POST /api/v1/ask| Routes
+    Routes --> Controllers
+    Controllers --> Services
     Services --> MongoDB
-    Services --> Engine
-    Services --> LLMClient
-    Engine --> FileIndex
-    LLMClient -->|REST| OllamaService
+    Services --> RAGWorkflow
+    RAGWorkflow --> SearchEngine
+    RAGWorkflow --> RAGFormatter
+    RAGWorkflow --> OllamaClient
+    OllamaClient -->|REST| OllamaServer
+    SearchEngine --> BM25Scorer
+    SearchEngine --> ProxScorer
+    SearchEngine --> TextProc
+    SearchEngine --> IndexFiles
+    Flatten --> FlatDocs
+    Ingestion --> IndexBuilder
+    IndexBuilder --> IndexFiles
+    IndexBuilder --> TextProc
+    Flatten --> Ingestion
+    LemmaDict --> IndexFiles
