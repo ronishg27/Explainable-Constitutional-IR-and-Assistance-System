@@ -1,4 +1,4 @@
-PY = C:\Users\Rons\OneDrive\Desktop\Constitution_assistant\backend\.venv\Scripts\python.exe
+PY = backend\.venv\Scripts\python.exe
 
 backend:
 	$(PY) ./backend/app.py
