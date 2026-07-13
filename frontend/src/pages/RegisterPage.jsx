@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
+import Alert from '../components/ui/Alert';
+import Card from '../components/ui/Card';
 
 export default function RegisterPage() {
   const [fullname, setFullname] = useState('');
@@ -26,69 +30,64 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-          <p className="text-sm text-gray-500 mt-1">Start exploring the Constitution</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">
-            {error}
+    <main className="flex items-center justify-center min-h-[calc(100vh-3.5rem)] px-4">
+      <Card className="w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <h1 className="text-lg font-semibold text-neutral-900">Create Account</h1>
+            <p className="text-sm text-neutral-500 mt-1">
+              Start exploring the Constitution
+            </p>
           </div>
-        )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-          <input
+          {error && (
+            <Alert variant="error">{error}</Alert>
+          )}
+
+          <Input
+            label="Full Name"
             type="text"
             required
             value={fullname}
             onChange={(e) => setFullname(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+            placeholder="Your full name"
           />
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
+          <Input
+            label="Email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+            placeholder="you@example.com"
           />
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
+          <Input
+            label="Password"
             type="password"
             required
             minLength={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+            helperText="At least 6 characters"
           />
-          <p className="text-xs text-gray-400 mt-1">At least 6 characters</p>
-        </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-60"
-        >
-          {submitting ? 'Creating account...' : 'Create Account'}
-        </button>
+          <Button
+            type="submit"
+            loading={submitting}
+            className="w-full"
+          >
+            Create Account
+          </Button>
 
-        <p className="text-center text-sm text-gray-500">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Sign In
-          </Link>
-        </p>
-      </form>
-    </div>
+          <p className="text-center text-sm text-neutral-500">
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary-600 hover:text-primary-700 underline">
+              Sign In
+            </Link>
+          </p>
+        </form>
+      </Card>
+    </main>
   );
 }

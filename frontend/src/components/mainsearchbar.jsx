@@ -1,15 +1,17 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import useAskStream from '../hooks/useAskStream';
 import Suggestion from './Suggestion';
 import Resultdisplay from './Resultdisplay';
+import Toggle from './ui/Toggle';
+import Button from './ui/Button';
+import Alert from './ui/Alert';
+import Spinner from './ui/Spinner';
 
-const MainSearchBar = () => {
+export default function MainSearchBar() {
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState('');
   const [useLlm, setUseLlm] = useState(true);
   const { articles, response, loading, error, startStream, cancel } = useAskStream();
-
-  const buttonRef = useRef(null);
 
   const handleSearch = () => {
     if (!query.trim()) return;
@@ -17,56 +19,58 @@ const MainSearchBar = () => {
     startStream(query, useLlm);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handleSearch();
+  };
+
   return (
-    <div className="w-full max-w-2xl mx-auto mt-10 px-4">
-      <div className="mb-3 flex justify-end">
-        <button
-          type="button"
-          onClick={() => setUseLlm((prev) => !prev)}
-          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-            useLlm
-              ? 'border-blue-600 bg-blue-50 text-blue-700'
-              : 'border-gray-300 bg-white text-gray-600'
-          }`}
-        >
-          <span
-            className={`h-2.5 w-2.5 rounded-full ${
-              useLlm ? 'bg-blue-600' : 'bg-gray-400'
-            }`}
+    <div className="mx-auto mt-8 max-w-4xl px-4">
+      <h1 className="text-xl font-semibold text-neutral-900">
+        Search the Constitution
+      </h1>
+
+      <div className="mt-4 flex items-end gap-3">
+        <div className="min-w-0 flex-1">
+          <label htmlFor="search-input" className="sr-only">
+            Search query
+          </label>
+          <input
+            id="search-input"
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask a legal question..."
+            className="block w-full rounded-md border border-neutral-300 bg-white px-3.5 py-2 text-sm text-neutral-900 placeholder-neutral-400 transition-colors hover:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-0"
           />
-          Use LLM: {useLlm ? 'ON' : 'OFF'}
-        </button>
+        </div>
+        {loading ? (
+          <Button onClick={() => { cancel(); setSubmittedQuery(''); }} variant="danger">
+            Cancel
+          </Button>
+        ) : (
+          <Button onClick={handleSearch} disabled={!query.trim()}>
+            Search
+          </Button>
+        )}
       </div>
 
-      <div className="bg-white shadow-2xl flex items-center rounded-full px-4 py-3">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && buttonRef.current?.click()}
-          placeholder="Search constitutional articles..."
-          className="flex-1 outline-none bg-transparent"
-        />
-
-        <button
-          ref={buttonRef}
-          type="button"
-          onClick={loading ? () => { cancel(); setSubmittedQuery(''); } : handleSearch}
-          className={`px-5 py-2 rounded-full font-medium disabled:opacity-60 ${
-            loading
-              ? 'bg-red-100 text-red-700 hover:bg-red-200'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-        >
-          {loading ? 'Cancel' : 'Analyze Query'}
-        </button>
+      <div className="mt-3">
+        <Toggle label="Use AI answer" enabled={useLlm} onChange={setUseLlm} />
       </div>
 
       <Suggestion setQuery={setQuery} />
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mt-6 text-center">
+        <Alert variant="error" className="mt-6">
           {error}
+        </Alert>
+      )}
+
+      {loading && !articles && (
+        <div className="mt-8 flex items-center gap-2 text-sm text-neutral-400">
+          <Spinner size="sm" />
+          Retrieving relevant articles...
         </div>
       )}
 
@@ -77,6 +81,4 @@ const MainSearchBar = () => {
       />
     </div>
   );
-};
-
-export default MainSearchBar;
+}

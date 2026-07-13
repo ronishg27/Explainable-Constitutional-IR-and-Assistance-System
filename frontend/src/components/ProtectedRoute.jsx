@@ -1,11 +1,16 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import Spinner from './ui/Spinner';
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="flex items-center justify-center min-h-screen text-gray-500">Loading...</div>;
+    return (
+      <main className="flex items-center justify-center min-h-[calc(100vh-3.5rem)]">
+        <Spinner size="lg" />
+      </main>
+    );
   }
 
   if (!user) {
