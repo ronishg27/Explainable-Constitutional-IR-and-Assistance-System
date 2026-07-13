@@ -337,6 +337,47 @@ Get a single message with its full article objects. Ownership is enforced — th
 
 ---
 
+### `DELETE /api/v1/messages/<message_id>`
+
+Delete a single chat message. Only the owner can delete their own messages. Irreversible.
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "Message deleted successfully"
+}
+```
+
+**Errors:**
+- `401` — Missing or invalid token
+- `403` — Forbidden (message belongs to another user)
+- `404` — Message not found
+
+---
+
+### `DELETE /api/v1/messages`
+
+Delete **all** chat messages for the authenticated user. Irreversible.
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "5 messages deleted successfully"
+}
+```
+
+**Errors:**
+- `401` — Missing or invalid token
+- `404` — User not found
+
+---
+
 ## Error Response Format
 
 All error responses follow this shape:
