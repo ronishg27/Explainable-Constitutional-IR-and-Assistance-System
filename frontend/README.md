@@ -1,16 +1,34 @@
-# React + Vite
+# Constitution Assistant — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 SPA for querying the Constitution of Nepal.
 
-Currently, two official plugins are available:
+Built with Vite 8, Tailwind CSS v4, and React Router.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Quick Start
 
-## React Compiler
+```powershell
+cd frontend
+npm install
+npm run dev     # Dev server with HMR at http://localhost:5173
+npm run build   # Production build to dist/
+npm run lint    # ESLint (flat config)
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Pages
 
-## Expanding the ESLint configuration
+| Route | Page | Access |
+|-------|------|--------|
+| `/` | Home — search bar, results, LLM toggle | Requires login |
+| `/history` | Chat history — paginated Q&A list | Requires login |
+| `/history/:id` | Single message detail with articles | Requires login |
+| `/login` | Login form | Public |
+| `/register` | Registration form | Public |
+| `/about` | About the project | Public |
+| `/how-it-works` | Explanation of the system | Public |
+| `*` | 404 Not Found | Public |
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Key Libraries
+
+- React 19, React Router 7
+- Tailwind CSS v4 (Vite plugin, no PostCSS config)
+- ESLint flat config
