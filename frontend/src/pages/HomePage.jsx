@@ -1,11 +1,9 @@
-import SearchBar from '../components/SearchBar';
-import Mainsearchbar from '../components/mainsearchbar';
+import MainSearchBar from '../components/mainsearchbar';
 
 export default function HomePage() {
   return (
-    <>
-      <SearchBar />
-      <Mainsearchbar />
-    </>
+    <main>
+      <MainSearchBar />
+    </main>
   );
 }

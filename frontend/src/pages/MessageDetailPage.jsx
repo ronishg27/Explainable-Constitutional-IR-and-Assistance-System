@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
 import Resultdisplay from '../components/Resultdisplay';
+import Dialog from '../components/ui/Dialog';
+import Alert from '../components/ui/Alert';
+import Spinner from '../components/ui/Spinner';
 
 export default function MessageDetailPage() {
   const { id } = useParams();
@@ -9,6 +12,7 @@ export default function MessageDetailPage() {
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -28,29 +32,34 @@ export default function MessageDetailPage() {
   }, [id]);
 
   const handleDelete = async () => {
-    if (!window.confirm('Delete this chat?')) return;
     try {
       await apiClient(`/api/v1/messages/${id}`, { method: 'DELETE' });
       navigate('/history');
     } catch (err) {
       setError(err.message);
+      setDeleteOpen(false);
     }
   };
 
   if (loading) {
-    return <div className="text-center text-gray-400 mt-20">Loading...</div>;
+    return (
+      <main className="mx-auto mt-12 max-w-3xl px-4 text-center">
+        <Spinner size="lg" className="mx-auto" />
+      </main>
+    );
   }
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto mt-20 px-4 text-center">
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
-          {error}
-        </div>
-        <Link to="/history" className="text-blue-600 text-sm mt-4 inline-block no-underline">
+      <main className="mx-auto mt-12 max-w-3xl px-4">
+        <Alert variant="error">{error}</Alert>
+        <Link
+          to="/history"
+          className="inline-block mt-4 text-sm text-primary-600 hover:text-primary-700 no-underline"
+        >
           &larr; Back to History
         </Link>
-      </div>
+      </main>
     );
   }
 
@@ -62,30 +71,46 @@ export default function MessageDetailPage() {
       title: a.title,
       citation: a.citation,
       score: a.relevance_score,
+      bm25_score: a.bm25_score,
+      proximity_score: a.proximity_score,
+      title_match_count: a.title_match_count,
+      article_no: a.article_no,
+      clause_no: a.clause_no,
+      subclause_id: a.subclause_id,
+      level: a.level,
+      part_no: a.part_no,
+      text: a.text,
     })),
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 px-4">
-      <div className="flex items-center justify-between mb-4">
+    <main className="mx-auto mt-8 max-w-4xl px-4">
+      <div className="flex items-center justify-between mb-6">
         <Link
           to="/history"
-          className="text-sm text-blue-600 hover:text-blue-800 no-underline"
+          className="text-sm text-primary-600 hover:text-primary-700 no-underline"
         >
           &larr; Back to History
         </Link>
         <button
-          onClick={handleDelete}
-          className="text-sm text-red-500 hover:text-red-700 bg-transparent border-none cursor-pointer flex items-center gap-1"
+          onClick={() => setDeleteOpen(true)}
+          className="text-sm text-error hover:text-red-700 transition-colors bg-transparent border-none cursor-pointer"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          </svg>
           Delete
         </button>
       </div>
+
       <Resultdisplay data={resultData} />
-    </div>
+
+      <Dialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete chat"
+        message="Are you sure you want to delete this chat?"
+        confirmLabel="Delete"
+        variant="danger"
+      />
+    </main>
   );
 }

@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
+import Alert from '../components/ui/Alert';
+import Card from '../components/ui/Card';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -25,56 +29,53 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[80vh] px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Sign In</h1>
-          <p className="text-sm text-gray-500 mt-1">Welcome back to Constitutional Assistant</p>
-        </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">
-            {error}
+    <main className="flex items-center justify-center min-h-[calc(100vh-3.5rem)] px-4">
+      <Card className="w-full max-w-sm">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <h1 className="text-lg font-semibold text-neutral-900">Sign In</h1>
+            <p className="text-sm text-neutral-500 mt-1">
+              Welcome back to Constitutional Assistant
+            </p>
           </div>
-        )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input
+          {error && (
+            <Alert variant="error">{error}</Alert>
+          )}
+
+          <Input
+            label="Email"
             type="email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+            placeholder="you@example.com"
           />
-        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input
+          <Input
+            label="Password"
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
           />
-        </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-60"
-        >
-          {submitting ? 'Signing in...' : 'Sign In'}
-        </button>
+          <Button
+            type="submit"
+            loading={submitting}
+            className="w-full"
+          >
+            Sign In
+          </Button>
 
-        <p className="text-center text-sm text-gray-500">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline">
-            Register
-          </Link>
-        </p>
-      </form>
-    </div>
+          <p className="text-center text-sm text-neutral-500">
+            Don&apos;t have an account?{' '}
+            <Link to="/register" className="text-primary-600 hover:text-primary-700 underline">
+              Register
+            </Link>
+          </p>
+        </form>
+      </Card>
+    </main>
   );
 }
