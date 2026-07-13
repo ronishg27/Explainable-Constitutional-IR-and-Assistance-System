@@ -103,6 +103,7 @@ def ask_stream():
         return jsonify({"error": "Invalid JSON payload."}), 400
 
     query = data.get("query")
+    use_llm = data.get("use_llm", True)
 
     if not query:
         return jsonify({"error": "Query is required."}), 400
@@ -117,7 +118,8 @@ def ask_stream():
 
     try:
         user_id = request.user.get("user_id")
-        events = QAService.answer_query_streaming(query)
+
+        events = QAService.answer_query_streaming(query, use_llm=use_llm)
 
         def generate():
             full_answer = ""
@@ -146,7 +148,7 @@ def ask_stream():
             },
         )
     except Exception as e:
-        logger.exception("Error processing streaming query")
+        logger.exception("Error processing streaming query", e)
         return jsonify({"error": "An error occurred while processing the query."}), 500
 
 
@@ -169,3 +171,24 @@ def get_message(message_id: str):
     if result["data"]["user"]["id"] != request.user.get("user_id"):
         return jsonify({"error": "Forbidden"}), 403
     return jsonify(result["data"]), 200
+
+
+def delete_message(message_id: str):
+    """DELETE /api/v1/messages/<id> — delete a single chat message (owner only)."""
+    result = MessageService.get_message(message_id)
+    if not result.get("success"):
+        return jsonify({"error": result["error"]}), 404
+    if result["data"]["user"]["id"] != request.user.get("user_id"):
+        return jsonify({"error": "Forbidden"}), 403
+
+    delete_result = MessageService.delete_message(message_id)
+    return jsonify(delete_result), 200
+
+
+def delete_all_messages():
+    """DELETE /api/v1/messages — delete all chat messages for the current user."""
+    user_id = request.user.get("user_id")
+    result = MessageService.delete_user_messages(user_id)
+    if not result.get("success"):
+        return jsonify({"error": result["error"]}), 404
+    return jsonify(result), 200
