@@ -329,8 +329,8 @@ def flatten_flat_constitution(data):
         )
         for label, value in article_extras:
             article_segments.append(f"[{label}] {value}")
-            
-        
+
+
         has_clauses = any(item.get("type") == "clause" for item in content)
         if not has_clauses:
             body_text = "\n".join(segment for segment in article_segments if segment)
@@ -368,7 +368,7 @@ def main():
         # Nested format with parts (nepal_constitution.json)
         documents = flatten_constitution(data)
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)   
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(documents, f, indent=2, ensure_ascii=False)
 
@@ -377,3 +377,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

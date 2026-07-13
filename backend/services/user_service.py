@@ -12,7 +12,7 @@ if not JWT_SECRET:
 
 
 class UserService:
-    
+
     @staticmethod
     def create_user(fullname:str, email:str, password:str, role:str='user'):
         "Create a new user."
@@ -24,21 +24,21 @@ class UserService:
             )
             user.set_password(password.strip())
             user.save()
-            
-            
+
+
             return {
                 'success': True,
                 'message': 'User created successfully',
                 'data': user.to_json()
             }
-            
+
         except ValidationError as ve:
             return {
                 'success': False,
                 'error': f"Validation Error: {str(ve)}",
                 'message': 'Invalid user data provided.'
             }
-            
+
         except NotUniqueError as nue:
             return {
                 'success': False,
@@ -52,7 +52,7 @@ class UserService:
                 'error': str(e),
                 'message': 'An error occurred while creating the user.'
             }
-            
+
     @staticmethod
     def get_user(user_id: str):
         """Retrieve a user by their ID."""
@@ -61,14 +61,14 @@ class UserService:
             return {
                 'success': True,
                 'data': user.to_json(),
-                'message': 'User retrieved successfully'     
+                'message': 'User retrieved successfully'
             }
         except DoesNotExist:
             return {
                 'success': False,
                 'error': 'User not found',
                 'message': 'No user exists with the provided ID.',
-                
+
             }
         except Exception as e:
             logger.exception("Error retrieving user")
@@ -77,7 +77,7 @@ class UserService:
                 'error': str(e),
                 "message": 'An error occurred while retrieving the user.'
             }
-            
+
     @staticmethod
     def get_user_by_email(email: str):
         """Retrieve a user by their email."""
@@ -86,7 +86,7 @@ class UserService:
             return {
                 'success': True,
                 'data': user.to_json(),
-                'message': 'User retrieved successfully'     
+                'message': 'User retrieved successfully'
             }
         except DoesNotExist:
             return {
@@ -120,7 +120,7 @@ class UserService:
                 'error': str(e),
                 'message': 'An error occurred while listing users.'
             }
-            
+
     @staticmethod
     def delete_user(user_id: str):
         """Delete a user by their ID."""
@@ -137,7 +137,7 @@ class UserService:
                 'error': 'User not found',
                 'message': 'No user exists with the provided ID.'
             }
-            
+
         except Exception as e:
             logger.exception("Error deleting user")
             return {
@@ -145,15 +145,15 @@ class UserService:
                 'error': str(e),
                 'message': 'An error occurred while deleting the user.'
             }
-            
-    
+
+
     @staticmethod
     def authenticate_user(email: str, password: str):
         """Authenticate a user."""
         try:
             user = User.objects.get(email=email.strip().lower())
             if user.check_password(password):
-                # create a JWT 
+                # create a JWT
                 payload = {
                     'user_id': str(user.id),
                     'email': user.email
@@ -171,14 +171,14 @@ class UserService:
                     'error': 'Invalid credentials',
                     'message': 'Incorrect email or password.'
                 }
-                
+
         except DoesNotExist:
             return {
                 'success': False,
                 'error': 'User not found',
                 'message': 'No user exists with the provided email.'
             }
-        
+
         except Exception as e:
             logger.exception("Error authenticating user")
             return {
@@ -186,3 +186,4 @@ class UserService:
                 'error': str(e),
                 'message': 'An error occurred during authentication.'
             }
+

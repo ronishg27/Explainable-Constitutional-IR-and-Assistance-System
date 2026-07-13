@@ -11,20 +11,20 @@ def register():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "Invalid JSON payload."}), 400
-    
+
     fullname = (data.get("fullname") or "").strip()
     email = (data.get("email") or "").strip().lower()
     password = (data.get("password") or "").strip()
     role = (data.get("role") or "user").strip().lower()
-    
+
     if not fullname or not email :
         return jsonify({"error": "Missing required fields."}), 400
-    
+
     if not password or len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters long."}), 400
-    
+
     result = UserService.create_user(fullname, email, password, role)
-    
+
     if result['success']:
         return jsonify({
             "message": result['message'],
@@ -40,10 +40,10 @@ def register():
 def login():
     """Handle user login."""
     data = request.get_json(silent=True)
-    
+
     email = (data.get("email") or "").strip().lower()
     password = (data.get("password") or "").strip()
-    
+
     result = UserService.authenticate_user(email, password)
     if result['success']:
         resp = make_response(jsonify({
@@ -55,13 +55,12 @@ def login():
         )
         resp.set_cookie('token', result['token'], httponly=True, secure=True, samesite='Strict', max_age=60*60*60*12) # 12 hours expiration
         return resp
-        
+
     else:
         return jsonify({
             "error": result['error'],
             "message": result.get('message')
             }), 401
-
 
 
 def logout():
@@ -80,10 +79,8 @@ def get_current_user():
     user = UserService.get_user(user_id)
     if user:
         return jsonify(user), 200
-    
+
     return jsonify({
         "error": "User not found."
     }), 404
-    
-
 

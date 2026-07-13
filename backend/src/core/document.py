@@ -14,11 +14,12 @@ class Document:
     subclause_id: Optional[str] = None
     is_primary: bool = False
     parent_id: Optional[str] = None
-    
+
     title_tokens: Optional[list[str]] = None
     body_tokens: Optional[list[str]] = None
-    
+
     raw_text: Optional[str] = None
     citation_normalized: Optional[str] = None
-    
+
     boost: float = 1.0
+
