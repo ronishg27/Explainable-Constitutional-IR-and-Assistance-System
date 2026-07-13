@@ -8,7 +8,7 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         auth_header = request.headers.get('Authorization')
-        
+
         token = None
         if auth_header and auth_header.startswith('Bearer '):
             token = auth_header.split(' ')[1]
@@ -17,7 +17,7 @@ def token_required(f):
 
         if not token:
             return jsonify({'error': 'Token is missing!'}), 401
-        
+
         JWT_SECRET = os.getenv('JWT_SECRET')
         if not JWT_SECRET:
             return jsonify({'error': 'JWT_SECRET is not set in environment variables!'}), 500
@@ -30,7 +30,8 @@ def token_required(f):
             return jsonify({'error': 'Invalid token!'}), 401
         except Exception as e:
             return jsonify({'error': f'An error occurred: {str(e)}'}), 500
-        
+
         return f(*args, **kwargs)
-    
+
     return decorated
+

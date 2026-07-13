@@ -4,15 +4,14 @@ from mongoengine import connect, disconnect
 logger = logging.getLogger(__name__)
 
 
-
 class Database:
     _instance = None
-    
+
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
-    
+
     def connect(self, db_name="ECIRAS", host='mongodb://localhost:27017', alias='default'):
         try:
             connect(
@@ -29,7 +28,7 @@ class Database:
         except Exception:
             logger.exception("Error connecting to MongoDB")
             raise
-            
+
     def disconnect(self):
         try:
             disconnect()
@@ -47,15 +46,15 @@ def main():
     db = Database()
     db_name = os.getenv("MONGO_DB_NAME", "ECIRAS")
     host = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-    
+
     try:
         db.connect(db_name=db_name, host=host)
     except Exception as e:
         logger.exception("Failed to connect to the database")
     finally:
         db.disconnect()
-    
 
 
 if __name__ == "__main__":
     main()
+

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class MessageService:
     """Handles chat messages with referenced articles."""
-    
+
     @staticmethod
     def create_message(
             user_id:str,
@@ -20,21 +20,21 @@ class MessageService:
         ):
         """Create a new message with referenced articles."""
         try:
-            
-            # 1. get the user 
+
+            # 1. get the user
             user = User.objects.get(id=user_id)
-            
+
             # 2. Get the referenced articles (if any)
-            
+
             article_refs = []
             if articles:
                 for art_id in articles:
-                    try: 
+                    try:
                         article = ReferencedArticle.objects.get(id=art_id)
                         article_refs.append(article)
                     except DoesNotExist:
                         logger.warning("Referenced article with id %s not found. Skipping.", art_id)
-                        
+
             # 3. Create the message
             message = Message(
                 query=query,
@@ -42,50 +42,50 @@ class MessageService:
                 user= user,
                 articles = article_refs
             )
-            
+
             message.save()
-            
+
             return {
                 'success': True,
                 'message': 'Message created successfully',
                 'data': message.to_json()
             }
-            
+
         except DoesNotExist:
             return {
                 'success': False,
                 'error': 'User not found'
             }
-        
+
         except ValidationError as ve:
             return {
                 'success': False,
                 'error': f'Validation error: {str(ve)}'
             }
-            
+
         except Exception as e:
             logger.exception("Error creating message")
             return {
                 'success': False,
                 'error': f'Unexpected error: {str(e)}'
             }
-            
+
     @staticmethod
     def get_user_messages(user_id:str, limit:int=20, skip:int=0):
         """Get all messages for a specific user."""
         try:
             # 1. Get the user
             user = User.objects.get(id=user_id)
-            
+
             # 2. Get messages for the user with pagination
             messages = Message.objects(user=user)\
                 .order_by('-created_at')\
                 .skip(skip)\
                 .limit(limit)
-            
+
             # 3. get the total count for pagination
             total_count = Message.objects(user=user).count()
-            
+
             return {
                 'success': True,
                 'data': [msg.to_json() for msg in messages],
@@ -96,13 +96,13 @@ class MessageService:
                     'has_more': skip + limit < total_count
                 }
             }
-            
+
         except DoesNotExist:
             return {
                 'success': False,
                 'error': 'User not found'
             }
-            
+
     @staticmethod
     def get_message(message_id:str):
         """Get a single message by ID."""
@@ -117,7 +117,7 @@ class MessageService:
                 'success': False,
                 'error': 'Message not found'
             }
-            
+
     @staticmethod
     def update_message_answer(message_id:str, new_answer:str):
         """Update the answer of a message."""
@@ -135,20 +135,20 @@ class MessageService:
                 'success': False,
                 'error': 'Message not found'
             }
-            
-    
+
+
     @staticmethod
     def search_messages(user_id:str, search_term:str):
         """Search messages by query text"""
         try:
             user = User.objects.get(id=user_id)
-            
+
             # case-insensitive search in the query field
             messages = Message.objects(
                 user=user,
                 query__icontains=search_term
             ).order_by('-created_at')
-            
+
             return {
                 'success': True,
                 'data': [msg.to_json() for msg in messages],
@@ -159,7 +159,7 @@ class MessageService:
                 'success': False,
                 'error': 'User not found'
             }
-            
+
     @staticmethod
     def delete_message(message_id:str):
         """Delete a message by ID."""
@@ -175,7 +175,7 @@ class MessageService:
                 'success': False,
                 'error': 'Message not found'
             }
-    
+
     @staticmethod
     def delete_user_messages(user_id:str):
         """Delete all messages for a specific user."""
@@ -191,3 +191,4 @@ class MessageService:
                 'success': False,
                 'error': 'User not found'
             }
+

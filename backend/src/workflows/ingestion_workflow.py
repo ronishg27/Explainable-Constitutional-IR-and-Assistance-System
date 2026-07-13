@@ -31,7 +31,7 @@ class IngestionWorkflow:
         """Load flattened constitution JSON as Document objects."""
         with open(self.doc_path, "r", encoding="utf-8") as f:
             raw = json.load(f)
-            
+
         allowed_fields = {f.name for f in dataclasses.fields(Document)}
         documents = []
         for item in raw:
@@ -69,3 +69,4 @@ class IngestionWorkflow:
             json.dump(pos_index, f, ensure_ascii=False, indent=2)
         with open(out / "doc_stats.json", "w", encoding="utf-8") as f:
             json.dump(doc_stats, f, ensure_ascii=False, indent=2)
+

@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 
-
 class ProximityScorer:
     """Scores documents based on how close query term pairs appear in a positional index."""
 
@@ -112,10 +111,9 @@ class ProximityScorer:
         with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
         return data if isinstance(data, dict) else {}
-    
+
     def save_index(self, path: Path) -> None:
         """Save the positional index to a JSON file."""
         with path.open("w", encoding="utf-8") as f:
             json.dump(self.index, f, ensure_ascii=False, indent=2)
-    
 

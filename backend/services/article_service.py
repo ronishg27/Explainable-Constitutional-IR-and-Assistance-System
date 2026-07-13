@@ -3,11 +3,10 @@ from models.referenced_article_model import ReferencedArticle
 from mongoengine.errors import ValidationError, DoesNotExist
 
 
-
 logger = logging.getLogger(__name__)
 
 class ArticleService:
-    
+
     @staticmethod
     def create_article(title:str, citation:str, doc_id:str, relevance_score:float):
         """Create a new referenced article, deduplicating by doc_id."""
@@ -27,13 +26,13 @@ class ArticleService:
                 relevance_score=relevance_score
             )
             article.save()
-            
+
             return {
                 'success': True,
                 'message': 'Article created successfully',
                 'data': article.to_json()
             }
-            
+
         except ValidationError as ve:
             return {
                 'success': False,
@@ -45,7 +44,7 @@ class ArticleService:
                 'success': False,
                 'error': str(e)
             }
-            
+
     @staticmethod
     def get_article(article_id:str):
         """Retrieve an article by its ID."""
@@ -55,7 +54,7 @@ class ArticleService:
                 'success': True,
                 'data': article.to_json()
             }
-            
+
         except DoesNotExist:
             return {
                 'success': False,
@@ -66,8 +65,8 @@ class ArticleService:
                 'success': False,
                 'error': str(e)
             }
-            
-    @staticmethod 
+
+    @staticmethod
     def list_articles():
         """List all referenced articles."""
         try:
@@ -81,7 +80,7 @@ class ArticleService:
                 'success': False,
                 'error': str(e)
             }
-    
+
     @staticmethod
     def delete_article(article_id:str):
         """Delete an article by its ID."""
@@ -103,4 +102,4 @@ class ArticleService:
                 'success': False,
                 'error': str(e)
             }
-    
+
