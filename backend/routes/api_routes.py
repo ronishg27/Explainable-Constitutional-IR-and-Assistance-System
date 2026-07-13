@@ -1,6 +1,15 @@
 from flask import Blueprint
 
-from controllers.api_controller import ask, ask_stream, get_message, health, home, list_messages
+from controllers.api_controller import (
+    ask,
+    ask_stream,
+    delete_all_messages,
+    delete_message,
+    get_message,
+    health,
+    home,
+    list_messages,
+)
 from controllers.decorators import token_required
 
 
@@ -38,3 +47,15 @@ def list_messages_route():
 @token_required
 def get_message_route(message_id):
     return get_message(message_id)
+
+
+@api_bp.route("/api/v1/messages/<message_id>", methods=["DELETE"])
+@token_required
+def delete_message_route(message_id):
+    return delete_message(message_id)
+
+
+@api_bp.route("/api/v1/messages", methods=["DELETE"])
+@token_required
+def delete_all_messages_route():
+    return delete_all_messages()
