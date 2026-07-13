@@ -11,7 +11,7 @@
 │                     Frontend (React 19 + Vite 8)             │
 │  Navbar │ SearchBar │ MainSearchBar │ ResultDisplay │ Suggs.│
 └───────────────────────────┬─────────────────────────────────┘
-                            │ POST /api/v1/ask
+                            │ POST /api/v1/ask (JWT auth)
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                   Backend (Flask / Python 3.13)              │
@@ -24,14 +24,21 @@
 │                    ┌───────────────────────┼───────────┐    │
 │                    │     RAGWorkflow       │           │    │
 │                    │  ┌─────────────────┐  │           │    │
-│                    │  │  SearchEngine    │  │           │    │
-│                    │  │  (BM25 + prox)   │  │           │    │
-│                    │  └─────────────────┘  │           │    │
-│                    │  ┌─────────────────┐  │           │    │
-│                    │  │ Ollama LLM       │  │           │    │
-│                    │  │ (Gemma3:1b)      │  │           │    │
-│                    │  └─────────────────┘  │           │    │
-│                    └───────────────────────┘           │    │
+│                    │  │  RAGRepository   │  │           │    │
+│                    │  │  (retrieval +    │  │           │    │
+│                    │  │   Ollama client)  │  │           │    │
+│                    │  └────────┬────────┘  │           │    │
+│                    │           │           │           │    │
+│                    │  ┌────────▼────────┐  │           │    │
+│                    │  │RetrievalWorkflow │  │           │    │
+│                    │  └─────┬──────┬────┘  │           │    │
+│                    │        │      │       │           │    │
+│                    │  ┌─────▼──┐ ┌──▼──────┐          │    │
+│                    │  │Search  │ │Reranker │          │    │
+│                    │  │Engine  │ │(RRF+MMR │          │    │
+│                    │  │BM25+prx│ │ +boost) │          │    │
+│                    │  └────────┘ └─────────┘          │    │
+│                    └──────────────────────────────────┘    │
 │                                                              │
 │  ┌──────────┐  ┌────────────┐  ┌─────────────────────────┐ │
 │  │  Config   │  │   Models   │  │      Preprocessing       │ │
@@ -101,16 +108,16 @@ App
 
 ## 5. Retrieval Pipeline
 
-### 5.1 Two-Phase Scoring
+### 5.1 Two-Phase Retrieval Pipeline
 
-The `SearchEngine` (`src/core/search_engine.py`) implements a candidate-generation + re-ranking pipeline:
+The `SearchEngine` (`src/core/search_engine.py`) implements candidate-generation + scoring, followed by `Reranker` (RRF fusion + MMR diversity + rule-based boost). The full chain:
 
 ```
 Query → [BM25 Processor]  ──→ bm25_tokens (lemmatized, no stopwords)
      → [Proximity Processor] ──→ raw_tokens (exact, stopwords kept)
                                       │
                                       ▼
-                           Candidate Generation
+                           Candidate Generation (recall_k=30)
                            (union of doc IDs containing any bm25 token)
                                       │
                                       ▼
@@ -120,7 +127,16 @@ Query → [BM25 Processor]  ──→ bm25_tokens (lemmatized, no stopwords)
                                    + proximity_weight (×1.0 × avg pair score)
                                       │
                                       ▼
-                           Sort descending → return top_k
+                           Top-30 candidates
+                                      │
+                                      ▼
+                           Reranker.rerank():
+                             1. RRF Fusion (combine BM25 + proximity + title ranks)
+                             2. MMR Diversity (cosine similarity via BM25 vectors)
+                             3. Rule-based Boost (part/level multipliers)
+                                      │
+                                      ▼
+                           Top-8 articles (promoted to article level)
 ```
 
 ### 5.2 BM25 Scoring
@@ -157,7 +173,15 @@ Pipeline steps: Normalize (lowercase → expand contractions → alpha-only) →
 
 ## 6. RAG Pipeline
 
-Implementation: `src/llm/rag_workflow.py`
+Implementation: `src/llm/rag_workflow.py` + `src/llm/rag_repository.py`
+
+### 6.0 Retrieval Layer (`src/llm/rag_repository.py`)
+
+- Owns the `RetrievalWorkflow` (SearchEngine + Reranker) and Ollama client.
+- `retrieve()` delegates to `RetrievalWorkflow.retrieve()` for high-recall search + reranking.
+- `promote_to_articles()` merges clause/sub-clause results into full articles, deduplicating by `article_no`.
+- `call_llm()` calls Ollama with 3-attempt retry logic.
+- Connectivity checks are cached per process lifetime.
 
 ### 6.1 Prompt Construction (`src/llm/rag_formatter.py`)
 
@@ -167,20 +191,21 @@ Implementation: `src/llm/rag_workflow.py`
 
 ### 6.2 LLM Integration
 
-- Client: `src/llm/ollama_llm.py` — factory creating an Ollama client
+- Client: `RAGRepository` owns the Ollama client (uses `ollama` Python SDK directly)
 - Default model: `gemma3:1b` (configurable via `OLLAMA_MODEL` env)
-- Connectivity check: cached, performed once on first request
-- Retry logic: 3 attempts with 0.5s delay
-- Graceful fallback: if Ollama is unavailable, API returns retrieval-only results (no error)
+- Connectivity check: cached, performed once on first request via `RAGRepository.check_ollama_connection()`
+- Model check: `RAGRepository.check_model_availability()` verifies configured model exists
+- Retry logic: 3 attempts with 0.5s delay via `RAGRepository.call_llm()`
+- Graceful fallback: if Ollama is unavailable, API returns HTTP 503; if model missing, returns retrieval-only results with status info
 
 ### 6.3 Q&A Endpoint Behavior
 
-| `use_llm` | Ollama Available | Behavior |
-|:---------:|:----------------:|----------|
-| false | — | Return only ranked articles |
-| true | yes | Return LLM answer + article citations |
-| true | no | Return 503 error (Ollama unavailable) |
-| true | model missing | Return articles + status info (no error) |
+| `use_llm` | Ollama Available | HTTP Status | Behavior |
+|:---------:|:----------------:|:-----------:|----------|
+| false | — | 200 | Return only ranked articles |
+| true | yes | 200 | Return LLM answer + article citations |
+| true | unreachable | 503 | Error: Ollama service unavailable |
+| true | model missing | 200 | Return articles + ollama_status (no LLM answer) |
 
 ## 7. Offline Ingestion Pipeline
 
@@ -277,7 +302,12 @@ class Document:
 |--------|----------------------|:----:|---------------------------------|
 | GET    | `/api/v1`            | No   | API landing + endpoint list     |
 | GET    | `/api/v1/health`     | No   | Liveness check                  |
-| POST   | `/api/v1/ask`        | No   | Main Q&A (`query`, `use_llm`)   |
+| POST   | `/api/v1/ask`        | Yes  | Main Q&A (`query`, `use_llm`, persists to MongoDB) |
+| POST   | `/api/v1/ask-stream` | Yes  | Streaming Q&A via SSE           |
+| GET    | `/api/v1/messages`   | Yes  | Paginated chat history          |
+| GET    | `/api/v1/messages/<id>` | Yes | Single message with articles  |
+| DELETE | `/api/v1/messages/<id>` | Yes | Delete message (owner only)  |
+| DELETE | `/api/v1/messages`   | Yes  | Delete all messages            |
 | POST   | `/api/v1/auth/register` | No | User registration               |
 | POST   | `/api/v1/auth/login` | No   | Login, sets JWT cookie          |
 | POST   | `/api/v1/auth/logout`| Yes  | Clears JWT cookie               |
