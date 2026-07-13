@@ -130,7 +130,11 @@ class Reranker:
     # ------------------------------------------------------------------
     @staticmethod
     def _apply_boost(results: list[dict], boost_rules: dict | None = None) -> list[dict]:
-        """Apply per-document boost field + part/level rule multipliers."""
+        """Apply per-document boost field + part/level rule multipliers.
+
+        Multiplies each result's ``score`` by the applicable boost multipliers.
+        Order from the previous pipeline stage (MMR) is preserved.
+        """
         part_rules = (boost_rules or {}).get("part_boost", {})
         level_rules = (boost_rules or {}).get(
             "level_boost",
@@ -152,7 +156,6 @@ class Reranker:
             result["score"] = result.get("score", 0.0) * multiplier
             result["boost_multiplier"] = multiplier
 
-        results.sort(key=lambda x: x.get("score", 0.0), reverse=True)
         return results
 
     # ------------------------------------------------------------------

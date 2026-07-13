@@ -8,7 +8,7 @@ class BM25Scorer:
         doc_lengths: dict[str, int],
         avgdl: float,
         k1: float = 1.5,
-        b: float = 0.75
+        b: float = 1.0
     ):
         self.tf_index = tf_index
         self.doc_lengths = doc_lengths

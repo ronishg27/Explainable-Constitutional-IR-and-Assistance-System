@@ -19,20 +19,27 @@ class RAGFormatter:
         return "\n".join(context_lines)
 
     @staticmethod
-    def build_prompt(query: str, context: str) -> str:
-        return f"""
-You are an expert in constitutional law, specifically the Constitution of Nepal. Your task is to answer the following question based ONLY on the **provided constitutional articles**. Do not reference any external knowledge or sources. **Only cite articles present in the context.**
+    def build_system_prompt() -> str:
+        return (
+            "You are a constitutional law expert specializing in the Constitution of Nepal. "
+            "You must answer questions using ONLY the constitutional articles provided in the user message. "
+            "The user will give you a list of retrieved articles from the Constitution of Nepal as context. "
+            "Follow these rules strictly:\n"
+            "1. Base your answer ONLY on the articles shown in the context below.\n"
+            "2. If the context does not contain a relevant article, say: "
+            "'The provided articles from the Constitution of Nepal do not address this question.'\n"
+            "3. Never reference any other constitution (Indian, US, etc.) or any external knowledge.\n"
+            "4. Cite articles exactly as shown in the context (e.g., [Part 3, Article 16]).\n"
+            "5. Do not add headings, summaries, or explanations beyond answering the question."
+        )
 
-CONSTITUTION ARTICLES:
+    @staticmethod
+    def build_user_prompt(query: str, context: str) -> str:
+        return f"""
+CONTEXT — Constitution of Nepal:
 {context}
 
-QUESTION: {query}
+QUESTION (Constitution of Nepal only): {query}
 
-ANSWER:
-- **Strictly** base your answer only on the provided articles. Do not reference any other source or external knowledge.
-- **Cite only the articles listed above**. If the answer requires referencing multiple articles, cite them **precisely** as [Part X, Article Y] (e.g., [Part 5, Article 56(2)]).
-- If the Constitution does not address the question or if there is no relevant article, **explicitly state** that the question is not addressed by the Constitution and do not attempt to make assumptions or guesses.
-- **Do not provide any information** that is not in the provided articles or make any references to sources outside the provided context.
-- **If an article is not present in the context**, **do not mention it**. Ensure your answer strictly adheres to the information in the provided articles.
-- Do not provide any additional information like headings, summaries, or explanations. Just answer the question based on the provided articles and cite them as required.
+ANSWER based solely on the articles above:
 """

@@ -21,6 +21,15 @@ def _persist_message(user_id: str, query: str, payload: dict) -> None:
                 citation=str(art.get("citation", "")),
                 doc_id=str(art.get("doc_id", "")),
                 relevance_score=art.get("score", 0.0),
+                bm25_score=art.get("bm25_score"),
+                proximity_score=art.get("proximity_score"),
+                title_match_count=art.get("title_match_count"),
+                article_no=art.get("article_no"),
+                clause_no=art.get("clause_no"),
+                subclause_id=art.get("subclause_id"),
+                level=art.get("level"),
+                part_no=art.get("part_no"),
+                text=art.get("text"),
             )
             if result.get("success"):
                 article_ids.append(result["data"]["id"])
@@ -158,6 +167,7 @@ def ask_stream():
             headers={
                 "X-Accel-Buffering": "no",
                 "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
             },
         )
     except Exception:
