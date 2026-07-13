@@ -1,48 +1,20 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
+import useAskStream from '../hooks/useAskStream';
 import Suggestion from './Suggestion';
 import Resultdisplay from './Resultdisplay';
 
 const MainSearchBar = () => {
   const [query, setQuery] = useState('');
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false); // tracks whether backend is still responding
+  const [submittedQuery, setSubmittedQuery] = useState('');
   const [useLlm, setUseLlm] = useState(true);
+  const { articles, response, loading, error, startStream, cancel } = useAskStream();
 
   const buttonRef = useRef(null);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!query.trim()) return;
-
-    setLoading(true); // start loading before the request
-
-    try {
-      const response = await fetch('http://127.0.0.1:5000/api/v1/ask', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: query,
-          use_llm: useLlm,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Backend request failed');
-      }
-
-      const data = await response.json();
-
-      console.log('Backend response:', data);
-
-      // Save backend result in state
-      setResult(data);
-
-    } catch (error) {
-      console.error('Error while calling backend:', error);
-    } finally {
-      setLoading(false); // stop loading whether request succeeded or failed
-    }
+    setSubmittedQuery(query);
+    startStream(query, useLlm);
   };
 
   return (
@@ -76,25 +48,33 @@ const MainSearchBar = () => {
           className="flex-1 outline-none bg-transparent"
         />
 
-        {/* Button is disabled while loading to prevent duplicate requests */}
         <button
           ref={buttonRef}
           type="button"
-          onClick={handleSearch}
-          disabled={loading}
-          className="bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 disabled:opacity-60"
+          onClick={loading ? () => { cancel(); setSubmittedQuery(''); } : handleSearch}
+          className={`px-5 py-2 rounded-full font-medium disabled:opacity-60 ${
+            loading
+              ? 'bg-red-100 text-red-700 hover:bg-red-200'
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
         >
-          {loading ? 'Analyzing...' : 'Analyze Query'}
+          {loading ? 'Cancel' : 'Analyze Query'}
         </button>
       </div>
 
       <Suggestion setQuery={setQuery} />
 
-      {/* Show loading message while waiting for backend, result once it arrives */}
-      {loading && (
-        <p className="text-center text-gray-400 mt-10 text-sm">Analyzing...</p>
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3 mt-6 text-center">
+          {error}
+        </div>
       )}
-      {!loading && result && <Resultdisplay data={result} />}
+
+      <Resultdisplay
+        data={articles ? { query: submittedQuery, response, articles } : null}
+        loading={loading}
+        streamedResponse={response}
+      />
     </div>
   );
 };

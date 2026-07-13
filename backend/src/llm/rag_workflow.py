@@ -113,7 +113,8 @@ class RAGWorkflow:
         try:
             response = self.repo.call_llm(messages, stream=True)
             for part in response:
-                yield {"type": "token", "content": part.message.content}
+                if part.message.content:
+                    yield {"type": "token", "content": part.message.content}
             yield {"type": "done"}
         except Exception as exc:
             logger.exception("LLM streaming call failed")

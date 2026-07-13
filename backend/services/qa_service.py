@@ -89,13 +89,22 @@ class QAService:
         }, 200
 
     @staticmethod
-    def answer_query_streaming(query: str):
+    def answer_query_streaming(query: str, use_llm: bool = True):
         """Generator that yields streaming event dicts for a user query.
 
         On connectivity / model errors it yields a single error event and returns
         (still in streaming format so the client can handle it uniformly).
         """
         workflow = QAService._get_workflow()
+
+        if not use_llm:
+            retrieve_only_result = workflow.ask(query, retrieve_only=True)
+            yield {
+                "type": "articles",
+                "articles": retrieve_only_result.get("retrieved_articles", []),
+            }
+            yield {"type": "done"}
+            return
 
         is_connected, status_message = workflow.check_ollama_connection()
         if not is_connected:

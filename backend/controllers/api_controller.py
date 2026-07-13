@@ -103,6 +103,7 @@ def ask_stream():
         return jsonify({"error": "Invalid JSON payload."}), 400
 
     query = data.get("query")
+    use_llm = data.get("use_llm", True)
 
     if not query:
         return jsonify({"error": "Query is required."}), 400
@@ -117,7 +118,8 @@ def ask_stream():
 
     try:
         user_id = request.user.get("user_id")
-        events = QAService.answer_query_streaming(query)
+
+        events = QAService.answer_query_streaming(query, use_llm=use_llm)
 
         def generate():
             full_answer = ""
@@ -146,7 +148,7 @@ def ask_stream():
             },
         )
     except Exception as e:
-        logger.exception("Error processing streaming query")
+        logger.exception("Error processing streaming query", e)
         return jsonify({"error": "An error occurred while processing the query."}), 500
 
 
