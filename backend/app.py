@@ -34,6 +34,7 @@ def setup_logging() -> None:
     formatter = logging.Formatter(
         "%(asctime)s  %(levelname)-8s  [%(correlation_id)s]  %(name)s  %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
+        defaults={"correlation_id": "-"},
     )
 
     console_handler = logging.StreamHandler()
@@ -49,11 +50,13 @@ def setup_logging() -> None:
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
 
+    console_handler.addFilter(CorrelationFilter())
+    file_handler.addFilter(CorrelationFilter())
+
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
     root_logger.addHandler(console_handler)
     root_logger.addHandler(file_handler)
-    root_logger.addFilter(CorrelationFilter())
 
 
 def register_request_hooks(app: Flask) -> None:
@@ -104,7 +107,10 @@ def main():
     app = create_app()
 
     logger.info("Starting the Flask API server...")
-    app.run(debug=True)
+    try:
+        app.run(debug=False, threaded=True)
+    except KeyboardInterrupt as ke:
+        logger.error("Closing the server")
 
 
 if __name__ == "__main__":

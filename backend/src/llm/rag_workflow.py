@@ -7,7 +7,11 @@ from .rag_formatter import RAGFormatter
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemma3:1b"
+_ARTICLE_FIELDS = [
+    "doc_id", "part_no", "article_no", "title", "text", "full_text", "citation",
+    "level", "clause_no", "subclause_id", "score",
+    "bm25_score", "proximity_score", "title_match_count",
+]
 DEFAULT_RECALL_K = 30
 DEFAULT_MAX_CONTEXT = 8
 
@@ -33,6 +37,11 @@ class RAGWorkflow:
         raw = self.repo.retrieve(query, top_k=top_k)
         return self.repo.promote_to_articles(raw)
 
+    @staticmethod
+    def _build_article_dict(article: dict) -> dict:
+        """Return a filtered dict with only the fields the frontend needs."""
+        return {k: article.get(k) for k in _ARTICLE_FIELDS}
+
     def ask(
         self,
         query: str,
@@ -46,16 +55,14 @@ class RAGWorkflow:
         retrieved_articles = self.repo.retrieve(query, top_k=self.max_context_articles)
         promoted_articles = self.repo.promote_to_articles(retrieved_articles)
 
+        for art in promoted_articles:
+            art["full_text"] = art["text"]
+            art["text"] = self.repo.build_truncated_text(art)
+
         result = {
             "query": query,
             "retrieved_articles": [
-                {
-                    "doc_id": art["doc_id"],
-                    "title": art["title"],
-                    "citation": art["citation"],
-                    "score": art.get("score", 0.0),
-                }
-                for art in promoted_articles
+                self._build_article_dict(art) for art in promoted_articles
             ],
         }
 
@@ -63,8 +70,12 @@ class RAGWorkflow:
             return result
 
         context = self.formatter.format_context(promoted_articles)
-        prompt = self.formatter.build_prompt(query, context)
-        messages = [{"role": "user", "content": prompt}]
+        system_prompt = self.formatter.build_system_prompt()
+        user_prompt = self.formatter.build_user_prompt(query, context)
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
 
         try:
             response = self.repo.call_llm(messages, stream=False)
@@ -94,21 +105,21 @@ class RAGWorkflow:
         retrieved_articles = self.repo.retrieve(query, top_k=self.max_context_articles)
         promoted_articles = self.repo.promote_to_articles(retrieved_articles)
 
-        articles_data = [
-            {
-                "doc_id": art["doc_id"],
-                "title": art["title"],
-                "citation": art["citation"],
-                "score": art.get("score", 0.0),
-            }
-            for art in promoted_articles
-        ]
+        for art in promoted_articles:
+            art["full_text"] = art["text"]
+            art["text"] = self.repo.build_truncated_text(art)
+
+        articles_data = [self._build_article_dict(art) for art in promoted_articles]
 
         yield {"type": "articles", "articles": articles_data}
 
         context = self.formatter.format_context(promoted_articles)
-        prompt = self.formatter.build_prompt(query, context)
-        messages = [{"role": "user", "content": prompt}]
+        system_prompt = self.formatter.build_system_prompt()
+        user_prompt = self.formatter.build_user_prompt(query, context)
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
 
         try:
             response = self.repo.call_llm(messages, stream=True)

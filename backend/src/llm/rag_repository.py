@@ -40,6 +40,7 @@ class RAGRepository:
         self._connection_status: str = "Not checked yet."
 
         self._article_lookup: dict[str, dict] = {}
+        self._clause_structure: dict[str, dict] = {}
         self._build_article_lookup()
 
     # ------------------------------------------------------------------
@@ -98,6 +99,20 @@ class RAGRepository:
                 "text": text,
             }
 
+        self._clause_structure = {}
+        for article_no, data in groups.items():
+            if data["clause_docs"]:
+                clauses = {}
+                for doc in data["clause_docs"]:
+                    cn = doc.clause_no
+                    if cn is not None:
+                        clauses[cn] = {"text": doc.text, "clause_no": cn}
+                if clauses:
+                    self._clause_structure[article_no] = {
+                        "title": data["title"],
+                        "clauses": clauses,
+                    }
+
     def promote_to_articles(self, results: list[dict]) -> list[dict]:
         """Convert clause/sub-clause results to full article results, deduplicating by article_no.
 
@@ -106,6 +121,15 @@ class RAGRepository:
         """
         if not self._article_lookup:
             return results
+
+        matched_clauses_per_article: dict[str, set] = {}
+        for result in results:
+            an = result["article_no"]
+            if an not in matched_clauses_per_article:
+                matched_clauses_per_article[an] = set()
+            cn = result.get("clause_no")
+            if cn is not None:
+                matched_clauses_per_article[an].add(cn)
 
         seen: set[str] = set()
         promoted: list[dict] = []
@@ -130,6 +154,10 @@ class RAGRepository:
                 "citation": article["citation"],
                 "level": "article",
                 "score": result.get("score", 0.0),
+                "bm25_score": result.get("bm25_score", 0.0),
+                "proximity_score": result.get("proximity_score", 0.0),
+                "title_match_count": result.get("title_match_count", 0),
+                "matched_clauses": sorted(matched_clauses_per_article.get(article_no, set())),
             })
 
         return promoted
@@ -145,6 +173,40 @@ class RAGRepository:
     ) -> list[dict]:
         """Delegate to RetrievalWorkflow and return ranked articles."""
         return self.retrieval.retrieve(query, top_k=top_k, boost_rules=boost_rules)
+
+    # ------------------------------------------------------------------
+    # Context truncation
+    # ------------------------------------------------------------------
+    def build_truncated_text(self, article: dict) -> str:
+        """Return article text truncated to header + matched clauses only.
+
+        For single-block articles (no clause structure) or articles where
+        no clause-level match was found, returns the full text as-is.
+        """
+        article_no = article["article_no"]
+        structure = self._clause_structure.get(article_no)
+        if not structure or not structure.get("clauses"):
+            return article["text"]
+
+        matched = article.get("matched_clauses", [])
+        if not matched:
+            return article["text"]
+
+        header = f"Part {article['part_no']} Article {article_no}"
+        title_line = structure["title"]
+
+        clause_texts = []
+        for cn in sorted(matched):
+            clause = structure["clauses"].get(cn)
+            if clause:
+                clause_texts.append(clause["text"])
+
+        if not clause_texts:
+            return article["text"]
+
+        parts = [f"{header}\n\n{title_line}"]
+        parts.extend(clause_texts)
+        return "\n---\n".join(parts)
 
     # ------------------------------------------------------------------
     # Ollama connectivity (with caching)
@@ -218,10 +280,10 @@ class RAGRepository:
                 if stream:
                     return self.client.chat(self.model, messages=messages, stream=True,
                                             keep_alive="30m", options={
-                                                "num_ctx": 2048,})
+                                                "num_ctx": 4096,})
                 else:
                     return self.client.chat(self.model, messages=messages, stream=False, keep_alive="30m", options={
-                        "num_ctx": 2048,})
+                        "num_ctx": 4096,})
             except Exception as exc:
                 last_exc = exc
                 logger.warning(

@@ -8,7 +8,10 @@ logger = logging.getLogger(__name__)
 class ArticleService:
 
     @staticmethod
-    def create_article(title:str, citation:str, doc_id:str, relevance_score:float):
+    def create_article(title, citation, doc_id, relevance_score,
+                       article_no=None, clause_no=None, subclause_id=None,
+                       level=None, part_no=None, text=None,
+                       bm25_score=None, proximity_score=None, title_match_count=None):
         """Create a new referenced article, deduplicating by doc_id."""
         try:
             existing = ReferencedArticle.objects(doc_id=doc_id).first()
@@ -23,7 +26,16 @@ class ArticleService:
                 title=title,
                 citation=citation,
                 doc_id=doc_id,
-                relevance_score=relevance_score
+                relevance_score=relevance_score,
+                bm25_score=bm25_score or 0.0,
+                proximity_score=proximity_score or 0.0,
+                title_match_count=title_match_count or 0,
+                article_no=article_no,
+                clause_no=clause_no,
+                subclause_id=subclause_id,
+                level=level,
+                part_no=part_no,
+                text=text,
             )
             article.save()
 
