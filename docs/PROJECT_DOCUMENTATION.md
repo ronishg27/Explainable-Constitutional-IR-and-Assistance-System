@@ -46,7 +46,9 @@ The Constitution of Nepal is a lengthy legal document (over 300 articles across 
 - **RAG (Retrieval-Augmented Generation)**: Ollama-powered LLM answer generation with strict grounding.
 - **Graceful Degradation**: If Ollama is unavailable, the system falls back to retrieval-only mode with informative status.
 - **User Authentication**: JWT-based registration/login with bcrypt password hashing.
-- **Message Persistence (infrastructure)**: `MessageService` / `ArticleService` ready for use; not wired to the `/ask` endpoint in the current scope.
+- **Message Persistence**: `MessageService` / `ArticleService` fully wired to `/ask` and `/ask-stream` — queries, LLM answers, and referenced articles are saved to MongoDB per user.
+- **Chat History API**: CRUD endpoints for user Q&A history (`GET/DELETE /api/v1/messages`, `GET/DELETE /api/v1/messages/<id>`).
+- **Algorithmic Reranking**: RRF fusion (reciprocal rank fusion of BM25 + proximity + title-boost signals) + MMR diversity (maximal marginal relevance via BM25 cosine similarity) + rule-based boost.
 - **Offline Ingestion Pipeline**: Flatten nested constitution JSON → build term frequency / positional / document-stats indexes.
 - **Frontend UI**: React 19 + Vite 8 single-page application with search, LLM toggle, and expandable result cards.
 
@@ -81,20 +83,33 @@ The Constitution of Nepal is a lengthy legal document (over 300 articles across 
 │                    ┌───────────────────────┼──────────────┐   │
 │                    │     RAGWorkflow       │              │   │
 │                    │  ┌─────────────────┐  │              │   │
-│                    │  │  SearchEngine    │  │              │   │
-│                    │  │  (BM25 + prox)   │  │              │   │
-│                    │  └─────────────────┘  │              │   │
-│                    │  ┌─────────────────┐  │              │   │
-│                    │  │ Ollama LLM       │  │              │   │
-│                    │  │ (Gemma3:1b)      │  │              │   │
-│                    │  └─────────────────┘  │              │   │
-│                    └───────────────────────┘              │   │
+│                    │  │  RAGRepository   │  │              │   │
+│                    │  │  (retrieval +    │  │              │   │
+│                    │  │   Ollama client)  │  │              │   │
+│                    │  └────────┬────────┘  │              │   │
+│                    │           │           │              │   │
+│                    │  ┌────────▼────────┐  │              │   │
+│                    │  │RetrievalWorkflow │  │              │   │
+│                    │  │  (search +       │  │              │   │
+│                    │  │   rerank)        │  │              │   │
+│                    │  └─────┬──────┬────┘  │              │   │
+│                    │        │      │       │              │   │
+│                    │  ┌─────▼──┐ ┌──▼──────┐             │   │
+│                    │  │Search  │ │Reranker │             │   │
+│                    │  │Engine  │ │(RRF+MMR │             │   │
+│                    │  │BM25+prx│ │ +boost) │             │   │
+│                    │  └────────┘ └─────────┘             │   │
+│                    │                                      │   │
+│                    │  ┌────────────────────────────────┐  │   │
+│                    │  │ Ollama LLM (Gemma3:1b)         │  │   │
+│                    │  └────────────────────────────────┘  │   │
+│                    └──────────────────────────────────────┘   │
 │                                                               │
 │  ┌──────────┐  ┌────────────┐  ┌──────────────────────────┐  │
 │  │  Config   │  │   Models   │  │      Preprocessing        │  │
 │  │ (MongoDB) │  │(User/Message│  │  (flatten + index build)  │  │
-│  └──────────┘  │ /Article)   │  └──────────────────────────┘  │
-│                └────────────┘                                │
+│  │           │  │ /Article)   │  └──────────────────────────┘  │
+│  └──────────┘  └────────────┘                                │
 └──────────────────────────────────────────────────────────────┘
                             │
                             ▼
@@ -108,16 +123,16 @@ The Constitution of Nepal is a lengthy legal document (over 300 articles across 
 ### 2.2 Component Interaction Flow
 
 **Online Q&A Flow:**
-1. User submits query via React frontend or direct API call.
-2. Flask API validates input (JSON, query length ≤ 500 chars).
+1. User submits query via React frontend or direct API call (requires JWT auth).
+2. Flask API validates input (JSON, query length ≤ 500 chars, valid token).
 3. `QAService` (lazy singleton) delegates to `RAGWorkflow`.
-4. `RAGWorkflow.retrieve()` calls `SearchEngine.search()`:
-   - Tokenizes query with two processors (BM25: lemmatized+no stopwords, Proximity: raw+stopwords kept).
-   - Generates candidate set from BM25 term-frequency index (union of doc IDs containing any query term).
-   - Scores each candidate: `BM25 + title_boost(×5.0 per title match) + proximity_weight(×1.0 × avg pair score)`.
-   - Returns top-k ranked article dicts.
-5. If `use_llm=true` and Ollama is reachable, formats articles as context → builds strict prompt → calls Ollama with retry → returns answer + citations.
-6. Response returned as JSON.
+4. `RAGWorkflow.retrieve()` delegates to `RAGRepository` → `RetrievalWorkflow`:
+   - **Phase 1 (High-recall search)**: `SearchEngine.search(query, top_k=30)` tokenizes query with two processors (BM25: lemmatized+no stopwords, Proximity: raw+stopwords kept), generates candidate set from BM25 term-frequency index, scores each candidate: `BM25 + title_boost(×5.0 per title match) + proximity_weight(×1.0 × avg pair score)`, returns top-30.
+   - **Phase 2 (Reranking)**: `Reranker.rerank(results, top_k=8)` applies RRF fusion (combines BM25 + proximity + title-match ranks), MMR diversity (maximal marginal relevance via BM25 cosine), and rule-based boost (part/level multipliers). Returns top-8.
+5. Results promoted to article level via `RAGRepository.promote_to_articles()` (clause/sub-clause docs merged into full articles, deduplicated).
+6. If `use_llm=true` and Ollama is reachable, formats articles as context → builds strict prompt → calls Ollama with retry → returns answer + citations.
+7. Response persisted: `_persist_message()` saves articles (via `ArticleService`) and query/answer (via `MessageService`) to MongoDB.
+8. Response returned as JSON.
 
 **Offline Ingestion Flow:**
 1. `flatten_constitution.py` reads nested JSON (`data/nepal_constitution_new.json`) and produces flat document list.
@@ -131,7 +146,7 @@ The Constitution of Nepal is a lengthy legal document (over 300 articles across 
 | Backend        | Python 3.13 + Flask 3.x             | Flask with CORS, Blueprints          |
 | Frontend       | React 19 + Vite 8                   | Tailwind CSS v4, JSX                 |
 | Database       | MongoDB 8 (mongoengine ODM)         | Users, messages, article refs        |
-| IR Engine      | Custom Python                       | BM25 + term proximity + title boost  |
+| IR Engine      | Custom Python                       | BM25 + term proximity + title boost + RRF/MMR reranking |
 | NLP            | spaCy (`en_core_web_sm`)            | Lemmatization, tokenization          |
 | LLM            | Ollama (local)                      | Default: `gemma3:1b`                 |
 | Auth           | JWT (HS256, 12h expiry)             | httpOnly SameSite=Strict cookies + Bearer fallback |
@@ -172,11 +187,11 @@ backend/
 ├── Makefile                        # Build commands
 │
 ├── routes/                         # Flask Blueprints (URL routing)
-│   ├── api_routes.py               #   /api/v1, /api/v1/health, /api/v1/ask
+│   ├── api_routes.py               #   GET /api/v1, /health, /messages; POST /ask, /ask-stream; DELETE /messages
 │   └── auth_routes.py              #   /api/v1/auth/register, /login, /logout, /me
 │
 ├── controllers/                    # Request validation and response formatting
-│   ├── api_controller.py           #   home(), health(), ask()
+│   ├── api_controller.py           #   home(), health(), ask(), ask_stream(), list/get/delete messages()
 │   ├── auth_controller.py          #   register(), login(), logout(), get_current_user()
 │   └── decorators.py               #   @token_required JWT decorator
 │
@@ -203,20 +218,23 @@ backend/
 │   │   ├── bm25_scorer.py          #   BM25Scorer (k1=1.5, b=0.75)
 │   │   ├── proximity.py            #   ProximityScorer (ordered term pairs)
 │   │   ├── search_engine.py        #   SearchEngine (candidate generation + scoring)
+│   │   ├── reranker.py             #   Reranker (RRF fusion + MMR diversity + rule-based boost)
 │   │   ├── engine_factory.py       #   EngineFactory (loads artifacts from disk)
 │   │   └── app_bootstrap.py        #   rebuild_document_artifacts(), preload_spacy(), connect_database()
 │   │
 │   ├── llm/                        # RAG and LLM integration
 │   │   ├── ollama_llm.py           #   createOllamaClient() factory
+│   │   ├── rag_repository.py       #   RAGRepository (retrieval + article promotion + Ollama client)
 │   │   ├── rag_formatter.py        #   RAGFormatter (context + prompt builder)
-│   │   └── rag_workflow.py         #   RAGWorkflow (retrieve + ask + streaming)
+│   │   └── rag_workflow.py         #   RAGWorkflow (orchestrates repo + formatter)
 │   │
 │   ├── constants/                  # Shared constants
 │   │   ├── contraction_map.py      #   57 English contractions → expansions
 │   │   └── stopwords.py            #   ~120 English stopwords
 │   │
-│   └── workflows/                  # Offline processing
-│       └── ingestion_workflow.py   #   IngestionWorkflow (load → build → save indexes)
+│   └── workflows/                  # Workflow layer
+│       ├── ingestion_workflow.py   #   IngestionWorkflow (load → build → save indexes)
+│       └── retrieval_workflow.py   #   RetrievalWorkflow (high-recall search → rerank → top-k)
 │
 ├── preprocessing_scripts/          # One-off pipeline scripts
 │   ├── run_ingestion.py            #   Orchestrates all 3 steps
@@ -586,17 +604,18 @@ Get the currently authenticated user's information.
 
 | Method | Path | Auth | Description |
 |--------|------|:----:|-------------|
-| GET | `/api/v1` | No | API landing + endpoints list |
-| GET | `/api/v1/health` | No | Liveness check |
-| POST | `/api/v1/ask` | No | Main Q&A endpoint |
-| POST | `/api/v1/auth/register` | No | User registration |
-| POST | `/api/v1/auth/login` | No | Login, sets JWT cookie |
-| POST | `/api/v1/auth/logout` | Yes | Clears JWT cookie |
-| GET | `/api/v1/auth/me` | Yes | Current user info |
-
-**`[Assumption]`**: The `/ask` endpoint is unauthenticated in the current implementation — there is no `@token_required` decorator on it. The `MessageService` for persisting queries to MongoDB exists but is **not wired** into the `/ask` flow. Queries are returned but never saved to the `messages` collection via this endpoint.
-
----
+| GET | /api/v1 | No | API landing + endpoints list |
+| GET | /api/v1/health | No | Liveness check |
+| POST | /api/v1/ask | Yes | Main Q&A (query + optional use_llm, persists to MongoDB) |
+| POST | /api/v1/ask-stream | Yes | Streaming Q&A via SSE |
+| GET | /api/v1/messages | Yes | Paginated chat history for current user |
+| GET | /api/v1/messages/<id> | Yes | Single message with populated articles |
+| DELETE | /api/v1/messages/<id> | Yes | Delete a single message (owner only) |
+| DELETE | /api/v1/messages | Yes | Delete all messages for current user |
+| POST | /api/v1/auth/register | No | User registration |
+| POST | /api/v1/auth/login | No | Login, sets JWT cookie |
+| POST | /api/v1/auth/logout | Yes | Clears JWT cookie |
+| GET | /api/v1/auth/me | Yes | Current user info |---
 
 ## 5. Database Documentation
 
@@ -773,27 +792,33 @@ score = avg(1 / (distance + 1)²) for all valid pairs
 
 ### 6.5 RAG Workflow
 
+The actual pipeline layers retrieval and LLM generation through multiple components:
+
+**Retrieval:** `RAGRepository.retrieve()` → `RetrievalWorkflow.retrieve()` → `SearchEngine.search(query, recall_k=30)` + `Reranker.rerank(top_k=8)` → results promoted to article level.
+
+**LLM Generation:**
 ```
 ask(query, retrieve_only=False):
 
-1. retrieved_articles = SearchEngine.search(query, top_k=max_context_articles)
-2. result = { query, retrieved_articles: [{doc_id, title, citation, score}], ... }
+1. retrieved_articles = RAGRepository.retrieve(query, top_k=max_context_articles)
+2. promoted = RAGRepository.promote_to_articles(retrieved_articles)
+3. result = { query, retrieved_articles: [{doc_id, title, citation, score}], ... }
 
-3. IF retrieve_only: RETURN result
+4. IF retrieve_only: RETURN result
 
-4. context = RAGFormatter.format_context(retrieved_articles)
-5. prompt  = RAGFormatter.build_prompt(query, context)
-6. messages = [{role: "user", content: prompt}]
+5. context = RAGFormatter.format_context(promoted)
+6. prompt  = RAGFormatter.build_prompt(query, context)
+7. messages = [{role: "user", content: prompt}]
 
-7. TRY (with RETRY_ATTEMPTS=3, RETRY_DELAY=0.5s):
-8.     response = Ollama.chat(model, messages)
-9.     result["answer"] = response.content
-10.    result["citations"] = [{article, title, doc_id}]
-11. EXCEPT:
-12.    result["answer"] = "Error querying LLM: {error}"
-13.    result["error"] = str(error)
+8. TRY (with RETRY_ATTEMPTS=3, RETRY_DELAY=0.5s):
+9.     response = RAGRepository.call_llm(messages)
+10.    result["answer"] = response.content
+11.    result["citations"] = [{article, title, doc_id}]
+12. EXCEPT:
+13.    result["answer"] = "Error querying LLM: {error}"
+14.    result["error"] = str(error)
 
-14. RETURN result
+15. RETURN result
 ```
 
 ### 6.6 Prompt Engineering
@@ -918,17 +943,21 @@ Two Processor Configurations:
 | **Graceful LLM Degradation** | ✅ Complete | 3 cases: OK → answer; model missing → retrieval-only; unreachable → 503 |
 | **User Authentication** | ✅ Complete | Register, login (JWT), logout, get current user |
 | **JWT Decorator** | ✅ Complete | `@token_required` with Bearer header + cookie fallback |
-| **React Frontend SPA** | ✅ Complete | Search, LLM toggle, suggestion pills, expandable cards |
-| **Automated Tests** | ✅ Partial | 10 test files at `backend/temp/tests/` (unit + integration) |
+| **React Frontend SPA** | ✅ Complete | Search, LLM toggle, suggestion pills, expandable cards, chat history, message detail |
+| **Chat History API** | ✅ Complete | Full CRUD: list/get/delete messages per user with populated article refs |
+| **Algorithmic Reranking** | ✅ Complete | RRF fusion + MMR diversity + rule-based boost via `Reranker` |
+| **Automated Tests** | ✅ Partial | Unit + integration tests at `backend/temp/tests/` |
 
 ### 7.2 Known Gaps (Scope Decisions)
 
 | Gap | Status | Reason |
 |-----|--------|--------|
-| **Auth on `/ask`** | ❌ Not applied | Unauthenticated for demo simplicity — auth infrastructure exists and is ready |
-| **Message Persistence wired to `/ask`** | ❌ Not wired | Services exist; integration deferred as non-critical for core retrieval demo |
 | **Admin API routes** | ❌ Not exposed | `UserService.list_users()` / `delete_user()` exist but no admin blueprint |
-| **LLM Streaming exposed** | ❌ Not exposed | `ask_streaming()` method exists; no API route wired up |
+| **Async/sync mismatch in services** | ⚠️ Misleading | `message_service.py`/`article_service.py` use `async def` with sync `mongoengine` (not broken, functionally correct) |
+| **CORS hardening** | ⚠️ Permissive | `CORS(app)` with no restrictions in `app.py:19` |
+| **Observability** | ❌ Missing | No latency tracking, structured logging, or request metrics |
+| **Retrieval-only endpoint** | ❌ Not dedicated | `/ask?use_llm=false` works but no dedicated `/api/v1/search` |
+| **Multi-model fallback** | ❌ Not implemented | If `gemma3:1b` unavailable, no automatic fallback to alternative models |
 
 ### 7.3 Out of Scope (Academic Project)
 
@@ -1092,10 +1121,9 @@ The following bugs were identified during documentation review and have been fix
 
 | Decision | Detail |
 |----------|--------|
-| **Message persistence not wired** | `MessageService` + `ArticleService` fully implemented but `/ask` returns results without saving. Deliberate: core retrieval demo does not require chat history. |
-| **`ArticleService` unused** | CRUD for referenced articles exists but not called from any route. Available for future message history feature. |
+| **Message persistence wired** | `MessageService` + `ArticleService` are used by `_persist_message()` in both `/ask` and `/ask-stream`. Queries, LLM answers, and article references are saved per user. |
 | **`/me` response nesting** | Response wraps `UserService.get_user()` output inside `"user"` key — service dict (`success`/`data`/`message`) appears nested. Works correctly but adds one level of indirection. |
-| **`/ask` unauthenticated** | Auth system is functional; `/ask` intentionally left open for demo convenience. |
+| **`/ask` authenticated** | Auth system is functional and `/ask` requires `@token_required`. |
 | **`to_json()` excludes role** | `User.to_json()` returns id, fullname, email, timestamps — role is excluded by design for default serialization. |
 
 ### 9.3 Cleanup Notes
@@ -1162,16 +1190,17 @@ This heuristic is supported by IR research showing that phrase-level proximity m
 
 - **spaCy** (`en_core_web_sm`) takes ~1–2 seconds to load.
 - **Index files** (tf_index, pos_index, doc_stats) are ~5 MB combined and require parsing.
+- **Retrieval pipeline** (SearchEngine, Reranker, RetrievalWorkflow, RAGRepository, RAGWorkflow) is assembled on first request.
 - Lazy initialization means the server starts immediately; the first query pays the one-time load cost.
 - Double-checked locking (`_workflow_lock`) ensures thread safety without locking on every request.
 
-### 11.5 Why is `/ask` unauthenticated?
+### 11.5 Why is `/ask` authenticated?
 
-Core Q&A is the primary feature. Requiring authentication before every query would add friction to the demo experience. The auth system is fully functional for user management; applying `@token_required` to `/ask` is a one-line change when needed.
+All Q&A endpoints (`/ask`, `/ask-stream`, and message management) require JWT authentication via the `@token_required` decorator. This enables per-user message persistence and prevents anonymous usage. The auth system uses httpOnly secure SameSite=Strict cookies with Bearer header fallback.
 
-### 11.6 Why isn't message persistence wired to `/ask`?
+### 11.6 Why is message persistence wired to `/ask`?
 
-The service layer (`MessageService`, `ArticleService`) was built to separate concerns — the Q&A logic should not depend on persistence. Wiring them requires ~3 additional lines in `QAService.answer_query()`. This was deferred because the retrieval and RAG logic were the primary academic contribution; persistence is auxiliary.
+Persistence is wired via `_persist_message()` in `api_controller.py`, which calls `ArticleService.create_article()` for each retrieved article and `MessageService.create_message()` to save the query/answer pair. This was implemented to support the chat history feature — users can review past Q&A sessions through the frontend. The service layer separation ensures the Q&A logic itself remains independent of any storage backend.
 
 ### 11.7 Failure Mode Summary
 
