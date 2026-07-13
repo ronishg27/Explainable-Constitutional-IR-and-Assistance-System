@@ -40,7 +40,7 @@ class ArticleService:
                 'error': f"Validation Error: {str(ve)}"
             }
         except Exception as e:
-            logger.error(f"Error creating article: {str(e)}")
+            logger.exception("Error creating article")
             return {
                 'success': False,
                 'error': str(e)
@@ -98,7 +98,7 @@ class ArticleService:
                 'error': 'Article not found'
             }
         except Exception as e:
-            logger.error(f"Error deleting article: {str(e)}")
+            logger.exception("Error deleting article")
             return {
                 'success': False,
                 'error': str(e)

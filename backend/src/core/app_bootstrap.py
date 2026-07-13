@@ -9,7 +9,7 @@ def rebuild_document_artifacts(logger: Logger) -> None:
     from preprocessing_scripts.flatten_constitution import main as flatten_constitution
     from preprocessing_scripts.generate_safe_lemma_dict import main as generate_lemma_dict
 
-    logger.info("Rebuilding document artifacts from data/nepal_constitution.json")
+    logger.info("Rebuilding document artifacts from data/nepal_constitution_new.json")
     flatten_constitution()
     build_index()
     generate_lemma_dict()

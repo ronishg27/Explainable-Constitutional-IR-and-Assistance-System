@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 from flask import Response, jsonify, request, stream_with_context
 
@@ -60,6 +61,7 @@ def health():
 
 
 def ask():
+    start = time.time()
     if not request.is_json:
         return jsonify({"error": "Invalid content type. Expected application/json."}), 400
 
@@ -88,8 +90,13 @@ def ask():
             user_id = request.user.get("user_id")
             _persist_message(user_id, query, payload)
 
+        elapsed = time.time() - start
+        logger.info(
+            "query=%s use_llm=%s status=%d latency=%.2fs",
+            query[:80], useLLM, status_code, elapsed,
+        )
         return jsonify(payload), status_code
-    except Exception as e:
+    except Exception:
         logger.exception("Error processing query")
         return jsonify({"error": "An error occurred while processing the query."}), 500
 
@@ -122,6 +129,7 @@ def ask_stream():
         events = QAService.answer_query_streaming(query, use_llm=use_llm)
 
         def generate():
+            stream_start = time.time()
             full_answer = ""
             articles_data = []
 
@@ -136,6 +144,11 @@ def ask_stream():
                         "response": full_answer,
                     }
                     _persist_message(user_id, query, payload)
+                    elapsed = time.time() - stream_start
+                    logger.info(
+                        "stream query=%s use_llm=%s latency=%.2fs",
+                        query[:80], use_llm, elapsed,
+                    )
 
                 yield f"data: {json.dumps(event)}\n\n"
 
@@ -147,8 +160,8 @@ def ask_stream():
                 "Cache-Control": "no-cache",
             },
         )
-    except Exception as e:
-        logger.exception("Error processing streaming query", e)
+    except Exception:
+        logger.exception("Error processing streaming query")
         return jsonify({"error": "An error occurred while processing the query."}), 500
 
 
