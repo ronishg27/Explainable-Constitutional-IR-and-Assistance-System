@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import constitutionData from '../data/constitution_flattened.json';
 
 const constitutionByDocId = new Map(
@@ -28,46 +28,48 @@ const getRelatedArticleEntry = (entry) => {
 	return relatedArticle;
 };
 
-const ResultDisplay = ({ data }) => {
+const ResultDisplay = ({ data, loading, streamedResponse }) => {
 	const [openId, setOpenId] = useState(null);
-	if (!data) return null;
 
-	const { query, response, articles } = data;
+	const displayResponse = streamedResponse || data?.response || '';
 
 	const toggle = (doc_id) =>
 		setOpenId((prev) => (prev === doc_id ? null : doc_id));
 
 	return (
-		<div className="w-fit max-w-2xl mx-auto mt-10 px-6 py-6 bg-gray-100 space-y-6">
-			{/* Query */}
-			<div>
-				<p className="text-xs uppercase tracking-widest text-gray-500 mb-1">
-					Query
-				</p>
-				<p className="text-lg font-semibold text-gray-900">{query}</p>
-			</div>
-
-			{/* LLM Response */}
-			{response && (
-				<div className=" pl-4">
-					<p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-						{response}
+		<div className="w-full max-w-6xl mx-auto mt-10 px-6 py-6 bg-gray-100 rounded-2xl space-y-6">
+			{data?.query && (
+				<div>
+					<p className="text-xs uppercase tracking-widest text-gray-500 mb-1">
+						Query
 					</p>
+					<p className="text-lg font-semibold text-gray-900">{data.query}</p>
 				</div>
 			)}
 
-			{/* Articles */}
-			{articles?.length > 0 && (
-				<div className="space-y-3">
-					<p className="text-sm text-gray-500">
-						Following are the constitutional provisions related to{' '}
-						<span className="text-gray-800 font-medium">
-							"{query}"
-						</span>
-					</p>
+			{loading && !data?.articles && (
+				<div className="flex items-center gap-2 text-gray-400 text-sm">
+					<div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+					Retrieving relevant articles...
+				</div>
+			)}
 
-					<div className="space-y-2">
-						{articles.map((article, index) => {
+			<div className="md:grid md:grid-cols-5 md:gap-10">
+				{displayResponse && (
+					<div className="md:col-span-3 pl-4 border-l-2 border-blue-300">
+						<p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+							{displayResponse}
+							{loading && (
+								<span className="inline-block w-1.5 h-4 bg-blue-600 ml-0.5 animate-pulse" />
+							)}
+						</p>
+					</div>
+				)}
+
+				{data?.articles?.length > 0 && (
+					<div className={`${displayResponse ? 'md:col-span-2' : 'md:col-span-5'} space-y-2 md:max-h-[70vh] md:overflow-y-auto md:pr-2`}>
+					<div className="space-y-1.5">
+						{data.articles.map((article, index) => {
 							const isOpen = openId === article.doc_id;
 							const constitutionEntry = getConstitutionEntry(
 								article.doc_id
@@ -79,39 +81,30 @@ const ResultDisplay = ({ data }) => {
 								<div key={`${article.doc_id}-${index}`}>
 									<button
 										onClick={() => toggle(article.doc_id)}
-										className="w-full text-left bg-white hover:bg-gray-50 border border-gray-200 px-4 py-3 flex items-center gap-3 transition-colors"
+										className="w-full text-left bg-white hover:bg-gray-50 border border-gray-200 flex items-center gap-2.5 transition-colors"
 										style={{
 											borderRadius: isOpen
-												? '12px 12px 0 0'
-												: '12px',
+												? '8px 8px 0 0'
+												: '8px',
 											borderColor: isOpen
 												? '#3b82f6'
 												: '#e5e7eb',
+											padding: isOpen
+												? '10px 12px'
+												: '8px 12px',
 										}}
 									>
-										<span className="text-xs text-gray-400 w-5 shrink-0">
+										<span className="text-[11px] text-gray-400 w-4 shrink-0">
 											#{index + 1}
 										</span>
 
-										<div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-											<span className="text-xs font-semibold text-blue-600">
-												{displayEntry.article_no}
-											</span>
-										</div>
-
 										<div className="flex-1 min-w-0">
-											<p className="text-sm font-semibold text-gray-800 truncate">
+											<p className="text-xs font-semibold text-gray-800 truncate">
 												{displayEntry.title}
 											</p>
-											<p className="text-xs text-gray-500 mt-0.5">
+											<p className="text-[11px] text-gray-500 mt-0.5">
 												{displayEntry.citation}
 											</p>
-											{relatedArticle && (
-												<p className="text-xs text-blue-600 mt-0.5 font-medium truncate">
-													Related Article:{' '}
-													{relatedArticle.citation}
-												</p>
-											)}
 										</div>
 
 										<svg
@@ -225,6 +218,7 @@ const ResultDisplay = ({ data }) => {
 					</div>
 				</div>
 			)}
+			</div>
 		</div>
 	);
 };

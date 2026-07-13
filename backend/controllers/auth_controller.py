@@ -49,7 +49,8 @@ def login():
         resp = make_response(jsonify({
             "message": result['message'],
             "user": result['data'],
-            "authenticated": True
+            "authenticated": True,
+            "token": result['token']
             })
         )
         resp.set_cookie('token', result['token'], httponly=True, secure=True, samesite='Strict', max_age=60*60*60*12) # 12 hours expiration
