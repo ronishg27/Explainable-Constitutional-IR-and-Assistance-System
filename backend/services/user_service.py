@@ -46,7 +46,7 @@ class UserService:
                 'error': f"NotUniqueError: {str(nue)}"
             }
         except Exception as e:
-            logger.error(f"Error creating user: {str(e)}")
+            logger.exception("Error creating user")
             return {
                 'success': False,
                 'error': str(e),
@@ -71,7 +71,7 @@ class UserService:
                 
             }
         except Exception as e:
-            logger.error(f"Error retrieving user: {str(e)}")
+            logger.exception("Error retrieving user")
             return {
                 'success': False,
                 'error': str(e),
@@ -95,7 +95,7 @@ class UserService:
                 'message': 'No user exists with the provided email.'
             }
         except Exception as e:
-            logger.error(f"Error retrieving user by email: {str(e)}")
+            logger.exception("Error retrieving user by email")
             return {
                 'success': False,
                 'error': str(e),
@@ -114,7 +114,7 @@ class UserService:
                 'message': 'Users retrieved successfully'
             }
         except Exception as e:
-            logger.error(f"Error listing users: {str(e)}")
+            logger.exception("Error listing users")
             return {
                 'success': False,
                 'error': str(e),
@@ -139,7 +139,7 @@ class UserService:
             }
             
         except Exception as e:
-            logger.error(f"Error deleting user: {str(e)}")
+            logger.exception("Error deleting user")
             return {
                 'success': False,
                 'error': str(e),
@@ -180,7 +180,7 @@ class UserService:
             }
         
         except Exception as e:
-            logger.error(f"Error authenticating user: {str(e)}")
+            logger.exception("Error authenticating user")
             return {
                 'success': False,
                 'error': str(e),

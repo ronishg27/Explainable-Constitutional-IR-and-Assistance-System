@@ -1,7 +1,6 @@
 import logging
 from mongoengine import connect, disconnect
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -25,10 +24,10 @@ class Database:
                 connectTimeoutMS=5000,
                 serverSelectionTimeoutMS=5000
             )
-            logger.info(f"Connected to MongoDB database: {db_name}")
+            logger.info("Connected to MongoDB database: %s", db_name)
             return True
-        except Exception as e:
-            logger.error(f"Error connecting to MongoDB: {e}")
+        except Exception:
+            logger.exception("Error connecting to MongoDB")
             raise
             
     def disconnect(self):
@@ -36,8 +35,8 @@ class Database:
             disconnect()
             logger.info("Disconnected from MongoDB")
             return True
-        except Exception as e:
-            logger.error(f"Error disconnecting from MongoDB: {e}")
+        except Exception:
+            logger.exception("Error disconnecting from MongoDB")
             raise
 
 
@@ -52,7 +51,7 @@ def main():
     try:
         db.connect(db_name=db_name, host=host)
     except Exception as e:
-        logger.error(f"Failed to connect to the database: {e}")
+        logger.exception("Failed to connect to the database")
     finally:
         db.disconnect()
     

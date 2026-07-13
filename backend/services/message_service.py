@@ -6,10 +6,7 @@ from typing import List, Any
 
 import logging
 
-
-
 logger = logging.getLogger(__name__)
-
 
 class MessageService:
     """Handles chat messages with referenced articles."""
@@ -36,7 +33,7 @@ class MessageService:
                         article = ReferencedArticle.objects.get(id=art_id)
                         article_refs.append(article)
                     except DoesNotExist:
-                        logger.warning(f"Referenced article with id {art_id} not found. Skipping.")
+                        logger.warning("Referenced article with id %s not found. Skipping.", art_id)
                         
             # 3. Create the message
             message = Message(
@@ -67,7 +64,7 @@ class MessageService:
             }
             
         except Exception as e:
-            logger.error(f"Error creating message: {e}")
+            logger.exception("Error creating message")
             return {
                 'success': False,
                 'error': f'Unexpected error: {str(e)}'

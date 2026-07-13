@@ -1,3 +1,5 @@
+import re
+
 from ..constants.contraction_map import CONTRACTIONS_MAP
 from ..constants.stopwords import STOPWORDS
 
@@ -35,20 +37,36 @@ class TextProcessor:
             self._nlp = get_spacy_pipeline()
         return self._nlp
 
+    @staticmethod
+    def _build_contraction_pattern():
+        """Build a compiled regex that matches any contraction as a whole word.
+
+        Sorts by descending length so longer contractions (e.g. ``"couldn't've"``)
+        are matched before their shorter prefixes (e.g. ``"couldn't"``).
+        """
+        if not hasattr(TextProcessor, "_pattern"):
+            sorted_contractions = sorted(CONTRACTIONS_MAP, key=len, reverse=True)
+            escaped = [re.escape(c) for c in sorted_contractions]
+            pattern = r"\b(" + "|".join(escaped) + r")\b"
+            TextProcessor._pattern = re.compile(pattern, re.IGNORECASE)
+        return TextProcessor._pattern
+
+    @staticmethod
+    def _contraction_replacer(match: re.Match) -> str:
+        return CONTRACTIONS_MAP[match.group(1).lower()]
+
     def _expand_contractions(self, text: str) -> str:
+        """"""
         if not text:
             return text
-
-        for contraction, expansion in CONTRACTIONS_MAP.items():
-            text = text.replace(contraction, expansion)
-        return text
+        pattern = self._build_contraction_pattern()
+        return pattern.sub(self._contraction_replacer, text)
 
     def normalize_text(self, text: str) -> str:
-        """Lowercase, expand contractions, keep only alphabetic characters."""
+        """Lowercase, expand contractions, keep only letters, digits and whitespace."""
         text = text.lower().strip()
         text = self._expand_contractions(text)
-        # Keep only letters and whitespace
-        text = ''.join(ch for ch in text if ch.isalpha() or ch.isspace())
+        text = ''.join(ch for ch in text if ch.isalnum() or ch.isspace())
         return text
 
     def _filter_stopwords(self, tokens: list[str]) -> list[str]:
