@@ -11,6 +11,7 @@ _ARTICLE_FIELDS = [
     "doc_id", "part_no", "article_no", "title", "text", "full_text", "citation",
     "level", "clause_no", "subclause_id", "score",
     "bm25_score", "proximity_score", "title_match_count",
+    "matched_terms", "exact_matched_terms", "boost_multiplier",
 ]
 DEFAULT_RECALL_K = 30
 DEFAULT_MAX_CONTEXT = 8
@@ -154,6 +155,7 @@ def main():
     engine = EngineFactory.from_artifacts(
         "data/output/flattened_nepal_constitution.json",
         "data/output",
+        synonyms_path="data/synonyms.json",
     )
     reranker = Reranker(engine.bm25_scorer.tf_index)
     retrieval = RetrievalWorkflow(engine, reranker)

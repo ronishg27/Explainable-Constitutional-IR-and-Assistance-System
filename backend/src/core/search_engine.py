@@ -21,6 +21,7 @@ Constants (tunable):
 from typing import Optional
 from .bm25_scorer import BM25Scorer
 from .proximity import ProximityScorer
+from .query_expander import QueryExpander
 from .text_processor import TextProcessor
 from .document import Document
 
@@ -52,6 +53,7 @@ class SearchEngine:
         title_boost: float = DEFAULT_TITLE_BOOST,
         default_top_k: int = 5,
         max_window: int = DEFAULT_MAX_WINDOW,
+        synonym_expander: Optional[QueryExpander] = None,
     ):
         """
         All dependencies are injected so the engine can be constructed
@@ -61,6 +63,7 @@ class SearchEngine:
         self.proximity_scorer = proximity_scorer
         self.bm25_processor = bm25_processor
         self.proximity_processor = proximity_processor
+        self.synonym_expander = synonym_expander
         self.documents = documents
         self.proximity_weight = proximity_weight
         self.title_boost = title_boost
@@ -92,9 +95,13 @@ class SearchEngine:
         title_boost = title_boost if title_boost is not None else self.title_boost
 
         # 1. Prepare query tokens
-        bm25_tokens = self._prepare_bm25_query(query)
-        if not bm25_tokens:
+        base_tokens = self.bm25_processor.process_text(query)
+        if not base_tokens:
             return []
+
+        bm25_tokens = base_tokens[:]
+        if self.synonym_expander:
+            bm25_tokens = self.synonym_expander.expand(bm25_tokens)
 
         raw_tokens = self._prepare_proximity_query(query)
         query_pairs = ProximityScorer.generate_query_pairs(raw_tokens)
@@ -109,21 +116,17 @@ class SearchEngine:
         for doc in self.documents:
             if doc.doc_id not in candidates:
                 continue
-            final, bm25_s, prox_s, title_matches = self._score_document(
-                doc, bm25_tokens, query_pairs, title_boost, proximity_weight
+            result = self._score_document(
+                doc, bm25_tokens, base_tokens, query_pairs, title_boost, proximity_weight
             )
-            if final > 0:
-                scored.append((final, bm25_s, prox_s, title_matches, doc))
+            if result[0] > 0:
+                scored.append(result)
 
         # 4. Sort descending and cut top‑k
         scored.sort(key=lambda x: x[0], reverse=True)
         return self._format_results(scored[:top_k])
 
     # Private pipeline steps
-    def _prepare_bm25_query(self, query: str) -> list[str]:
-        """Tokenize with lemmatisation and stopword removal (for BM25 recall)."""
-        return self.bm25_processor.process_text(query)
-
     def _prepare_proximity_query(self, query: str) -> list[str]:
         """Tokenize without lemmatisation, keeping stopwords (for exact proximity matching)."""
         return self.proximity_processor.process_text(query)
@@ -140,21 +143,26 @@ class SearchEngine:
         self,
         doc: Document,
         bm25_tokens: list[str],
+        original_tokens: list[str],
         query_pairs: list[tuple[str, str]],
         title_boost: float,
         proximity_weight: float,
-    ) -> tuple[float, float, float, int]:
+    ) -> tuple[float, float, float, int, Document, list[str], list[str]]:
         """
         Compute combined score for a single document.
 
         Score = BM25 + (title_matches * title_boost) + proximity_weight * proximity_score
 
         Returns:
-            (final_score, bm25_score, proximity_score, title_match_count)
+            (final_score, bm25_score, proximity_score, title_match_count, doc, matched_terms, exact_matched_terms)
         """
         bm25 = self.bm25_scorer.score(bm25_tokens, doc.doc_id)
         if bm25 == 0.0:
-            return 0.0, 0.0, 0.0, 0
+            return 0.0, 0.0, 0.0, 0, doc, [], []
+
+        # Query terms that matched in BM25 (for frontend highlighting)
+        matched = self.bm25_scorer.matched_terms(bm25_tokens, doc.doc_id)
+        exact_matched = self.bm25_scorer.matched_terms(original_tokens, doc.doc_id)
 
         # Title boost: extra weight for query terms appearing in the title
         title_match_count = len(set(bm25_tokens) & set(self.title_tokens[doc.doc_id]))
@@ -168,13 +176,13 @@ class SearchEngine:
             ordered=True,
         )
 
-        return boosted_bm25 + proximity_weight * prox, bm25, prox, title_match_count
+        return boosted_bm25 + proximity_weight * prox, bm25, prox, title_match_count, doc, matched, exact_matched
 
-    def _format_results(self, scored_docs: list[tuple[float, float, float, int, Document]]) -> list[dict]:
+    def _format_results(self, scored_docs: list[tuple]) -> list[dict]:
         """Convert scored Document objects to dictionaries for API/CLI output."""
         results = []
         for entry in scored_docs:
-            _, bm25_score, prox_score, title_match_count, doc = entry
+            _, bm25_score, prox_score, title_match_count, doc, matched, exact_matched = entry
             results.append({
                 "doc_id": doc.doc_id,
                 "part_no": doc.part_no,
@@ -190,5 +198,7 @@ class SearchEngine:
                 "proximity_score": prox_score,
                 "title_match_count": title_match_count,
                 "boost": doc.boost,
+                "matched_terms": matched,
+                "exact_matched_terms": exact_matched,
             })
         return results

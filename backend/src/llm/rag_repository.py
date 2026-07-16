@@ -157,6 +157,9 @@ class RAGRepository:
                 "bm25_score": result.get("bm25_score", 0.0),
                 "proximity_score": result.get("proximity_score", 0.0),
                 "title_match_count": result.get("title_match_count", 0),
+                "matched_terms": result.get("matched_terms", []),
+                "exact_matched_terms": result.get("exact_matched_terms", []),
+                "boost_multiplier": result.get("boost_multiplier", 1.0),
                 "matched_clauses": sorted(matched_clauses_per_article.get(article_no, set())),
             })
 

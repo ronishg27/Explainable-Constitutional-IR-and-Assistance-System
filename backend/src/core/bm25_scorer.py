@@ -40,6 +40,9 @@ class BM25Scorer:
             total += idf * (numerator / denominator)
         return total
 
+    def matched_terms(self, query_tokens: list[str], doc_id: str) -> list[str]:
+        return [t for t in query_tokens if self.tf_index.get(t, {}).get(doc_id, 0) > 0]
+
     def score_with_title_boost(
         self,
         query_tokens: list[str],

@@ -18,6 +18,7 @@ _workflow_lock = Lock()
 # Default paths – adjust if needed
 _DEFAULT_DOCS_PATH = "data/output/flattened_nepal_constitution.json"
 _DEFAULT_INDEX_DIR = "data/output"
+_DEFAULT_SYNONYMS_PATH = "data/synonyms.json"
 
 
 class QAService:
@@ -31,7 +32,8 @@ class QAService:
             with _workflow_lock:
                 if _workflow is None:
                     engine = EngineFactory.from_artifacts(
-                        _DEFAULT_DOCS_PATH, _DEFAULT_INDEX_DIR
+                        _DEFAULT_DOCS_PATH, _DEFAULT_INDEX_DIR,
+                        synonyms_path=_DEFAULT_SYNONYMS_PATH,
                     )
                     reranker = Reranker(engine.bm25_scorer.tf_index)
                     retrieval_workflow = RetrievalWorkflow(engine, reranker)
