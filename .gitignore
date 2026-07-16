@@ -26,3 +26,6 @@ backend/data/output/*
 *.7z
 
 AGENTS.md
+
+backend/logs
+backend/tests_eval

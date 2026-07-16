@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { apiClient } from '../api/client';
+import { apiClient, API } from '../api/client';
 import Resultdisplay from '../components/Resultdisplay';
 import Dialog from '../components/ui/Dialog';
 import Alert from '../components/ui/Alert';
@@ -19,7 +19,7 @@ export default function MessageDetailPage() {
 
     (async () => {
       try {
-        const res = await apiClient(`/api/v1/messages/${id}`);
+        const res = await apiClient(`${API.MESSAGES}/${id}`);
         if (!cancelled) setMessage(res);
       } catch (err) {
         if (!cancelled) setError(err.message);
@@ -33,7 +33,7 @@ export default function MessageDetailPage() {
 
   const handleDelete = async () => {
     try {
-      await apiClient(`/api/v1/messages/${id}`, { method: 'DELETE' });
+      await apiClient(`${API.MESSAGES}/${id}`, { method: 'DELETE' });
       navigate('/history');
     } catch (err) {
       setError(err.message);
@@ -83,6 +83,9 @@ export default function MessageDetailPage() {
       level: a.level,
       part_no: a.part_no,
       text: a.text,
+      full_text: a.full_text,
+      matched_terms: a.matched_terms,
+      exact_matched_terms: a.exact_matched_terms,
     })),
   };
 

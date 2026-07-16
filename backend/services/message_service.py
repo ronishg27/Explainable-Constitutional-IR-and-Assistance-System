@@ -4,7 +4,6 @@ from models.user_model import User
 from models.referenced_article_model import ReferencedArticle
 from models.message_model import Message
 from mongoengine.errors import DoesNotExist, ValidationError
-from typing import List, Any
 
 import logging
 
@@ -18,7 +17,7 @@ class MessageService:
             user_id:str,
             query:str,
             answer:str,
-            articles: List[Any] = None #TODO: Define a proper type for articles (List[ReferencedArticle]
+            articles: list | None = None
         ):
         """Create a new message with referenced articles."""
         try:
@@ -59,17 +58,17 @@ class MessageService:
                 'error': 'User not found'
             }
 
-        except ValidationError as ve:
+        except ValidationError:
             return {
                 'success': False,
-                'error': f'Validation error: {str(ve)}'
+                'error': 'Validation error'
             }
 
-        except Exception as e:
+        except Exception:
             logger.exception("Error creating message")
             return {
                 'success': False,
-                'error': f'Unexpected error: {str(e)}'
+                'error': 'Unexpected error'
             }
 
     @staticmethod

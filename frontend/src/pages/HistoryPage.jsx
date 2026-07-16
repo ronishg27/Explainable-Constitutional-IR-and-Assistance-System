@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { apiClient } from '../api/client';
+import { apiClient, API } from '../api/client';
 import Pagination from '../components/ui/Pagination';
 import Dialog from '../components/ui/Dialog';
 import Alert from '../components/ui/Alert';
@@ -21,7 +21,7 @@ export default function HistoryPage() {
     setError('');
     setLoading(true);
     try {
-      const res = await apiClient(`/api/v1/messages?limit=${LIMIT}&skip=${skip}`);
+      const res = await apiClient(`${API.MESSAGES}?limit=${LIMIT}&skip=${skip}`);
       setMessages(res.data);
       setPagination(res.pagination);
     } catch (err) {
@@ -34,7 +34,7 @@ export default function HistoryPage() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     try {
-      await apiClient(`/api/v1/messages/${deleteTarget}`, { method: 'DELETE' });
+      await apiClient(`${API.MESSAGES}/${deleteTarget}`, { method: 'DELETE' });
       setMessages((prev) => prev.filter((m) => m.id !== deleteTarget));
     } catch (err) {
       setError(err.message);
@@ -45,7 +45,7 @@ export default function HistoryPage() {
 
   const handleClearAll = async () => {
     try {
-      await apiClient('/api/v1/messages', { method: 'DELETE' });
+      await apiClient(API.MESSAGES, { method: 'DELETE' });
       setMessages([]);
       setPagination(null);
     } catch (err) {
@@ -62,7 +62,7 @@ export default function HistoryPage() {
       setLoading(true);
       setError('');
       try {
-        const res = await apiClient(`/api/v1/messages?limit=${LIMIT}&skip=0`);
+        const res = await apiClient(`${API.MESSAGES}?limit=${LIMIT}&skip=0`);
         if (!cancelled) {
           setMessages(res.data);
           setPagination(res.pagination);

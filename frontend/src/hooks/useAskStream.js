@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5000';
+import { BASE_URL, API } from '../api/client';
 
 export default function useAskStream() {
   const [articles, setArticles] = useState(null);
@@ -22,7 +21,7 @@ export default function useAskStream() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${BASE_URL}/api/v1/ask-stream`, {
+      const res = await fetch(`${BASE_URL}${API.ASK_STREAM}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,6 +34,10 @@ export default function useAskStream() {
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || `Request failed (${res.status})`);
+      }
+
+      if (!res.body) {
+        throw new Error('Empty response body from server');
       }
 
       const reader = res.body.getReader();

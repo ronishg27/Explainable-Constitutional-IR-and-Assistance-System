@@ -1,6 +1,9 @@
 import json
+import logging
 import re
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 TOKEN_RE = re.compile(r"[a-z]+(?:'[a-z]+)?")
 
@@ -114,10 +117,10 @@ def main():
         json.dump(safe_dict, f, indent=2, sort_keys=True)
 
     changed = sum(1 for k, v in safe_dict.items() if k != v)
-    print(f"vocab_size={len(vocab)}")
-    print(f"lemma_entries={len(safe_dict)}")
-    print(f"changed_mappings={changed}")
-    print(f"output={output_path}")
+    logger.info("vocab_size=%d", len(vocab))
+    logger.info("lemma_entries=%d", len(safe_dict))
+    logger.info("changed_mappings=%d", changed)
+    logger.info("output=%s", output_path)
 
 
 if __name__ == "__main__":

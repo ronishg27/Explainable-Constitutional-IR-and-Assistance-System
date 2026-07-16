@@ -11,6 +11,7 @@ Usage:
 """
 
 import json
+import logging
 from pathlib import Path
 from .document import Document
 from .query_expander import QueryExpander
@@ -18,6 +19,8 @@ from .text_processor import TextProcessor
 from .bm25_scorer import BM25Scorer
 from .proximity import ProximityScorer
 from .search_engine import SearchEngine
+
+logger = logging.getLogger(__name__)
 
 
 class EngineFactory:
@@ -42,34 +45,55 @@ class EngineFactory:
 
         Returns:
             A fully initialised SearchEngine, ready for search() calls.
+
+        Raises:
+            FileNotFoundError: If any required artifact is missing.
+            json.JSONDecodeError: If any artifact is malformed.
         """
-        # 1. Load documents as Document objects
-        with open(documents_path, "r", encoding="utf-8") as f:
-            raw_docs = json.load(f)
+        try:
+            with open(documents_path, "r", encoding="utf-8") as f:
+                raw_docs = json.load(f)
+        except FileNotFoundError:
+            logger.error("Documents file not found: %s", documents_path)
+            raise
+        except json.JSONDecodeError:
+            logger.error("Documents file is not valid JSON: %s", documents_path)
+            raise
+
         documents = [Document(**item) for item in raw_docs]
 
-        # 2. Load indexes
         base = Path(index_dir)
-        with open(base / "tf_index.json", "r", encoding="utf-8") as f:
-            tf_index = json.load(f)
-        with open(base / "pos_index.json", "r", encoding="utf-8") as f:
-            pos_index = json.load(f)
-        with open(base / "doc_stats.json", "r", encoding="utf-8") as f:
-            stats = json.load(f)
+        index_files = {
+            "tf_index.json": None,
+            "pos_index.json": None,
+            "doc_stats.json": None,
+        }
+        for name in index_files:
+            path = base / name
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    index_files[name] = json.load(f)
+            except FileNotFoundError:
+                logger.error("Index file not found: %s", path)
+                raise
+            except json.JSONDecodeError:
+                logger.error("Index file is not valid JSON: %s", path)
+                raise
+
+        tf_index = index_files["tf_index.json"]
+        pos_index = index_files["pos_index.json"]
+        stats = index_files["doc_stats.json"]
 
         doc_lengths = stats["doc_lengths"]
         avgdl = stats["avgdl"]
 
-        # 3. Create the two processors
         bm25_proc = TextProcessor(use_lemmatization=True, remove_stopwords=True)
         prox_proc = TextProcessor(use_lemmatization=False, remove_stopwords=False)
 
-        # 4. Create synonym expander (optional)
         synonym_expander = None
         if synonyms_path:
             synonym_expander = QueryExpander(synonyms_path)
 
-        # 5. Assemble engine
         bm25_scorer = BM25Scorer(tf_index, doc_lengths, avgdl)
         prox_scorer = ProximityScorer(pos_index)
 
