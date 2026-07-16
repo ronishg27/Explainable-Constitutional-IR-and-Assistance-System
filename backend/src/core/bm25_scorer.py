@@ -43,14 +43,4 @@ class BM25Scorer:
     def matched_terms(self, query_tokens: list[str], doc_id: str) -> list[str]:
         return [t for t in query_tokens if self.tf_index.get(t, {}).get(doc_id, 0) > 0]
 
-    def score_with_title_boost(
-        self,
-        query_tokens: list[str],
-        doc_id: str,
-        title_tokens: list[str],
-        title_boost: float = 5.0
-    )-> float:
-        base = self.score(query_tokens, doc_id)
-        title_match_count = len(set(query_tokens) & set(title_tokens)) # & -> intersection of sets
-        return base+ (title_match_count * title_boost)
 

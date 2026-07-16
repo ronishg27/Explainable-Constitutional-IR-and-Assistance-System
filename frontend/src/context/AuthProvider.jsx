@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiClient, setToken, getToken } from '../api/client';
+import { apiClient, setToken, getToken, API } from '../api/client';
 import AuthContext from './authContext';
 
 export function AuthProvider({ children }) {
@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
       }
 
       try {
-        const res = await apiClient('/api/v1/auth/me');
+        const res = await apiClient(API.ME);
         if (!cancelled) setUser(res.data);
       } catch {
         if (!cancelled) setToken(null);
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async (email, password) => {
-    const res = await apiClient('/api/v1/auth/login', {
+    const res = await apiClient(API.LOGIN, {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const register = useCallback(async (fullname, email, password) => {
-    const res = await apiClient('/api/v1/auth/register', {
+    const res = await apiClient(API.REGISTER, {
       method: 'POST',
       body: JSON.stringify({ fullname, email, password }),
     });
@@ -49,7 +49,7 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await apiClient('/api/v1/auth/logout', { method: 'POST' });
+      await apiClient(API.LOGOUT, { method: 'POST' });
     } catch {
       // still clear local state
     }

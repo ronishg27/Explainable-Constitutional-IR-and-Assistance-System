@@ -1,6 +1,6 @@
 from enum import Enum
 
-from mongoengine import Document, StringField,  DateTimeField,  EnumField
+from mongoengine import Document, IntField, StringField,  DateTimeField,  EnumField
 from datetime import datetime, timezone
 import bcrypt
 
@@ -14,6 +14,7 @@ class User(Document):
     email = StringField(required=True, unique=True)
     password_hash = StringField(required=True)
     role = EnumField(RoleEnum, default=RoleEnum.USER)
+    token_version = IntField(default=0)
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
     updated_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
 

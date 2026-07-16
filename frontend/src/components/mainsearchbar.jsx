@@ -5,7 +5,6 @@ import Resultdisplay from './Resultdisplay';
 import Toggle from './ui/Toggle';
 import Button from './ui/Button';
 import Alert from './ui/Alert';
-import Spinner from './ui/Spinner';
 
 export default function MainSearchBar() {
   const [query, setQuery] = useState('');
@@ -65,13 +64,6 @@ export default function MainSearchBar() {
         <Alert variant="error" className="mt-6">
           {error}
         </Alert>
-      )}
-
-      {loading && !articles && (
-        <div className="mt-8 flex items-center gap-2 text-sm text-neutral-400">
-          <Spinner size="sm" />
-          Retrieving relevant articles...
-        </div>
       )}
 
       <Resultdisplay

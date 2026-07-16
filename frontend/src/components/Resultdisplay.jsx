@@ -85,7 +85,7 @@ const HighlightText = ({ text, terms, exactTerms }) => {
   const allSet = new Set(terms.map(t => t.toLowerCase()));
 
   const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const pattern = new RegExp(`(${escaped.join('|')})`, 'gi');
+  const pattern = new RegExp(`(${escaped.map(t => `\\b${t}\\b`).join('|')})`, 'gi');
   const parts = text.split(pattern);
 
   return parts.map((part, i) => {

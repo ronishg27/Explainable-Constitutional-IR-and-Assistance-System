@@ -1,6 +1,9 @@
 import json
+import logging
 from pathlib import Path
 from src.core.text_processor import TextProcessor
+
+logger = logging.getLogger(__name__)
 
 _tokenizer = TextProcessor(use_lemmatization=True, remove_stopwords=True)
 
@@ -137,6 +140,55 @@ def _make_document(doc_id, part_no, article_no, title, text, citation, level, cl
     }
 
 
+def _flatten_clauses(clauses, article_no, part_no, title):
+    """Process numbered clauses under an article. Returns list of clause documents."""
+    docs = []
+    for clause in clauses:
+        clause_number = clause.get("clause_no", "?")
+        clause_segments = []
+
+        clause_text = clause.get("text", "")
+        if clause_text:
+            clause_segments.append(clause_text.strip())
+
+        clause_provision = clause.get("provision", "")
+        if clause_provision:
+            clause_segments.append(_format_provision(clause_provision))
+
+        clause_explanation = clause.get("explanation", "")
+        if clause_explanation:
+            clause_segments.append(_format_explanation(clause_explanation))
+
+        clause_sub_clauses = clause.get("sub_clauses", [])
+        if clause_sub_clauses:
+            sub_segments, sub_docs = _flatten_sub_clauses(
+                clause_sub_clauses,
+                f"{article_no}.{clause_number}",
+                part_no, article_no, title,
+                f"Part {part_no}, Article {article_no}({clause_number})",
+                level_num=1
+            )
+            docs.extend(sub_docs)
+            clause_segments.extend(sub_segments)
+
+        clause_body = "\n".join(segment for segment in clause_segments if segment)
+        if clause_body:
+            docs.append(
+                _make_document(
+                    doc_id=f"{article_no}.{clause_number}",
+                    part_no=part_no,
+                    article_no=article_no,
+                    clause_no=clause_number,
+                    subclause_id=None,
+                    title=title,
+                    text=clause_body,
+                    citation=f"Part {part_no}, Article {article_no}({clause_number})",
+                    level="clause",
+                )
+            )
+    return docs
+
+
 def flatten_constitution(data):
     """Flattens nested structure to article, clause and sub-clause documents (new schema)."""
     documents = []
@@ -190,50 +242,9 @@ def flatten_constitution(data):
                 continue
 
             if clauses:
-                for clause in clauses:
-                    clause_number = clause.get("clause_no", "?")
-                    clause_segments = []
-
-                    clause_text = clause.get("text", "")
-                    if clause_text:
-                        clause_segments.append(clause_text.strip())
-
-                    clause_provision = clause.get("provision", "")
-                    if clause_provision:
-                        clause_segments.append(_format_provision(clause_provision))
-
-                    clause_explanation = clause.get("explanation", "")
-                    if clause_explanation:
-                        clause_segments.append(_format_explanation(clause_explanation))
-
-                    clause_sub_clauses = clause.get("sub_clauses", [])
-                    if clause_sub_clauses:
-                        sub_segments, sub_docs = _flatten_sub_clauses(
-                            clause_sub_clauses,
-                            f"{article_no}.{clause_number}",
-                            part_no, article_no, title,
-                            f"Part {part_no}, Article {article_no}({clause_number})",
-                            level_num=1
-                        )
-                        documents.extend(sub_docs)
-                        clause_segments.extend(sub_segments)
-
-                    clause_body = "\n".join(segment for segment in clause_segments if segment)
-                    if clause_body:
-                        documents.append(
-                            _make_document(
-                                doc_id=f"{article_no}.{clause_number}",
-                                part_no=part_no,
-                                article_no=article_no,
-                                clause_no=clause_number,
-                                subclause_id=None,
-                                title=title,
-                                text=clause_body,
-                                citation=f"Part {part_no}, Article {article_no}({clause_number})",
-                                level="clause",
-                            )
-                        )
-
+                documents.extend(
+                    _flatten_clauses(clauses, article_no, part_no, title)
+                )
                 continue
 
             article_body = "\n".join(segment for segment in article_segments if segment)
@@ -372,7 +383,7 @@ def main():
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(documents, f, indent=2, ensure_ascii=False)
 
-    print(f"Flattened {len(documents)} documents into {output_path}")
+    logger.info("Flattened %d documents into %s", len(documents), output_path)
 
 
 if __name__ == "__main__":

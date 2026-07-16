@@ -9,7 +9,7 @@ from ..workflows.retrieval_workflow import RetrievalWorkflow
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemma3:1b"
+DEFAULT_MODEL = "qwen2.5:7b"
 RETRY_ATTEMPTS = 3
 RETRY_DELAY = 0.5
 
@@ -82,6 +82,7 @@ class RAGRepository:
                     groups[key]["part_no"] = doc.part_no
 
         self._article_lookup = {}
+        self._clause_structure = {}
         for article_no, data in groups.items():
             if data["article_doc"] is not None:
                 text = data["article_doc"].text
@@ -99,8 +100,6 @@ class RAGRepository:
                 "text": text,
             }
 
-        self._clause_structure = {}
-        for article_no, data in groups.items():
             if data["clause_docs"]:
                 clauses = {}
                 for doc in data["clause_docs"]:

@@ -6,9 +6,12 @@ from mongoengine.errors import ValidationError, DoesNotExist, NotUniqueError
 
 logger = logging.getLogger(__name__)
 
-JWT_SECRET = os.getenv("JWT_SECRET")
-if not JWT_SECRET:
-    raise RuntimeError("JWT_SECRET environment variable is required")
+
+def _get_jwt_secret() -> str:
+    secret = os.getenv("JWT_SECRET")
+    if not secret:
+        raise RuntimeError("JWT_SECRET environment variable is required")
+    return secret
 
 
 class UserService:
@@ -32,24 +35,24 @@ class UserService:
                 'data': user.to_json()
             }
 
-        except ValidationError as ve:
+        except ValidationError:
             return {
                 'success': False,
-                'error': f"Validation Error: {str(ve)}",
+                'error': 'Invalid user data provided.',
                 'message': 'Invalid user data provided.'
             }
 
-        except NotUniqueError as nue:
+        except NotUniqueError:
             return {
                 'success': False,
                 'message': 'Email already exists',
-                'error': f"NotUniqueError: {str(nue)}"
+                'error': 'Email already exists'
             }
-        except Exception as e:
+        except Exception:
             logger.exception("Error creating user")
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'An error occurred while creating the user.',
                 'message': 'An error occurred while creating the user.'
             }
 
@@ -68,13 +71,12 @@ class UserService:
                 'success': False,
                 'error': 'User not found',
                 'message': 'No user exists with the provided ID.',
-
             }
-        except Exception as e:
+        except Exception:
             logger.exception("Error retrieving user")
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'An error occurred while retrieving the user.',
                 "message": 'An error occurred while retrieving the user.'
             }
 
@@ -94,11 +96,11 @@ class UserService:
                 'error': 'User not found',
                 'message': 'No user exists with the provided email.'
             }
-        except Exception as e:
+        except Exception:
             logger.exception("Error retrieving user by email")
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'An error occurred while retrieving the user.',
                 "message": 'An error occurred while retrieving the user.'
             }
 
@@ -113,11 +115,11 @@ class UserService:
                 'data': [user.to_json() for user in users],
                 'message': 'Users retrieved successfully'
             }
-        except Exception as e:
+        except Exception:
             logger.exception("Error listing users")
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'An error occurred while listing users.',
                 'message': 'An error occurred while listing users.'
             }
 
@@ -138,11 +140,11 @@ class UserService:
                 'message': 'No user exists with the provided ID.'
             }
 
-        except Exception as e:
+        except Exception:
             logger.exception("Error deleting user")
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'An error occurred while deleting the user.',
                 'message': 'An error occurred while deleting the user.'
             }
 
@@ -153,12 +155,12 @@ class UserService:
         try:
             user = User.objects.get(email=email.strip().lower())
             if user.check_password(password):
-                # create a JWT
                 payload = {
                     'user_id': str(user.id),
-                    'email': user.email
+                    'email': user.email,
+                    'token_version': user.token_version,
                 }
-                token = jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+                token = jwt.encode(payload, _get_jwt_secret(), algorithm='HS256')
                 return {
                     'success': True,
                     'data': user.to_json(),
@@ -179,11 +181,11 @@ class UserService:
                 'message': 'No user exists with the provided email.'
             }
 
-        except Exception as e:
+        except Exception:
             logger.exception("Error authenticating user")
             return {
                 'success': False,
-                'error': str(e),
+                'error': 'An error occurred during authentication.',
                 'message': 'An error occurred during authentication.'
             }
 

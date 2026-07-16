@@ -101,7 +101,7 @@ class SearchEngine:
 
         bm25_tokens = base_tokens[:]
         if self.synonym_expander:
-            bm25_tokens = self.synonym_expander.expand(bm25_tokens)
+            bm25_tokens = self.synonym_expander.expand(bm25_tokens, raw_query=query)
 
         raw_tokens = self._prepare_proximity_query(query)
         query_pairs = ProximityScorer.generate_query_pairs(raw_tokens)
@@ -182,7 +182,7 @@ class SearchEngine:
         """Convert scored Document objects to dictionaries for API/CLI output."""
         results = []
         for entry in scored_docs:
-            _, bm25_score, prox_score, title_match_count, doc, matched, exact_matched = entry
+            final_score, bm25_score, prox_score, title_match_count, doc, matched, exact_matched = entry
             results.append({
                 "doc_id": doc.doc_id,
                 "part_no": doc.part_no,
@@ -193,7 +193,7 @@ class SearchEngine:
                 "level": doc.level,
                 "clause_no": doc.clause_no,
                 "subclause_id": doc.subclause_id,
-                "score": _,
+                "score": final_score,
                 "bm25_score": bm25_score,
                 "proximity_score": prox_score,
                 "title_match_count": title_match_count,

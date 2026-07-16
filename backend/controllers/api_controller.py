@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from typing import Generator
 
 from flask import Response, jsonify, request, stream_with_context
 
@@ -30,6 +31,9 @@ def _persist_message(user_id: str, query: str, payload: dict) -> None:
                 level=art.get("level"),
                 part_no=art.get("part_no"),
                 text=art.get("text"),
+                full_text=art.get("full_text"),
+                matched_terms=art.get("matched_terms", []),
+                exact_matched_terms=art.get("exact_matched_terms", []),
             )
             if result.get("success"):
                 article_ids.append(result["data"]["id"])
@@ -48,7 +52,8 @@ def _persist_message(user_id: str, query: str, payload: dict) -> None:
         logger.error("Failed to persist message: %s", e)
 
 
-def home():
+def home() -> Response:
+    """GET /api/v1/ — list available endpoints."""
     return jsonify(
         {
             "message": "Welcome to the API!",
@@ -59,17 +64,22 @@ def home():
                 "/api/v1/auth/register": "Register a new user.",
                 "/api/v1/auth/login": "Login with email and password.",
                 "/api/v1/auth/logout": "Logout the current user.",
+                "/api/v1/auth/me": "Get the current logged in user.",
+                "/api/v1/messages": "List or delete chat history.",
+                "/api/v1/messages/<id>": "Get or delete a specific message.",
             },
             "version": "1.0.0",
         }
     )
 
 
-def health():
+def health() -> Response:
+    """GET /api/v1/health — readiness check."""
     return jsonify({"status": "healthy"})
 
 
-def ask():
+def ask() -> Response:
+    """POST /api/v1/ask — answer a question (synchronous)."""
     start = time.time()
     if not request.is_json:
         return jsonify({"error": "Invalid content type. Expected application/json."}), 400
@@ -79,7 +89,7 @@ def ask():
         return jsonify({"error": "Invalid JSON payload."}), 400
 
     query = data.get("query")
-    useLLM = data.get("use_llm", False)
+    use_llm = data.get("use_llm", False)
 
     if not query:
         return jsonify({"error": "Query is required."}), 400
@@ -93,7 +103,7 @@ def ask():
         ), 400
 
     try:
-        payload, status_code = QAService.answer_query(query, useLLM=useLLM)
+        payload, status_code = QAService.answer_query(query, useLLM=use_llm)
 
         if status_code == 200:
             user_id = request.user.get("user_id")
@@ -102,7 +112,7 @@ def ask():
         elapsed = time.time() - start
         logger.info(
             "query=%s use_llm=%s status=%d latency=%.2fs",
-            query[:80], useLLM, status_code, elapsed,
+            query[:80], use_llm, status_code, elapsed,
         )
         return jsonify(payload), status_code
     except Exception:
@@ -110,7 +120,34 @@ def ask():
         return jsonify({"error": "An error occurred while processing the query."}), 500
 
 
-def ask_stream():
+def _stream_events(user_id: str, query: str, use_llm: bool, events) -> Generator[str, None, None]:
+    """Consume QAService events, persist on done, yield SSE lines."""
+    stream_start = time.time()
+    full_answer = ""
+    articles_data = []
+
+    for event in events:
+        if event["type"] == "articles":
+            articles_data = event.get("articles", [])
+        elif event["type"] == "token":
+            full_answer += event.get("content", "")
+        elif event["type"] == "done":
+            payload = {
+                "articles": articles_data,
+                "response": full_answer,
+            }
+            _persist_message(user_id, query, payload)
+            elapsed = time.time() - stream_start
+            logger.info(
+                "stream query=%s use_llm=%s latency=%.2fs",
+                query[:80], use_llm, elapsed,
+            )
+
+        yield f"data: {json.dumps(event)}\n\n"
+
+
+def ask_stream() -> Response:
+    """POST /api/v1/ask-stream — answer a question (SSE stream)."""
     if not request.is_json:
         return jsonify({"error": "Invalid content type. Expected application/json."}), 400
 
@@ -134,35 +171,10 @@ def ask_stream():
 
     try:
         user_id = request.user.get("user_id")
-
         events = QAService.answer_query_streaming(query, use_llm=use_llm)
 
-        def generate():
-            stream_start = time.time()
-            full_answer = ""
-            articles_data = []
-
-            for event in events:
-                if event["type"] == "articles":
-                    articles_data = event.get("articles", [])
-                elif event["type"] == "token":
-                    full_answer += event.get("content", "")
-                elif event["type"] == "done":
-                    payload = {
-                        "articles": articles_data,
-                        "response": full_answer,
-                    }
-                    _persist_message(user_id, query, payload)
-                    elapsed = time.time() - stream_start
-                    logger.info(
-                        "stream query=%s use_llm=%s latency=%.2fs",
-                        query[:80], use_llm, elapsed,
-                    )
-
-                yield f"data: {json.dumps(event)}\n\n"
-
         return Response(
-            stream_with_context(generate()),
+            stream_with_context(_stream_events(user_id, query, use_llm, events)),
             mimetype="text/event-stream",
             headers={
                 "X-Accel-Buffering": "no",

@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Optional
+from typing import Optional
 
 from .rag_repository import RAGRepository
 from .rag_formatter import RAGFormatter

@@ -10,15 +10,25 @@ class ArticleService:
     @staticmethod
     def create_article(title, citation, doc_id, relevance_score,
                        article_no=None, clause_no=None, subclause_id=None,
-                       level=None, part_no=None, text=None,
-                       bm25_score=None, proximity_score=None, title_match_count=None):
-        """Create a new referenced article, deduplicating by doc_id."""
+                       level=None, part_no=None, text=None, full_text=None,
+                       bm25_score=None, proximity_score=None, title_match_count=None,
+                       matched_terms=None, exact_matched_terms=None):
+        """Create or update a referenced article, deduplicating by doc_id."""
         try:
             existing = ReferencedArticle.objects(doc_id=doc_id).first()
             if existing:
+                existing.text = text
+                existing.full_text = full_text
+                existing.matched_terms = matched_terms or []
+                existing.exact_matched_terms = exact_matched_terms or []
+                existing.relevance_score = relevance_score
+                existing.bm25_score = bm25_score or 0.0
+                existing.proximity_score = proximity_score or 0.0
+                existing.title_match_count = title_match_count or 0
+                existing.save()
                 return {
                     'success': True,
-                    'message': 'Article already exists',
+                    'message': 'Article updated',
                     'data': existing.to_json()
                 }
 
@@ -36,6 +46,9 @@ class ArticleService:
                 level=level,
                 part_no=part_no,
                 text=text,
+                full_text=full_text,
+                matched_terms=matched_terms or [],
+                exact_matched_terms=exact_matched_terms or [],
             )
             article.save()
 
@@ -45,16 +58,16 @@ class ArticleService:
                 'data': article.to_json()
             }
 
-        except ValidationError as ve:
+        except ValidationError:
             return {
                 'success': False,
-                'error': f"Validation Error: {str(ve)}"
+                'error': 'Validation error'
             }
-        except Exception as e:
+        except Exception:
             logger.exception("Error creating article")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'An error occurred while creating the article.'
             }
 
     @staticmethod
@@ -72,10 +85,11 @@ class ArticleService:
                 'success': False,
                 'error': 'Article not found'
             }
-        except Exception as e:
+        except Exception:
+            logger.exception("Error retrieving article")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'An error occurred while retrieving the article.'
             }
 
     @staticmethod
@@ -87,10 +101,11 @@ class ArticleService:
                 'success': True,
                 'data': [article.to_json() for article in articles]
             }
-        except Exception as e:
+        except Exception:
+            logger.exception("Error listing articles")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'An error occurred while listing articles.'
             }
 
     @staticmethod
@@ -108,10 +123,10 @@ class ArticleService:
                 'success': False,
                 'error': 'Article not found'
             }
-        except Exception as e:
+        except Exception:
             logger.exception("Error deleting article")
             return {
                 'success': False,
-                'error': str(e)
+                'error': 'An error occurred while deleting the article.'
             }
 

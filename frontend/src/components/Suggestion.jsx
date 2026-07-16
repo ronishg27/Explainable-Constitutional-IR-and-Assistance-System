@@ -1,9 +1,11 @@
 export default function Suggestion({ setQuery }) {
   const suggestions = [
-    'Can police take my phone?',
-    'Right to free education',
-    'Can I be arrested without reason?',
-    'Freedom of speech limits',
+    'How is the President of Nepal elected?',
+    'What fundamental rights are guaranteed to citizens?',
+    'How can a person acquire citizenship of Nepal?',
+    'What are the duties and obligations of the State?',
+    'What is the structure of the Federal Parliament?',
+    'What rights do senior citizens have under the constitution?',
   ];
 
   return (

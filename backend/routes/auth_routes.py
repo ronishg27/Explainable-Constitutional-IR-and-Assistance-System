@@ -15,7 +15,6 @@ def login_user():
     return login()
 
 
-# TODO: Implement Protected route and token-based authentication before enabling logout
 @auth_bp.route("/logout", methods=["POST"])
 @token_required
 def logout_user():

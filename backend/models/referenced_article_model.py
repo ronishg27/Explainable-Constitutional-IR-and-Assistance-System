@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, DateTimeField, FloatField, IntField
+from mongoengine import Document, ListField, StringField, DateTimeField, FloatField, IntField
 from datetime import datetime, timezone
 
 
@@ -16,6 +16,9 @@ class ReferencedArticle(Document):
     level = StringField()
     part_no = IntField()
     text = StringField()
+    full_text = StringField()
+    matched_terms = ListField(StringField(), default=list)
+    exact_matched_terms = ListField(StringField(), default=list)
 
     # timestamps
     created_at = DateTimeField(default=lambda: datetime.now(timezone.utc))
@@ -46,6 +49,9 @@ class ReferencedArticle(Document):
             'level': self.level,
             'part_no': self.part_no,
             'text': self.text,
+            'full_text': self.full_text,
+            'matched_terms': self.matched_terms,
+            'exact_matched_terms': self.exact_matched_terms,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
