@@ -1,3 +1,5 @@
+import re
+
 from models.user_model import User
 from models.referenced_article_model import ReferencedArticle
 from models.message_model import Message
@@ -143,10 +145,10 @@ class MessageService:
         try:
             user = User.objects.get(id=user_id)
 
-            # case-insensitive search in the query field
+            safe_term = re.escape(search_term)
             messages = Message.objects(
                 user=user,
-                query__icontains=search_term
+                query__icontains=safe_term
             ).order_by('-created_at')
 
             return {
