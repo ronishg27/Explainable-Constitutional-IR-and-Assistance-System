@@ -13,6 +13,7 @@ Usage:
 import json
 from pathlib import Path
 from .document import Document
+from .query_expander import QueryExpander
 from .text_processor import TextProcessor
 from .bm25_scorer import BM25Scorer
 from .proximity import ProximityScorer
@@ -28,6 +29,7 @@ class EngineFactory:
         index_dir: str,
         proximity_weight: float = 1.0,
         title_boost: float = 5.0,
+        synonyms_path: str | None = None,
     ) -> SearchEngine:
         """
         Load flattened documents and pre‑computed indexes from disk.
@@ -62,7 +64,12 @@ class EngineFactory:
         bm25_proc = TextProcessor(use_lemmatization=True, remove_stopwords=True)
         prox_proc = TextProcessor(use_lemmatization=False, remove_stopwords=False)
 
-        # 4. Assemble engine
+        # 4. Create synonym expander (optional)
+        synonym_expander = None
+        if synonyms_path:
+            synonym_expander = QueryExpander(synonyms_path)
+
+        # 5. Assemble engine
         bm25_scorer = BM25Scorer(tf_index, doc_lengths, avgdl)
         prox_scorer = ProximityScorer(pos_index)
 
@@ -74,4 +81,5 @@ class EngineFactory:
             documents,
             proximity_weight=proximity_weight,
             title_boost=title_boost,
+            synonym_expander=synonym_expander,
         )
