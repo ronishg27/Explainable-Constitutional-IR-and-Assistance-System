@@ -66,7 +66,9 @@ export default function MessageDetailPage() {
   const resultData = {
     query: message.query,
     response: message.answer,
-    articles: message.articles?.map((a) => ({
+    articles: (message.articles || [])
+      .sort((a, b) => (b.relevance_score ?? 0) - (a.relevance_score ?? 0))
+      .map((a) => ({
       doc_id: a.doc_id,
       title: a.title,
       citation: a.citation,
@@ -74,6 +76,7 @@ export default function MessageDetailPage() {
       bm25_score: a.bm25_score,
       proximity_score: a.proximity_score,
       title_match_count: a.title_match_count,
+      boost_multiplier: a.boost_multiplier,
       article_no: a.article_no,
       clause_no: a.clause_no,
       subclause_id: a.subclause_id,

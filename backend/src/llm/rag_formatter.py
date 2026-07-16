@@ -8,10 +8,11 @@ class RAGFormatter:
 
         context_lines = []
         for index, article in enumerate(articles, 1):
-            context_lines.append(f"[Article {index}]")
-            context_lines.append(f"Citation: {article['citation']}")
-            context_lines.append(f"Title: {article['title']}")
-            context_lines.append(f"Content:\n{article['text']}")
+            # context_lines.append(f"[Article {index}]")
+            # context_lines.append(f"Citation: {article['citation']}")
+            # context_lines.append(f"Title: {article['title']}")
+            # context_lines.append(f"Content:\n{article['text']}")
+            context_lines.append(f"{article['citation']}: {article['title']}\n{article['text']}")
             if "score" in article:
                 context_lines.append(f"(Relevance Score: {article['score']:.2f})")
             context_lines.append("")
@@ -21,25 +22,37 @@ class RAGFormatter:
     @staticmethod
     def build_system_prompt() -> str:
         return (
-            "You are a constitutional law expert specializing in the Constitution of Nepal. "
-            "You must answer questions using ONLY the constitutional articles provided in the user message. "
-            "The user will give you a list of retrieved articles from the Constitution of Nepal as context. "
-            "Follow these rules strictly:\n"
-            "1. Base your answer ONLY on the articles shown in the context below.\n"
-            "2. If the context does not contain a relevant article, say: "
-            "'The provided articles from the Constitution of Nepal do not address this question.'\n"
-            "3. Never reference any other constitution (Indian, US, etc.) or any external knowledge.\n"
-            "4. Cite articles exactly as shown in the context (e.g., [Part 3, Article 16]).\n"
-            "5. Do not add headings, summaries, or explanations beyond answering the question."
-        )
+            "You are a legal QA assistant for the Constitution of Nepal.\n"
+            "Answer ONLY the questions using the Contxt.\n\n"
+
+            "Important Instructions:\n"
+            "- Focus ONLY on the question.\n"
+            "- Do NOT explain all articles.\n"
+            "- Select ONLY the relevant parts of the context.\n"
+            "- Ignore unrelated information.\n"
+            "- Keep it concise.\n\n"
+
+            "Answer Guidelines:\n"
+            "- First, give a clear answer to the question in 2–4 sentences.\n"
+            "- Then, cite the relevant article(s) in brackets.\n"
+            "- Do NOT summarize all articles.\n"
+            "- Do NOT add extra explanation beyond what is needed.\n\n"
+
+            "If the answer is not in the context, say:\n"
+            "'The provided articles do not contain the answer.'"
+        )   
 
     @staticmethod
     def build_user_prompt(query: str, context: str) -> str:
         return f"""
-CONTEXT — Constitution of Nepal:
-{context}
+    Context:
+    {context}
 
-QUESTION (Constitution of Nepal only): {query}
+    Question:
+    {query}
+    
+    Task:
+    Find the exact answer to the question using the context above. Answer in 2-5 sentences depending on the complexity
 
-ANSWER based solely on the articles above:
-"""
+    Answer:
+    """
