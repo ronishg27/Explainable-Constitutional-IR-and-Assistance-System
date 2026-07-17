@@ -11,6 +11,8 @@ classDiagram
         +subclause_id: String
         +is_primary: Boolean
         +parent_id: String
+        +title_tokens: List
+        +body_tokens: List
         +boost: Float
     }
 
@@ -37,12 +39,12 @@ classDiagram
         -tf_index: Dict
         -doc_lengths: Dict
         -avgdl: Float
-        -k1: Float
-        -b: Float
+        -k1: Float = 1.5
+        -b: Float = 1.0
         -N: Int
         +idf(term) Float
         +score(query_tokens, doc_id) Float
-        +score_with_title_boost(query_tokens, doc_id, title_tokens, title_boost) Float
+        +matched_terms(query_tokens, doc_id) List
     }
 
     class ProximityScorer {
@@ -51,45 +53,79 @@ classDiagram
         +score(doc_id, pairs, max_window, ordered) Float
     }
 
+    class QueryExpander {
+        -groups: List
+        -lookup: Dict
+        +expand(tokens, raw_query) List
+    }
+
     class SearchEngine {
         -bm25_scorer: BM25Scorer
         -proximity_scorer: ProximityScorer
         -bm25_processor: TextProcessor
         -proximity_processor: TextProcessor
         -documents: List~Document~
-        -proximity_weight: Float
-        -title_boost: Float
+        -proximity_weight: Float = 1.0
+        -title_boost: Float = 5.0
         -default_top_k: Int
-        -max_window: Int
-        +search(query, top_k, proximity_weight, title_boost) List
+        -max_window: Int = 30
+        -synonym_expander: QueryExpander
+        +search(query, top_k) List
+    }
+
+    class Reranker {
+        -tf_index: Dict
+        -rrf_k: Int = 60
+        -mmr_lambda: Float = 0.5
+        +rerank(results, top_k, boost_rules) List
+        -_rrf_fuse(results) List
+        -_mmr_diversify(results) List
+        -_apply_boost(results, boost_rules) List
+    }
+
+    class RetrievalWorkflow {
+        -engine: SearchEngine
+        -reranker: Reranker
+        +retrieve(query, top_k, boost_rules) List
     }
 
     class EngineFactory {
-        +from_artifacts(documents_path, index_dir) SearchEngine
+        +from_artifacts(documents_path, index_dir, synonyms_path) SearchEngine
     }
 
     class RAGFormatter {
         +format_context(articles) String
-        +build_prompt(query, context) String
+        +build_system_prompt() String
+        +build_user_prompt(query, context) String
     }
 
-    class RAGWorkflow {
-        -engine: SearchEngine
+    class RAGRepository {
+        -retrieval: RetrievalWorkflow
         -model: String
         -client: Client
-        -formatter: RAGFormatter
-        -max_context_articles: Int
+        -_article_lookup: Dict
+        -_clause_structure: Dict
         -_ollama_available: Boolean
         -_available_models: List
         +check_ollama_connection() Tuple
         +check_model_availability() Tuple
         +retrieve(query, top_k) List
-        +ask(query, stream, retrieve_only) Dict
+        +promote_to_articles(results) List
+        +build_truncated_text(article) String
+        +call_llm(messages, stream) Response
+    }
+
+    class RAGWorkflow {
+        -repo: RAGRepository
+        -formatter: RAGFormatter
+        -max_context_articles: Int = 8
+        +ask(query, retrieve_only) Dict
         +ask_streaming(query) Generator
     }
 
     class QAService {
         +answer_query(query, useLLM) Tuple~Dict, Int~
+        +answer_query_streaming(query) Generator
         +_get_workflow() RAGWorkflow
     }
 
@@ -104,24 +140,24 @@ classDiagram
     class MessageService {
         +create_message(user_id, query, answer, articles) Dict
         +get_user_messages(user_id, limit, skip) Dict
+        +get_message(message_id) Dict
+        +update_message_answer(message_id, answer) Dict
         +search_messages(user_id, search_term) Dict
         +delete_message(message_id) Dict
+        +delete_user_messages(user_id) Dict
     }
 
     class ArticleService {
-        +create_article(title, citation, doc_id, score) Dict
+        +create_article(...) Dict
         +get_article(article_id) Dict
         +list_articles() Dict
         +delete_article(article_id) Dict
     }
 
     class IngestionWorkflow {
-        -doc_path: Path
-        -bm25_proc: TextProcessor
-        -prox_proc: TextProcessor
-        +load_documents() List~Document~
-        +build_indexes() Tuple
-        +save_indexes(output_dir)
+        +load_documents(path) List~Document~
+        +build_indexes(documents, bm25_proc, prox_proc) Tuple
+        +save_indexes(indexes, output_dir)
     }
 
     class User {
@@ -129,6 +165,7 @@ classDiagram
         +email: String
         +password_hash: String
         +role: RoleEnum
+        +token_version: Int = 0
         +created_at: DateTime
         +updated_at: DateTime
         +set_password(password)
@@ -151,6 +188,18 @@ classDiagram
         +citation: String
         +doc_id: String
         +relevance_score: Float
+        +bm25_score: Float
+        +proximity_score: Float
+        +title_match_count: Int
+        +article_no: Int
+        +clause_no: String
+        +subclause_id: String
+        +level: String
+        +part_no: Int
+        +text: String
+        +full_text: String
+        +matched_terms: List~String~
+        +exact_matched_terms: List~String~
         +created_at: DateTime
         +updated_at: DateTime
         +to_json() Dict
@@ -164,11 +213,15 @@ classDiagram
     User "1" --> "0..*" Message : creates
     Message "0..*" --> "0..*" ReferencedArticle : references
     QAService --> RAGWorkflow : uses
-    RAGWorkflow --> SearchEngine : uses
+    RAGWorkflow --> RAGRepository : uses
     RAGWorkflow --> RAGFormatter : uses
+    RAGRepository --> RetrievalWorkflow : uses
+    RetrievalWorkflow --> SearchEngine : uses
+    RetrievalWorkflow --> Reranker : uses
     SearchEngine --> BM25Scorer : uses
     SearchEngine --> ProximityScorer : uses
     SearchEngine --> TextProcessor : uses 2x
+    SearchEngine --> QueryExpander : optional
     EngineFactory --> SearchEngine : builds
     IndexBuilder --> TextProcessor : uses 2x
     IngestionWorkflow --> TextProcessor : uses 2x

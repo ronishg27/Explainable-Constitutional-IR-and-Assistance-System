@@ -5,29 +5,34 @@ architecture-beta
 
     group backend(cloud)[Backend Layer]
     service flask(server)[Flask API<br/>Python 3.13] in backend
-    service qa(server)[QAService] in backend
-    service rag(server)[RAGWorkflow] in backend
-    service search(server)[SearchEngine] in backend
-    service bm25(server)[BM25Scorer] in backend
-    service prox(server)[ProximityScorer] in backend
+    service qa(server)[QAService<br/>Lazy Singleton] in backend
+    service ragwf(server)[RAGWorkflow] in backend
+    service ragrepo(server)[RAGRepository<br/>+ Article Promotion] in backend
+    service ret(server)[RetrievalWorkflow] in backend
+    service search(server)[SearchEngine<br/>BM25 + Proximity + Title] in backend
+    service rerank(server)[Reranker<br/>RRF + MMR + Boost] in backend
+    service persist(server)[_persist_message<br/>→ MongoDB] in backend
 
     group data(cloud)[Data Layer]
     service mongo(database)[MongoDB 8<br/>ECIRAS] in data
     service indexes(disk)[File Indexes<br/>tf/pos/doc_stats] in data
     service flat(disk)[Flattened<br/>Constitution JSON] in data
+    service syn(disk)[Synonyms<br/>44 groups] in data
 
     group llm(cloud)[LLM Layer]
-    service ollama(server)[Ollama<br/>gemma3:1b] in llm
+    service ollama(server)[Ollama<br/>qwen2.5:7b] in llm
 
     browser:R -- L:flask
     vite:R -- L:flask
     flask:L -- R:qa
-    flask:T -- B:ollama
-    qa:B -- T:rag
-    rag:B -- T:search
-    search:L -- R:bm25
-    search:L -- R:prox
-    rag:R -- L:ollama
+    flask:T -- B:persist
+    qa:B -- T:ragwf
+    ragwf:B -- T:ragrepo
+    ragrepo:B -- T:ret
+    ret:L -- R:search
+    ret:R -- L:rerank
+    ragrepo:R -- L:ollama
     search:T -- B:indexes
-    flask:B -- T:mongo
+    search:B -- T:syn
+    persist:B -- T:mongo
     flat:R -- L:indexes

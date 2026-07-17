@@ -3,23 +3,41 @@ flowchart TD
     ValidateJSON -->|No| BadRequest(["400: Invalid JSON"])
     ValidateJSON -->|Yes| CheckQuery{"query present<br/>and ≤ 500 chars?"}
     CheckQuery -->|No| BadQuery(["400: Query too long or missing"])
-    CheckQuery -->|Yes| GetEngine["QAService._get_workflow<br/>lazy singleton init"]
+    CheckQuery -->|Yes| CheckAuth{"JWT valid?"}
+    CheckAuth -->|No| Unauthorized(["401: Unauthorized"])
+    CheckAuth -->|Yes| GetEngine["QAService._get_workflow<br/>lazy singleton init"]
     GetEngine --> DecideLLM{"useLLM?"}
 
-    DecideLLM -->|No| Retrieve["SearchEngine.search<br/>top-k articles"]
-    Retrieve --> RetOnly(["200: query + articles"])
+    DecideLLM -->|No| Search["SearchEngine.search(recall_k=30)<br/>+ synonym expansion"]
+
+    Search --> Score["Score candidates:<br/>BM25(k1=1.5, b=1.0)<br/>+ title boost(×5.0)<br/>+ proximity(×1.0)"]
+    Score --> Sort["Sort by score DESC, top-30"]
+
+    Sort --> Rerank["Reranker.rerank(top_k=8):<br/>1. RRF Fusion (k=60)<br/>2. MMR Diversity (λ=0.5)<br/>3. Rule-based Boost"]
+
+    Rerank --> Promote["Article Promotion<br/>(clause→article merge, dedup)"]
+    Promote --> Persist["_persist_message()<br/>(save articles + query to MongoDB)"]
+    Persist --> RetOnly(["200: query + articles"])
 
     DecideLLM -->|Yes| CheckOllama{"RAGWorkflow<br/>check_ollama_connection()"}
     CheckOllama -->|Unreachable| OllamaDown(["503: Ollama unavailable"])
     CheckOllama -->|Reachable| CheckModel{"RAGWorkflow<br/>check_model_availability()"}
 
-    CheckModel -->|Missing| RetrieveW["RAGWorkflow.ask<br/>retrieve_only=True"]
-    RetrieveW --> ModelWarn(["200: articles + status<br/>model_available=false"])
+    CheckModel -->|Missing| SearchW["SearchEngine.search(recall_k=30)"]
+    SearchW --> ScoreW["Score → Sort → Rerank"]
+    ScoreW --> PromoteW["Article Promotion"]
+    PromoteW --> PersistW["_persist_message()"]
+    PersistW --> ModelWarn(["200: articles + status<br/>model_available=false"])
 
     CheckModel -->|Available| RagFull["RAGWorkflow.ask<br/>retrieve_only=False"]
-    RagFull --> Format["RAGFormatter.format_context"]
-    Format --> BuildPrompt["RAGFormatter.build_prompt"]
-    BuildPrompt --> LLMCall["Ollama.chat with 3x retry"]
+    RagFull --> SearchF["SearchEngine.search(recall_k=30)"]
+    SearchF --> ScoreF["Score → Sort → Rerank"]
+    ScoreF --> PromoteF["Article Promotion +<br/>build_truncated_text()"]
+    PromoteF --> Format["RAGFormatter.format_context"]
+    Format --> BuildPrompt["RAGFormatter.build_system_prompt()<br/>+ build_user_prompt()"]
+    BuildPrompt --> LLMCall["Ollama.chat with 3× retry<br/>4096 context window"]
     LLMCall --> LLMSuccess{"Success?"}
-    LLMSuccess -->|Yes| ReturnFull(["200: answer + articles<br/>+ ollama_status"])
-    LLMSuccess -->|No after 3 retries| ReturnError(["200: query + articles<br/>+ error text in response"])
+    LLMSuccess -->|Yes| PersistFull["_persist_message()"]
+    PersistFull --> ReturnFull(["200: answer + articles<br/>+ ollama_status"])
+    LLMSuccess -->|No after 3 retries| PersistErr["_persist_message()"]
+    PersistErr --> ReturnError(["200: query + articles<br/>+ error text in response"])

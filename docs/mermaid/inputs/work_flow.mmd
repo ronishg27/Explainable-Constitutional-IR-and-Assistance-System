@@ -16,43 +16,55 @@ end
 
 subgraph ONLINE["Online Q&A Pipeline"]
     direction TB
-    M["User Query"] --> N["ApiController.ask()<br/>(validate JSON, query length)"]
+    M["User Query"] --> N["ApiController.ask()<br/>(validate JSON, query length, JWT)"]
     N --> O{"use_llm?"}
-    O -->|false| P["SearchEngine.search()"]
-    O -->|true| Q["RAGWorkflow.ask()<br/>(retrieve_only=False)"]
+    O -->|false| P["QAService.answer_query()"]
 
+    O -->|true| Q["QAService.answer_query()"]
     Q --> R["check_ollama_connection()"]
     R -->|unreachable| S["503: Service Unavailable"]
     R -->|reachable| T["check_model_availability()"]
     T -->|model missing| U["SearchEngine.search()<br/>(retrieval-only fallback)"]
-    T -->|available| V["SearchEngine.search()"]
+    T -->|available| V["RAGWorkflow.ask(retrieve_only=False)"]
 
-    P --> W["Candidate Generation<br/>(union of doc_ids from tf_index)"]
+    P --> W["SearchEngine.search(recall_k=30)"]
     U --> W
     V --> W
 
-    W --> X["BM25Scorer.score()"]
-    W --> Y["ProximityScorer.score()"]
-    W --> Z["Title Boost<br/>(×5.0 per title match)"]
+    W --> WA["Synonym Expansion<br/>(44 groups from synonyms.json)"]
+    WA --> WB["Candidate Generation<br/>(union of doc_ids from tf_index)"]
+
+    WB --> X["BM25Scorer.score(k1=1.5, b=1.0)"]
+    WB --> Y["ProximityScorer.score()<br/>(ordered pairs, max_window=30)"]
+    WB --> Z["Title Boost<br/>(×5.0 per title match)"]
 
     X --> AA["Final Score =<br/>BM25 + title_boost + proximity_weight × prox_score"]
     Y --> AA
     Z --> AA
 
     AA --> AB["Sort by score DESC"]
-    AB --> AC["Top-K Results<br/>(default k=5)"]
+    AB --> AC["Top-30 Candidates"]
 
-    AC --> AD{"RAG mode?"}
-    AD -->|No| AE["Return articles"]
-    AD -->|Yes| AF["RAGFormatter.format_context()"]
-    AF --> AG["RAGFormatter.build_prompt()<br/>(strict grounding instructions)"]
-    AG --> AH["Ollama.chat()<br/>(with 3x retry / 0.5s delay)"]
-    AH --> AI{"Success?"}
-    AI -->|Yes| AJ["Return answer + articles<br/>+ ollama_status"]
-    AI -->|No| AK["Return error text + articles"]
+    AC --> AD["Reranker.rerank(top_k=8)"]
+    AD --> AD1["Stage 2a: RRF Fusion (k=60)<br/>BM25 + Proximity + Title ranks"]
+    AD1 --> AD2["Stage 2b: MMR Diversity (λ=0.5)<br/>Cosine similarity on BM25 TF vectors"]
+    AD2 --> AD3["Stage 2c: Rule-based Boost<br/>(doc.boost × part_rules × level_rules)"]
+    AD3 --> AE["Top-8 Results"]
+
+    AE --> AF{"RAG mode with LLM?"}
+    AF -->|No| AG["Article Promotion<br/>(clause→article merge, dedup)"]
+    AG --> AH["Return articles + persist to MongoDB"]
+
+    AF -->|Yes| AI["Article Promotion<br/>(clause→article merge, dedup)"]
+    AI --> AJ["build_truncated_text()<br/>(matched clauses only)"]
+    AJ --> AK["RAGFormatter.format_context()"]
+    AK --> AL["RAGFormatter.build_prompt()<br/>(strict grounding instructions)"]
+    AL --> AM["Ollama.chat()<br/>(3× retry / 0.5s delay / 4096 ctx)"]
+    AM --> AN{"Success?"}
+    AN -->|Yes| AO["Return answer + articles + citations<br/>+ persist to MongoDB"]
+    AN -->|No| AP["Return error text + articles<br/>+ persist to MongoDB"]
 end
 
-H -.-> W
+H -.-> WB
 I -.-> Y
 J -.-> X
-L -.-> D
