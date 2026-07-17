@@ -6,10 +6,13 @@ Base URL: `http://localhost:5000`
 
 ## Authentication
 
-All endpoints except `register`, `login`, `/api/v1`, and `/api/v1/health` require a **JWT token** sent via:
+All endpoints except `register`, `login`, `/api/v1`, and `/api/v1/health` require a **JWT token**.
 
-- **Header:** `Authorization: Bearer <token>`
-- **Cookie:** `token=<token>` (set automatically on login with `httpOnly`)
+**How to send the token:**
+- **Bearer header (primary, used by frontend):** `Authorization: Bearer <token>`
+- **Cookie (set by backend on login):** `token=<token>` (httpOnly, SameSite=Strict, Secure in production)
+
+**Token storage (frontend):** The React app stores the JWT in `localStorage` and sends it via the `Authorization: Bearer` header. The backend sets both a cookie (for fallback) and returns the token in the login response body.
 
 ---
 
@@ -28,6 +31,13 @@ Create a new user account.
 }
 ```
 
+| Field | Type | Required | Description |
+|-------|------|:--------:|-------------|
+| `fullname` | string | yes | 3–50 characters |
+| `email` | string | yes | Must be valid email format |
+| `password` | string | yes | Minimum 6 characters |
+| `role` | string | no | `"user"` or `"admin"` (default `"user"`) |
+
 **Response `201` — Created:**
 ```json
 {
@@ -43,13 +53,13 @@ Create a new user account.
 ```
 
 **Errors:**
-- `400` — Missing fields, short password, or duplicate email
+- `400` — Missing fields, invalid email, short password, duplicate email, invalid role
 
 ---
 
 ### `POST /api/v1/auth/login`
 
-Authenticate and receive a JWT (set as httpOnly cookie).
+Authenticate and receive a JWT (returned in body + set as httpOnly cookie).
 
 **Request:**
 ```json
@@ -63,11 +73,17 @@ Authenticate and receive a JWT (set as httpOnly cookie).
 ```json
 {
   "message": "Login successful",
-  "user": { "id": "...", "fullname": "John Doe", "email": "john@example.com" },
-  "authenticated": true
+  "user": {
+    "id": "66a1b2c3d4e5f67890123456",
+    "fullname": "John Doe",
+    "email": "john@example.com"
+  },
+  "authenticated": true,
+  "token": "<jwt-string>"
 }
 ```
-Sets `Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Strict`.
+
+Also sets `Set-Cookie: token=<jwt>; HttpOnly; SameSite=Strict; Max-Age=43200` (12h). `Secure` flag is only set in production.
 
 **Errors:**
 - `401` — Invalid credentials or user not found
@@ -76,7 +92,7 @@ Sets `Set-Cookie: token=<jwt>; HttpOnly; Secure; SameSite=Strict`.
 
 ### `POST /api/v1/auth/logout`
 
-Clears the token cookie. Requires authentication.
+Invalidates the current JWT (increments `token_version` on the user) and clears the cookie. Requires authentication.
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -130,7 +146,10 @@ List all available endpoints.
     "/api/v1/ask-stream": "Submit a query and stream the response.",
     "/api/v1/auth/register": "Register a new user.",
     "/api/v1/auth/login": "Login with email and password.",
-    "/api/v1/auth/logout": "Logout the current user."
+    "/api/v1/auth/logout": "Logout the current user.",
+    "/api/v1/auth/me": "Get the current logged in user.",
+    "/api/v1/messages": "List or delete chat history.",
+    "/api/v1/messages/<id>": "Get or delete a specific message."
   },
   "version": "1.0.0"
 }
@@ -165,8 +184,8 @@ Submit a question and get a JSON response with retrieved articles and (optionall
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `query` | `string` | — | Question text (max 500 chars) |
-| `use_llm` | `bool` | `false` | If `true`, also queries the LLM for a summary answer |
+| `query` | string | — | Question text (max 500 chars) |
+| `use_llm` | bool | `false` | If `true`, also queries the LLM for a summary answer |
 
 **Response `200` — Retrieval-only (`use_llm: false`):**
 ```json
@@ -175,9 +194,21 @@ Submit a question and get a JSON response with retrieved articles and (optionall
   "articles": [
     {
       "doc_id": "2",
+      "part_no": "3",
+      "article_no": 12,
       "title": "Right to privacy",
-      "citation": "Article 12",
-      "score": 8.5
+      "text": "...",
+      "citation": "Part 3, Article 12",
+      "level": "article",
+      "clause_no": null,
+      "subclause_id": null,
+      "score": 8.5,
+      "bm25_score": 6.2,
+      "proximity_score": 2.3,
+      "title_match_count": 1,
+      "matched_terms": ["right", "privacy"],
+      "exact_matched_terms": ["right", "privacy"],
+      "boost_multiplier": 0.98
     }
   ]
 }
@@ -187,18 +218,62 @@ Submit a question and get a JSON response with retrieved articles and (optionall
 ```json
 {
   "query": "What is the right to privacy?",
-  "response": "The right to privacy is...",
-  "articles": [...],
+  "response": "The right to privacy is guaranteed under Article 12...",
+  "articles": [
+    {
+      "doc_id": "2",
+      "part_no": "3",
+      "article_no": 12,
+      "title": "Right to privacy",
+      "text": "...",
+      "citation": "Part 3, Article 12",
+      "level": "article",
+      "clause_no": null,
+      "subclause_id": null,
+      "score": 8.5,
+      "bm25_score": 6.2,
+      "proximity_score": 2.3,
+      "title_match_count": 1,
+      "matched_terms": ["right", "privacy"],
+      "exact_matched_terms": ["right", "privacy"],
+      "boost_multiplier": 0.98
+    }
+  ],
   "ollama_status": {
     "connected": true,
-    "model": "gemma3:1b",
+    "model": "qwen2.5:7b",
     "model_available": true
   }
 }
 ```
 
+**Response `200` — Model missing (retrieval-only fallback):**
+```json
+{
+  "query": "What is the right to privacy?",
+  "articles": [...],
+  "ollama_status": {
+    "connected": true,
+    "model": "qwen2.5:7b",
+    "model_available": false,
+    "message": "Model 'qwen2.5:7b' is unavailable.",
+    "available_models": ["llama3.2:3b", "nomic-embed-text"]
+  }
+}
+```
+
+**Behavior Matrix:**
+
+| `use_llm` | Ollama State | HTTP Status | Response Includes |
+|:---------:|--------------|:-----------:|-------------------|
+| `false` | — | 200 | `query` + `articles` |
+| `true` | Connected, model loaded | 200 | `query` + `articles` + `response` + `ollama_status` (all available) |
+| `true` | Connected, model missing | 200 | `query` + `articles` + `ollama_status` (model_available=false) |
+| `true` | Unreachable | 503 | `error`: "Ollama service is unavailable." |
+| `true` | LLM call fails after 3 retries | 200 | `query` + `articles` + `response` (error text) + `error` field |
+
 **Errors:**
-- `400` — Missing/empty query, query too long, invalid JSON
+- `400` — Missing/empty query, query too long, invalid JSON, wrong content type
 - `401` — Missing or invalid token
 - `503` — Ollama service unavailable (when `use_llm: true`)
 
@@ -208,20 +283,26 @@ Submit a question and get a JSON response with retrieved articles and (optionall
 
 Submit a question and receive a **Server-Sent Events (SSE)** stream. Each event is a JSON line prefixed with `data: ` and separated by `\n\n`.
 
-**Headers:** `Authorization: Bearer <token>`  
+**Headers:** `Authorization: Bearer <token>`
 **Content-Type:** `application/json`
 
 **Request:**
 ```json
 {
-  "query": "What is the right to privacy?"
+  "query": "What is the right to privacy?",
+  "use_llm": true
 }
 ```
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `query` | string | — | Question text (max 500 chars) |
+| `use_llm` | bool | `true` | If `false`, only retrieves articles (no LLM) |
 
 **Response `200` — SSE stream (`text/event-stream`):**
 
 ```
-data: {"type": "articles", "articles": [{"doc_id": "2", "title": "Right to privacy", "citation": "Article 12", "score": 8.5}]}
+data: {"type": "articles", "articles": [{"doc_id": "2", "title": "Right to privacy", ...}]}
 
 data: {"type": "token", "content": "The right to privacy is "}
 
@@ -237,14 +318,14 @@ data: {"type": "done"}
 | `articles` | `articles: [...]` | Immediately — retrieved documents |
 | `token` | `content: string` | Each partial LLM response chunk |
 | `done` | *(none)* | Stream complete |
-| `error` | `content: string` | Ollama unavailable or error during generation |
+| `error` | `content: string` | Ollama unavailable or generation error (no more events follow) |
 | `status` | `connected`, `model`, `model_available`, `message`, `available_models` | Model not found on the server |
 
-**Errors:**
-- `400` — Missing/empty query, query too long, invalid JSON
-- `401` — Missing or invalid token
-
-> **Note:** The `answer` in the database is accumulated from all `token` events. The `articles` array in the DB records which articles were referenced.
+**Notes:**
+- The `articles` event is always the first event (unless `use_llm=false`, in which case it's followed immediately by `done`)
+- The frontend accumulates all `token` events into the full answer
+- The persisted answer in MongoDB is the concatenation of all token events
+- The `use_llm` field defaults to `true` on this endpoint (vs `false` on `/ask`)
 
 ---
 
@@ -258,8 +339,8 @@ Get paginated chat history for the authenticated user. Most recent first.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
-| `limit` | `int` | `20` | Max items per page |
-| `skip` | `int` | `0` | Items to skip (for pagination) |
+| `limit` | int | `20` | Max items per page |
+| `skip` | int | `0` | Items to skip (for pagination) |
 
 **Response `200`:**
 ```json
@@ -279,9 +360,15 @@ Get paginated chat history for the authenticated user. Most recent first.
         {
           "id": "6a53c25392e8c5db45cdce26",
           "title": "Right to privacy",
-          "citation": "Article 12",
+          "citation": "Part 3, Article 12",
           "doc_id": "2",
-          "relevance_score": 8.5
+          "relevance_score": 8.5,
+          "bm25_score": 6.2,
+          "proximity_score": 2.3,
+          "article_no": 12,
+          "clause_no": null,
+          "level": "article",
+          "matched_terms": ["right", "privacy"]
         }
       ],
       "created_at": "2026-07-12T16:37:14.087000",
@@ -297,15 +384,11 @@ Get paginated chat history for the authenticated user. Most recent first.
 }
 ```
 
-**Errors:**
-- `401` — Missing or invalid token
-- `404` — User not found
-
 ---
 
 ### `GET /api/v1/messages/<message_id>`
 
-Get a single message with its full article objects. Ownership is enforced — the message must belong to the requesting user.
+Get a single message with its full article objects. Ownership is enforced.
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -315,12 +398,16 @@ Get a single message with its full article objects. Ownership is enforced — th
   "id": "6a53c2ba92e8c5db45cdce2e",
   "query": "Right to privacy?",
   "answer": "...",
-  "user": { "id": "69e8da3f1d5051a808e768a3", "fullname": "John Doe", "email": "john@example.com" },
+  "user": {
+    "id": "69e8da3f1d5051a808e768a3",
+    "fullname": "John Doe",
+    "email": "john@example.com"
+  },
   "articles": [
     {
       "id": "6a53c25392e8c5db45cdce26",
       "title": "Right to privacy",
-      "citation": "Article 12",
+      "citation": "Part 3, Article 12",
       "doc_id": "2",
       "relevance_score": 8.5
     }
@@ -339,7 +426,7 @@ Get a single message with its full article objects. Ownership is enforced — th
 
 ### `DELETE /api/v1/messages/<message_id>`
 
-Delete a single chat message. Only the owner can delete their own messages. Irreversible.
+Delete a single chat message. Only the owner can delete their own messages.
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -351,16 +438,11 @@ Delete a single chat message. Only the owner can delete their own messages. Irre
 }
 ```
 
-**Errors:**
-- `401` — Missing or invalid token
-- `403` — Forbidden (message belongs to another user)
-- `404` — Message not found
-
 ---
 
 ### `DELETE /api/v1/messages`
 
-Delete **all** chat messages for the authenticated user. Irreversible.
+Delete **all** chat messages for the authenticated user.
 
 **Headers:** `Authorization: Bearer <token>`
 
@@ -371,10 +453,6 @@ Delete **all** chat messages for the authenticated user. Irreversible.
   "message": "5 messages deleted successfully"
 }
 ```
-
-**Errors:**
-- `401` — Missing or invalid token
-- `404` — User not found
 
 ---
 
@@ -401,8 +479,8 @@ All error responses follow this shape:
 
 ## Database Collections
 
-| Collection | Document |
-|------------|----------|
-| `users` | User accounts (name, email, password hash, role) |
-| `messages` | Q&A exchanges (query, answer, user ref, article refs) |
-| `referenced_articles` | Constitution articles cited in answers (deduped by `doc_id`) |
+| Collection | Document | Purpose |
+|------------|----------|---------|
+| `users` | User | Accounts (name, email, bcrypt hash, role, token_version) |
+| `messages` | Message | Q&A history (query, answer, user ref, article refs) |
+| `referenced_articles` | ReferencedArticle | Constitution articles cited in answers (deduplicated by `doc_id`, with full scoring metadata) |

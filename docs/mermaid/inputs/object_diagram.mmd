@@ -6,24 +6,25 @@ classDiagram
         String fullname = "John Doe"
         String email = "john@example.com"
         String role = "user"
+        Int token_version = 3
     }
 
     class msg_q1 {
         String id = "6612b..."
         String query = "Right to education"
-        String answer = "Article 31..."
+        String answer = "Under Article 31..."
     }
 
     class msg_q2 {
         String id = "6612c..."
         String query = "What is the right to privacy?"
-        String answer = "Article 28..."
+        String answer = "Article 28 guarantees..."
     }
 
     class msg_q3 {
         String id = "6612d..."
         String query = "Right to clean environment"
-        String answer = "Article 30..."
+        String answer = "Article 30 provides..."
     }
 
     class art_privacy {
@@ -31,6 +32,11 @@ classDiagram
         String citation = "Part 3, Article 28"
         String doc_id = "28"
         Float relevance_score = 8.47
+        Float bm25_score = 6.12
+        Float proximity_score = 2.35
+        Int title_match_count = 1
+        String level = "article"
+        Int article_no = 28
     }
 
     class art_education {
@@ -38,6 +44,11 @@ classDiagram
         String citation = "Part 3, Article 31"
         String doc_id = "31"
         Float relevance_score = 9.12
+        Float bm25_score = 7.04
+        Float proximity_score = 2.08
+        Int title_match_count = 1
+        String level = "article"
+        Int article_no = 31
     }
 
     class art_info {
@@ -45,6 +56,11 @@ classDiagram
         String citation = "Part 3, Article 27"
         String doc_id = "27"
         Float relevance_score = 7.85
+        Float bm25_score = 5.91
+        Float proximity_score = 1.94
+        Int title_match_count = 0
+        String level = "article"
+        Int article_no = 27
     }
 
     class art_environment {
@@ -52,6 +68,11 @@ classDiagram
         String citation = "Part 3, Article 30"
         String doc_id = "30"
         Float relevance_score = 8.91
+        Float bm25_score = 6.83
+        Float proximity_score = 2.08
+        Int title_match_count = 1
+        String level = "article"
+        Int article_no = 30
     }
 
     user_john --> msg_q1 : user ref

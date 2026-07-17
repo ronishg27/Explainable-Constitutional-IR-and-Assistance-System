@@ -1,6 +1,6 @@
 graph TD
     subgraph Client
-        ReactApp["React 19 SPA<br/>(SearchBar, MainSearchBar,<br/>ResultDisplay, Suggestion, Navbar)"]
+        ReactApp["React 19 SPA<br/>(Navbar, MainSearchBar,<br/>ResultDisplay, ArticleCard,<br/>Suggestion, ConfidenceBadge,<br/>History, About, HowItWorks)"]
     end
 
     subgraph "Backend API (Flask)"
@@ -12,15 +12,19 @@ graph TD
     subgraph "Search & Retrieval"
         TextProc["TextProcessor<br/>(normalize, lemmatize, stopwords)"]
         IndexBuilder["IndexBuilder<br/>(tf, positional, doc_stats indexes)"]
-        BM25Scorer["BM25Scorer<br/>(k1=1.5, b=0.75)"]
+        BM25Scorer["BM25Scorer<br/>(k1=1.5, b=1.0)"]
         ProxScorer["ProximityScorer<br/>(ordered term pairs, window=30)"]
+        QueryExp["QueryExpander<br/>(44 synonym groups)"]
         SearchEngine["SearchEngine<br/>(candidates → BM25 + proximity + title_boost)"]
+        Reranker["Reranker<br/>(RRF Fusion + MMR Diversity + Rule Boost)"]
+        RetrievalWF["RetrievalWorkflow<br/>(SearchEngine.search → Reranker.rerank)"]
     end
 
     subgraph "LLM / RAG"
+        RAGRepo["RAGRepository<br/>(retrieval + article promotion<br/>+ Ollama client + context truncation)"]
         RAGFormatter["RAGFormatter<br/>(context + prompt builder)"]
-        RAGWorkflow["RAGWorkflow<br/>(retrieve → format → LLM call)"]
-        OllamaClient["Ollama Client<br/>(httpx-based)"]
+        RAGWorkflow["RAGWorkflow<br/>(repo → formatter → answer)"]
+        OllamaClient["Ollama Client<br/>(3× retry, 4096 ctx)"]
     end
 
     subgraph "Offline Pipeline"
@@ -36,21 +40,25 @@ graph TD
     end
 
     subgraph External
-        OllamaServer["Ollama LLM Server<br/>(gemma3:1b)"]
+        OllamaServer["Ollama LLM Server<br/>(qwen2.5:7b)"]
     end
 
-    ReactApp -->|POST /api/v1/ask| Routes
+    ReactApp -->|POST /api/v/ask<br/>Bearer JWT| Routes
     Routes --> Controllers
     Controllers --> Services
     Services --> MongoDB
     Services --> RAGWorkflow
-    RAGWorkflow --> SearchEngine
+    RAGWorkflow --> RAGRepo
     RAGWorkflow --> RAGFormatter
-    RAGWorkflow --> OllamaClient
-    OllamaClient -->|REST| OllamaServer
+    RAGRepo --> RetrievalWF
+    RAGRepo --> OllamaClient
+    OllamaClient -->|REST /chat| OllamaServer
+    RetrievalWF --> SearchEngine
+    RetrievalWF --> Reranker
     SearchEngine --> BM25Scorer
     SearchEngine --> ProxScorer
     SearchEngine --> TextProc
+    SearchEngine --> QueryExp
     SearchEngine --> IndexFiles
     Flatten --> FlatDocs
     Ingestion --> IndexBuilder

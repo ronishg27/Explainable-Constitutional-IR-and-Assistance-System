@@ -5,22 +5,33 @@ stateDiagram-v2
         [*] --> Guest
         Guest --> LoggedIn : login() / JWT issued
         Guest --> Guest : login failed / invalid credentials
-        LoggedIn --> Guest : logout() / token cleared
-        LoggedIn --> Guest : 401 / token expired
+        LoggedIn --> Guest : logout() / token_version incremented
+        LoggedIn --> Guest : 401 / token expired or invalidated
     }
 
-    Idle --> Processing : POST /api/v1/ask
-    Processing --> Retrieving : useLLM=false
-    Processing --> CheckingLLM : useLLM=true
+    Idle --> Processing : POST /api/v1/ask (JWT auth)
+
+    state Processing {
+        [*] --> Validating
+        Validating --> Retrieving : useLLM=false
+        Validating --> CheckingLLM : useLLM=true
+    }
 
     state Retrieving {
         [*] --> Searching
         Searching --> ScoringBM25
         Searching --> ScoringProximity
-        ScoringBM25 --> Combining
-        ScoringProximity --> Combining
-        Combining --> Ranking
-        Ranking --> [*]
+        ScoringBM25 --> TitleBoost
+        ScoringProximity --> TitleBoost
+        TitleBoost --> Combining
+        Combining --> ([*]) : Top-30 candidates
+    }
+
+    state Reranking {
+        [*] --> RRFFusion
+        RRFFusion --> MMRDiversity
+        MMRDiversity --> RuleBoost
+        RuleBoost --> ([*]) : Top-8 results
     }
 
     state CheckingLLM {
@@ -30,6 +41,13 @@ stateDiagram-v2
         Reachable --> ModelCheck
         ModelCheck --> ModelAvailable
         ModelCheck --> ModelMissing
+    }
+
+    state ArticlePromotion {
+        [*] --> MergeClauses
+        MergeClauses --> Deduplicate
+        Deduplicate --> TruncateContext
+        TruncateContext --> ([*]) : Article-level results
     }
 
     CheckingLLM --> Retrieving : ModelMissing → retrieval-only
@@ -45,7 +63,10 @@ stateDiagram-v2
         LLMCall --> Success
     }
 
-    Retrieving --> Idle : return articles
-    Generating --> Idle : return answer + articles
+    Retrieving --> Reranking
+    Reranking --> ArticlePromotion
+    ArticlePromotion --> Idle : return articles + persist to MongoDB
+    ArticlePromotion --> Generating : RAG mode
+    Generating --> Idle : return answer + articles + persist
     CheckingLLM --> Idle : 503 Ollama unreachable
     Idle --> [*]

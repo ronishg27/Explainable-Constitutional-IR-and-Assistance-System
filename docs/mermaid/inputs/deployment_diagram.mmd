@@ -13,19 +13,21 @@ graph TD
     end
 
     subgraph LLMNode["LLM Server (localhost)"]
-        Ollama["Ollama<br/>- gemma3:1b model<br/>- Port 11434<br/>- REST API"]
+        Ollama["Ollama<br/>- qwen2.5:7b model (default)<br/>- Port 11434<br/>- REST API"]
     end
 
     subgraph StorageNode["File System (backend/data/output)"]
         Indexes["Index Files<br/>(tf_index.json, pos_index.json,<br/>doc_stats.json)"]
         FlattenedDoc["Flattened Constitution<br/>(flattened_nepal_constitution.json)"]
         LemmaDict["Lemma Dictionary<br/>(lemma_dict_v3.json)"]
+        Synonyms["Synonyms<br/>(synonyms.json)"]
     end
 
     Browser -->|HTTPS| FlaskApp
-    DevServer -->|API calls| FlaskApp
+    DevServer -->|API calls<br/>Bearer JWT| FlaskApp
     FlaskApp -->|mongoengine ODM| MongoD
     FlaskApp -->|Read-only| Indexes
-    FlaskApp -->|REST / chat| Ollama
+    FlaskApp -->|REST /chat| Ollama
     FlaskApp -->|Read| FlattenedDoc
     FlaskApp -->|Read| LemmaDict
+    FlaskApp -->|Read| Synonyms
