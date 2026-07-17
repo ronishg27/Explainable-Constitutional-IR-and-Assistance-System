@@ -13,9 +13,7 @@ Flask API and retrieval pipeline for answering questions about the Constitution 
 
 ## Common Commands
 
-- Start the API with a **full data rebuild** (flatten + index + lemma dictionary):  
-  - `python app.py --rebuild-data`
-- Run full offline ingestion manually:  
+- Run full offline ingestion (flatten + index + lemma dictionary):  
   - `python -m preprocessing_scripts.run_ingestion`
 - Run the RAG demo script (requires Ollama):  
   - `python -m src.llm.rag_workflow`
@@ -25,7 +23,7 @@ Flask API and retrieval pipeline for answering questions about the Constitution 
 ## Project Layout
 
 ```
-app.py                          # Flask entry point, server startup, --rebuild-data flag
+app.py                          # Flask entry point, server startup
 config/                         # MongoDB connection (used for user/message persistence)
 controllers/                    # Request handling, validation, auth
 models/                         # MongoDB document models (User, Message, ReferencedArticle)
@@ -59,7 +57,7 @@ data/
 
 1. **Request** – `POST /api/v1/ask` with `{"query": "...", "use_llm": false/true}` (requires JWT auth)
 2. **Validation** – `controllers/api_controller.py` checks input and auth token
-3. **Service orchestration** – `QAService` (lazy‑initialises `RAGWorkflow` + `RAGRepository` + `RetrievalWorkflow`)
+3. **Service orchestration** – `QAService` (orchestrates `RAGWorkflow` + `RAGRepository` + `RetrievalWorkflow`)
 4. **Retrieval** – `RetrievalWorkflow.retrieve()`:
    - **Phase 1 (High‑recall search)** – `SearchEngine.search(query, top_k=30)`:
      - **Candidate generation** – union of all documents containing at least one BM25 query term (lemmatised, stopwords removed)
@@ -92,9 +90,9 @@ data/
 
 ## Notes
 
-- The server **warms up the spaCy pipeline** at startup (`preload_spacy()`) so the first request does not incur a model loading delay.
-- Use `app.py --rebuild-data` to regenerate all artefacts **before** the server starts – useful after changing the source data or modifying the indexing logic.
-- The full retrieval pipeline is assembled lazily on first request: `EngineFactory` → `Reranker` → `RetrievalWorkflow` → `RAGRepository` → `RAGWorkflow`.
+- The server **warms up the spaCy pipeline** at startup so the first request does not incur a model loading delay.
+- Use `python -m preprocessing_scripts.run_ingestion` to regenerate all artefacts before starting the server.
+- The full retrieval pipeline is assembled eagerly at startup: `EngineFactory` → `Reranker` → `RetrievalWorkflow` → `RAGRepository` → `RAGWorkflow`.
 - The default pipeline uses `recall_k=30` (from SearchEngine) + rerank to `top_k=8` (via Reranker).
 - **Proximity scoring is only applied to BM25 candidates** (reranking, not filtering). The combined score feeds into RRF fusion.
 - All Q&A endpoints (`/ask`, `/ask-stream`, `/messages`) require JWT authentication (`@token_required`).

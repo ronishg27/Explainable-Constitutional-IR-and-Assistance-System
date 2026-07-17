@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import Optional
 
 from .rag_repository import RAGRepository
@@ -131,20 +130,6 @@ class RAGWorkflow:
         except Exception as exc:
             logger.exception("LLM streaming call failed")
             yield {"type": "error", "content": str(exc)}
-
-    # ------------------------------------------------------------------
-    # Convenience proxies for QAService
-    # ------------------------------------------------------------------
-    @property
-    def model(self) -> str:
-        return self.repo.model
-
-    def check_ollama_connection(self) -> tuple[bool, str]:
-        return self.repo.check_ollama_connection()
-
-    def check_model_availability(self, model_name: Optional[str] = None) -> tuple[bool, str, list[str]]:
-        return self.repo.check_model_availability(model_name)
-
 
 # Standalone demo
 def main():

@@ -6,6 +6,7 @@ import os
 import logging
 
 from mongoengine.connection import get_db, ConnectionFailure
+from models.user_model import User
 
 logger = logging.getLogger(__name__)
 
@@ -17,12 +18,8 @@ def _get_user(user_id: str) -> Optional[object]:
     except ConnectionFailure:
         logger.warning("Database not available; skipping token_version check.")
         return None
-    except Exception:
-        logger.warning("Could not connect to database; skipping token_version check.")
-        return None
 
     try:
-        from models.user_model import User
         return User.objects(id=user_id).first()
     except Exception:
         return None

@@ -26,15 +26,14 @@ def create_app():
     app.register_blueprint(api_bp, url_prefix='/api/v1')
     app.register_blueprint(auth_bp, url_prefix='/api/v1/auth')
     CORS(app)
-    app_bootstrap.connect_database()
+    db = Database()
+    db.connect(db_name="ECIRAS", host="mongodb://localhost:27017")
     return app
 ```
 
 Key features:
 - **Lazy initialization**: spaCy model and search indexes are loaded on the first API request, not at startup
-- **Correlation IDs**: a 12-character hex ID is injected into every log record via `g.correlation_id`
 - **Rotating file handler**: logs are written to `logs/backend.log` (10 MB per file, 5 backups)
-- **Rebuild flag**: `--rebuild-data` triggers full index regeneration before starting the server
 
 ### 5.2.2 Text Processing Pipeline
 
@@ -563,15 +562,6 @@ class IndexBuilder:
         return doc_lengths, avgdl
 ```
 
-### 5.4.3 Lemma Dictionary
-
-File: `backend/preprocessing_scripts/generate_safe_lemma_dict.py`
-
-Generates a rule-based lemma dictionary without spaCy dependency:
-- Handles suffixes: `-ies` → `-y`, `-es` → `-e`, `-s` → ``, `-ing` → ``, `-ed` → ``
-- Handles irregular forms
-- Handles double-consonant undoubling
-
 ## 5.5 System Constants Summary
 
 | Constant | Value | File |
@@ -589,7 +579,7 @@ Generates a rule-based lemma dictionary without spaCy dependency:
 | LLM retry attempts | 3 | `rag_repository.py:13` |
 | LLM retry delay | 0.5s | `rag_repository.py:14` |
 | LLM context window | 4096 | `rag_repository.py:285` |
-| Default LLM model | qwen2.5:7b | `rag_repository.py:12` |
+| Default LLM model | qwen3:8b | `rag_repository.py:12` |
 | Query max length | 500 chars | `api_controller.py:100` |
 | JWT expiry | 12h (43200s) | `auth_controller.py:70` |
 | MongoDB pool | min=2, max=10 | `db_connect.py:21-22` |
