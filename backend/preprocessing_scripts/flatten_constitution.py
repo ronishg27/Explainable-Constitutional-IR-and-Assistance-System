@@ -38,7 +38,7 @@ def _format_explanation(explanation_text):
     return f"Explanation: {text}"
 
 
-def _flatten_sub_clauses(sub_clauses, parent_id, part_no, article_no, title, citation_prefix, level_num):
+def _flatten_sub_clauses(sub_clauses, parent_id, part_no, article_no, title, citation_prefix, level_num, create_docs=True):
     """Recursively flatten sub_clauses. Returns (inline_segments, documents)."""
     segments = []
     docs = []
@@ -68,28 +68,30 @@ def _flatten_sub_clauses(sub_clauses, parent_id, part_no, article_no, title, cit
         if joined:
             segments.append(f"{prefix} {joined}")
 
-        doc_id = f"{parent_id}.{sub_id}"
-        body = "\n".join(sub_segments)
-        if body:
-            docs.append(
-                _make_document(
-                    doc_id=doc_id,
-                    part_no=part_no,
-                    article_no=article_no,
-                    clause_no=None,
-                    subclause_id=str(sub_id),
-                    level="sub-clause",
-                    title=title,
-                    text=body,
-                    citation=f"{citation_prefix}({sub_id})",
+        if create_docs:
+            doc_id = f"{parent_id}.{sub_id}"
+            body = "\n".join(sub_segments)
+            if body:
+                docs.append(
+                    _make_document(
+                        doc_id=doc_id,
+                        part_no=part_no,
+                        article_no=article_no,
+                        clause_no=None,
+                        subclause_id=str(sub_id),
+                        level="sub-clause",
+                        title=title,
+                        text=body,
+                        citation=f"{citation_prefix}({sub_id})",
+                    )
                 )
-            )
 
         nested = sub.get("sub_clauses", [])
         if nested:
             nested_segments, nested_docs = _flatten_sub_clauses(
-                nested, doc_id, part_no, article_no, title,
-                f"{citation_prefix}({sub_id})", level_num + 1
+                nested, parent_id, part_no, article_no, title,
+                f"{citation_prefix}({sub_id})", level_num + 1,
+                create_docs=create_docs
             )
             segments.extend(nested_segments)
             docs.extend(nested_docs)
@@ -162,14 +164,14 @@ def _flatten_clauses(clauses, article_no, part_no, title):
 
         clause_sub_clauses = clause.get("sub_clauses", [])
         if clause_sub_clauses:
-            sub_segments, sub_docs = _flatten_sub_clauses(
+            sub_segments, _ = _flatten_sub_clauses(
                 clause_sub_clauses,
                 f"{article_no}.{clause_number}",
                 part_no, article_no, title,
                 f"Part {part_no}, Article {article_no}({clause_number})",
-                level_num=1
+                level_num=1,
+                create_docs=False
             )
-            docs.extend(sub_docs)
             clause_segments.extend(sub_segments)
 
         clause_body = "\n".join(segment for segment in clause_segments if segment)
@@ -218,11 +220,11 @@ def flatten_constitution(data):
             clauses = article.get("clauses", [])
 
             if sub_clauses:
-                sub_segments, sub_docs = _flatten_sub_clauses(
+                sub_segments, _ = _flatten_sub_clauses(
                     sub_clauses, str(article_no), part_no, article_no, title,
-                    f"Part {part_no}, Article {article_no}", level_num=1
+                    f"Part {part_no}, Article {article_no}", level_num=1,
+                    create_docs=False
                 )
-                documents.extend(sub_docs)
                 article_segments.extend(sub_segments)
 
                 article_body = "\n".join(segment for segment in article_segments if segment)
@@ -365,6 +367,7 @@ def flatten_flat_constitution(data):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     root = Path(__file__).resolve().parents[1]
     input_path = root / "data" / "nepal_constitution_new.json"
     output_path = root / "data" / "output" / "flattened_nepal_constitution.json"

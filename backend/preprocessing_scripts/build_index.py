@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def main() -> None:
+    logging.basicConfig(level=logging.INFO)
     root = Path(__file__).resolve().parents[1]
     input_path = root / "data" / "output" / "flattened_nepal_constitution.json"
     output_dir = root / "data" / "output"

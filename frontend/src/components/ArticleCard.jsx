@@ -126,15 +126,6 @@ export default function ArticleCard({ article, maxScore }) {
               />
             </svg>
           </button>
-
-          {article.article_no && (
-            <span className="text-[10px] text-neutral-400">
-              Article {article.article_no}
-              {article.matched_clauses?.length > 0 && (
-                <span> &middot; clauses {article.matched_clauses.join(", ")}</span>
-              )}
-            </span>
-          )}
         </div>
 
         <div

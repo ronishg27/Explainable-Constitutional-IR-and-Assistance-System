@@ -106,9 +106,12 @@ class RAGRepository:
                 content = raw or _clean_body(text, data.get("title"))
                 citation = data["citation"]
             else:
-                texts = [d.text for d in data["clause_docs"]]
+                clause_only = [d for d in data["clause_docs"] if d.level == "clause"]
+                if not clause_only:
+                    clause_only = data["clause_docs"]
+                texts = [d.text for d in clause_only]
                 text = "\n---\n".join(texts)
-                sorted_docs = sorted(data["clause_docs"], key=lambda d: d.clause_no or 0)
+                sorted_docs = sorted(clause_only, key=lambda d: d.clause_no or 0)
                 numbered = []
                 for d in sorted_docs:
                     raw = (d.raw_text or "").strip()

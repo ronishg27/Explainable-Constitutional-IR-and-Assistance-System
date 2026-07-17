@@ -77,6 +77,7 @@ export default function MainSearchBar() {
         data={articles ? { query: submittedQuery, response, articles } : null}
         loading={loading}
         streamedResponse={response}
+        useLlm={useLlm}
       />
     </div>
   );

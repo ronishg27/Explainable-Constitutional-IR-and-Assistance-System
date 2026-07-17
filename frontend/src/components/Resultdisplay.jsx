@@ -36,13 +36,14 @@ function CitationLink({ href, children, ...props }) {
   );
 }
 
-const PhasedLoading = ({ hasArticles }) => {
+const PhasedLoading = ({ hasArticles, useLlm }) => {
   const phases = [
     { label: 'Searching the constitution...', show: !hasArticles },
-    { label: 'Generating answer...', show: hasArticles },
+    { label: 'Generating answer...', show: hasArticles && useLlm },
   ];
 
-  const active = phases.find((p) => p.show) || phases[0];
+  const active = phases.find((p) => p.show);
+  if (!active) return null;
 
   return (
     <div className="flex items-center gap-2.5 text-sm text-neutral-400">
@@ -52,7 +53,7 @@ const PhasedLoading = ({ hasArticles }) => {
   );
 };
 
-const ResultDisplay = ({ data, loading, streamedResponse }) => {
+const ResultDisplay = ({ data, loading, streamedResponse, useLlm }) => {
   const displayResponse = streamedResponse || data?.response || '';
 
   const articles = (data?.articles || []).sort(
@@ -105,7 +106,7 @@ const ResultDisplay = ({ data, loading, streamedResponse }) => {
 
           {loading && !displayResponse && (
             <div className="flex items-center gap-2 text-sm text-neutral-400">
-              <PhasedLoading hasArticles={articles.length > 0} />
+              <PhasedLoading hasArticles={articles.length > 0} useLlm={useLlm} />
             </div>
           )}
         </div>
