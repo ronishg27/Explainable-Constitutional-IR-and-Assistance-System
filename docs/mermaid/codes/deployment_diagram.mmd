@@ -1,0 +1,39 @@
+﻿%%{init: {'flowchart': {'htmlLabels': true, 'curve': 'basis'}, 'theme': 'base', 'themeVariables': {'primaryColor': '#f5f5f5', 'lineColor': '#333333'}}}%%
+flowchart LR
+    classDef client fill:#d4e6f1,stroke:#2c3e50,stroke-width:2px,color:#1a1a2e
+    classDef server fill:#fef9e7,stroke:#7d6608,stroke-width:2px,color:#1a1a2e
+    classDef database fill:#d5f5e3,stroke:#1e8449,stroke-width:2px,color:#1a1a2e
+    classDef llm fill:#fadbd8,stroke:#922b21,stroke-width:2px,color:#1a1a2e
+    classDef storage fill:#e8daef,stroke:#6c3483,stroke-width:2px,color:#1a1a2e
+    classDef artifact fill:#ffffff,stroke:#666666,stroke-width:1px
+
+    subgraph ClientNode["«device» Client Machine"]
+        Browser["Web Browser<br/>Chrome / Firefox / Edge"]:::client
+    end
+
+    subgraph AppNode["«executionEnvironment» Application Server"]
+        Flask["Flask App (Python 3.13)<br/>— app.py entry point<br/>— CORS enabled<br/>— JWT Authentication<br/>— Port 5000"]:::server
+    end
+
+    subgraph DBNode["«executionEnvironment» Database Server"]
+        Mongo["MongoDB 8<br/>— ECIRAS database<br/>— Collections: users, messages,<br/>  referenced_articles<br/>— Port 27017"]:::database
+    end
+
+    subgraph LLMNode["«executionEnvironment» LLM Server"]
+        Ollama["Ollama<br/>— qwen3:8b model (default)<br/>— REST /chat API<br/>— Port 11434"]:::llm
+    end
+
+    subgraph StorageNode["«storage» File System<br/>backend/data/output/"]
+        Indexes["Index Files<br/>tf_index.json / pos_index.json / doc_stats.json"]:::artifact
+        FlattenedDoc["Flattened Constitution<br/>flattened_nepal_constitution.json"]:::artifact
+        LemmaDict["Lemma Dictionary<br/>lemma_dict_v3.json"]:::artifact
+        Synonyms["Synonyms<br/>synonyms.json"]:::artifact
+    end
+
+    Browser -->|"HTTPS"| Flask
+    Flask -->|"mongoengine ODM"| Mongo
+    Flask -->|"REST /chat"| Ollama
+    Flask -->|"read"| Indexes
+    Flask -->|"read"| FlattenedDoc
+    Flask -->|"read"| LemmaDict
+    Flask -->|"read"| Synonyms
