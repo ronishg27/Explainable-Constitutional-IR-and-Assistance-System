@@ -9,17 +9,22 @@ export default function Suggestion({ setQuery }) {
   ];
 
   return (
-    <div className="mt-3 flex flex-wrap gap-2">
-      {suggestions.map((text, index) => (
-        <button
-          key={index}
-          type="button"
-          onClick={() => setQuery(text)}
-          className="rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-600 hover:border-neutral-300 hover:bg-neutral-50 hover:text-neutral-800 transition-colors cursor-pointer"
-        >
-          {text}
-        </button>
-      ))}
+    <div className="mt-3">
+      <p className="text-[11px] uppercase tracking-wider text-neutral-400 mb-2">
+        Suggested questions
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {suggestions.map((text, index) => (
+          <button
+            key={index}
+            type="button"
+            onClick={() => setQuery(text)}
+            className="rounded-lg border border-neutral-200 bg-white px-2.5 py-1 text-[11px] text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100 hover:text-neutral-700 transition-colors cursor-pointer"
+          >
+            {text}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
