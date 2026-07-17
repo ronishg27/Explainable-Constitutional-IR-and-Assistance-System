@@ -1,0 +1,48 @@
+classDiagram
+    direction TB
+
+    class user_john {
+        fullname = "John Doe"
+        email = "john@example.com"
+        role = "user"
+    }
+
+    class msg_privacy {
+        query = "What is the right to privacy?"
+        answer = "Article 28 guarantees..."
+    }
+
+    class msg_education {
+        query = "Right to education"
+        answer = "Under Article 31..."
+    }
+
+    class art_privacy {
+        title = "Right to privacy"
+        citation = "Part 3, Article 28"
+        relevance_score = 8.47
+        bm25_score = 6.12
+        proximity_score = 2.35
+    }
+
+    class art_education {
+        title = "Right relating to education"
+        citation = "Part 3, Article 31"
+        relevance_score = 9.12
+        bm25_score = 7.04
+        proximity_score = 2.08
+    }
+
+    class art_info {
+        title = "Right to information"
+        citation = "Part 3, Article 27"
+        relevance_score = 7.85
+        bm25_score = 5.91
+        proximity_score = 1.94
+    }
+
+    user_john --> msg_privacy
+    user_john --> msg_education
+    msg_privacy --> art_privacy
+    msg_privacy --> art_info
+    msg_education --> art_education

@@ -1,0 +1,64 @@
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend
+    participant API as Flask API
+    participant QA as QAService
+    participant RAG as RAGWorkflow
+    participant REPO as RAGRepository
+    participant RV as RetrievalWF
+    participant SE as SearchEngine
+    participant RK as Reranker
+    participant LLM as Ollama
+    participant DB as MongoDB
+
+    U->>FE: types query
+    FE->>API: POST /ask {query, use_llm}
+    API->>API: validate JWT
+
+    alt useLLM = false
+        API->>QA: answer_query(query, false)
+        QA->>RAG: ask(query, retrieve_only=True)
+        RAG->>REPO: retrieve(query, top_k=8)
+        REPO->>RV: retrieve(recall_k=30)
+        RV->>SE: search + score
+        SE-->>RV: top-30
+        RV->>RK: rerank(top_k=8)
+        RK-->>RV: top-8
+        REPO->>REPO: promote_to_articles()
+        REPO-->>RAG: articles
+        RAG-->>QA: {query, articles}
+        QA-->>API: articles
+        API->>DB: _persist_message()
+        API-->>FE: 200 + articles
+        FE-->>U: ranked articles
+    end
+
+    alt useLLM = true
+        RAG->>REPO: check Ollama
+        alt unavailable
+            API-->>FE: 503
+        else available
+            REPO->>REPO: check model
+            alt missing
+                REPO->>RV: retrieve-only
+                RV-->>RAG: articles
+                RAG-->>QA: {articles, model_available=false}
+                QA-->>API: fallback response
+            else ready
+                REPO->>RV: retrieve + rerank
+                REPO->>REPO: promote + truncate
+                RAG->>RAG: build_prompt()
+                RAG->>LLM: chat(retry logic)
+                alt success
+                    LLM-->>RAG: answer
+                    RAG-->>QA: full payload
+                    QA-->>API: answer + articles
+                else fail
+                    RAG-->>QA: error + articles
+                end
+            end
+            API->>DB: _persist_message()
+            API-->>FE: 200 JSON
+            FE-->>U: answer & citations
+        end
+    end
