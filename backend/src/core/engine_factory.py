@@ -42,6 +42,7 @@ class EngineFactory:
             index_dir: Directory containing tf_index.json, pos_index.json, doc_stats.json
             proximity_weight: How much proximity score contributes (default 1.0)
             title_boost: Bonus per matching title token (default 5.0)
+            synonyms_path: Path to synonyms.json for query expansion
 
         Returns:
             A fully initialised SearchEngine, ready for search() calls.

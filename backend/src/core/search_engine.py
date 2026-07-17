@@ -26,7 +26,7 @@ from .text_processor import TextProcessor
 from .document import Document
 
 # -------------------------------------------------------------------
-# Tunable constants — extracted for visibility and easy adjustment
+# Tunable constants
 # -------------------------------------------------------------------
 DEFAULT_PROXIMITY_WEIGHT = 1.0   # factor for proximity score vs. BM25
 DEFAULT_TITLE_BOOST = 5.0        # bonus for matching a query token in the article title
@@ -39,7 +39,7 @@ class SearchEngine:
 
     Usage:
         engine = EngineFactory.from_artifacts(docs_path, index_dir)
-        results = engine.search("fundamental rights", top_k=5)
+        results = engine.search(query, top_k=5)
     """
 
     def __init__(
@@ -57,7 +57,7 @@ class SearchEngine:
     ):
         """
         All dependencies are injected so the engine can be constructed
-        from pre‑built indexes or built in‑memory (for testing).
+        from pre‑built indexes or built in‑memory.
         """
         self.bm25_scorer = bm25_scorer
         self.proximity_scorer = proximity_scorer
@@ -121,7 +121,7 @@ class SearchEngine:
             )
             if result[0] > 0:
                 scored.append(result)
-
+        print("Testing scored results:", scored[0])
         # 4. Sort descending and cut top‑k
         scored.sort(key=lambda x: x[0], reverse=True)
         return self._format_results(scored[:top_k])

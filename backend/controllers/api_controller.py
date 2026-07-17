@@ -5,51 +5,10 @@ from typing import Generator
 
 from flask import Response, jsonify, request, stream_with_context
 
-from services.article_service import ArticleService
 from services.message_service import MessageService
 from services.qa_service import QAService
 
 logger = logging.getLogger(__name__)
-
-
-def _persist_message(user_id: str, query: str, payload: dict) -> None:
-    """Save a Q&A exchange to MongoDB. Failures are logged, never break the response."""
-    try:
-        article_ids = []
-        for art in payload.get("articles", []):
-            result = ArticleService.create_article(
-                title=str(art.get("title", "")),
-                citation=str(art.get("citation", "")),
-                doc_id=str(art.get("doc_id", "")),
-                relevance_score=art.get("score", 0.0),
-                bm25_score=art.get("bm25_score"),
-                proximity_score=art.get("proximity_score"),
-                title_match_count=art.get("title_match_count"),
-                article_no=art.get("article_no"),
-                clause_no=art.get("clause_no"),
-                subclause_id=art.get("subclause_id"),
-                level=art.get("level"),
-                part_no=art.get("part_no"),
-                text=art.get("text"),
-                full_text=art.get("full_text"),
-                matched_terms=art.get("matched_terms", []),
-                exact_matched_terms=art.get("exact_matched_terms", []),
-            )
-            if result.get("success"):
-                article_ids.append(result["data"]["id"])
-            else:
-                logger.warning("Failed to create article: %s", result.get("error"))
-
-        msg_result = MessageService.create_message(
-            user_id=user_id,
-            query=query,
-            answer=payload.get("response", ""),
-            articles=article_ids,
-        )
-        if not msg_result.get("success"):
-            logger.error("Failed to persist message: %s", msg_result.get("error"))
-    except Exception as e:
-        logger.error("Failed to persist message: %s", e)
 
 
 def home() -> Response:
@@ -103,11 +62,11 @@ def ask() -> Response:
         ), 400
 
     try:
-        payload, status_code = QAService.answer_query(query, useLLM=use_llm)
+        payload, status_code = QAService.answer_query(query, use_llm=use_llm)
 
         if status_code == 200:
             user_id = request.user.get("user_id")
-            _persist_message(user_id, query, payload)
+            QAService.persist_message(user_id, query, payload)
 
         elapsed = time.time() - start
         logger.info(
@@ -136,7 +95,7 @@ def _stream_events(user_id: str, query: str, use_llm: bool, events) -> Generator
                 "articles": articles_data,
                 "response": full_answer,
             }
-            _persist_message(user_id, query, payload)
+            QAService.persist_message(user_id, query, payload)
             elapsed = time.time() - stream_start
             logger.info(
                 "stream query=%s use_llm=%s latency=%.2fs",

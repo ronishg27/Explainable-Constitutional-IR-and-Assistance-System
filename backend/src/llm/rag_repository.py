@@ -9,7 +9,7 @@ from ..workflows.retrieval_workflow import RetrievalWorkflow
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "qwen2.5:7b"
+DEFAULT_MODEL = "qwen3:8b"
 RETRY_ATTEMPTS = 3
 RETRY_DELAY = 0.5
 
