@@ -58,6 +58,7 @@ class QAService:
                     subclause_id=art.get("subclause_id"),
                     level=art.get("level"),
                     part_no=art.get("part_no"),
+                    content=art.get("content"),
                     text=art.get("text"),
                     full_text=art.get("full_text"),
                     matched_terms=art.get("matched_terms", []),

@@ -31,7 +31,7 @@ export default function LoginPage() {
   return (
     <main className="flex items-center justify-center min-h-[calc(100vh-3.5rem)] px-4">
       <Card className="w-full max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <h1 className="text-lg font-semibold text-neutral-900">Sign In</h1>
             <p className="text-sm text-neutral-500 mt-1">

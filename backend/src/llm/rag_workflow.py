@@ -7,10 +7,11 @@ from .rag_formatter import RAGFormatter
 logger = logging.getLogger(__name__)
 
 _ARTICLE_FIELDS = [
-    "doc_id", "part_no", "article_no", "title", "text", "full_text", "citation",
+    "doc_id", "part_no", "article_no", "title", "content", "citation",
     "level", "clause_no", "subclause_id", "score",
     "bm25_score", "proximity_score", "title_match_count",
     "matched_terms", "exact_matched_terms", "boost_multiplier",
+    "matched_clauses",
 ]
 DEFAULT_RECALL_K = 30
 DEFAULT_MAX_CONTEXT = 8

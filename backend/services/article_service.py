@@ -10,13 +10,14 @@ class ArticleService:
     @staticmethod
     def create_article(title, citation, doc_id, relevance_score,
                        article_no=None, clause_no=None, subclause_id=None,
-                       level=None, part_no=None, text=None, full_text=None,
+                       level=None, part_no=None, content=None, text=None, full_text=None,
                        bm25_score=None, proximity_score=None, title_match_count=None,
                        matched_terms=None, exact_matched_terms=None):
         """Create or update a referenced article, deduplicating by doc_id."""
         try:
             existing = ReferencedArticle.objects(doc_id=doc_id).first()
             if existing:
+                existing.content = content
                 existing.text = text
                 existing.full_text = full_text
                 existing.matched_terms = matched_terms or []
@@ -45,6 +46,7 @@ class ArticleService:
                 subclause_id=subclause_id,
                 level=level,
                 part_no=part_no,
+                content=content,
                 text=text,
                 full_text=full_text,
                 matched_terms=matched_terms or [],

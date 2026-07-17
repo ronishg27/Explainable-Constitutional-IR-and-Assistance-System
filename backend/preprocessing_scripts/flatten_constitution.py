@@ -100,13 +100,14 @@ def _flatten_sub_clauses(sub_clauses, parent_id, part_no, article_no, title, cit
 def _make_document(doc_id, part_no, article_no, title, text, citation, level, clause_no=None, subclause_id=None):
     base_text = text.strip()
 
-    enriched_text = f"""
-    Part {part_no} Article {article_no}
-    {f"Clause {clause_no}" if clause_no else ""}
-    {f"Subclause {subclause_id}" if subclause_id else ""}
-    {title}
-    {base_text}
-    """
+    lines = [f"Part {part_no} Article {article_no}"]
+    if clause_no:
+        lines.append(f"Clause {clause_no}")
+    if subclause_id:
+        lines.append(f"Subclause {subclause_id}")
+    lines.append(title)
+    lines.append(base_text)
+    enriched_text = "\n".join(lines)
 
     citation_normalized = f"article {article_no}"
     if clause_no:

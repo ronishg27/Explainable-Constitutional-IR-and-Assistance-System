@@ -174,7 +174,7 @@ class Reranker:
         if not results:
             return results
 
-        results = self._rrf_fuse(results)
-        results = self._mmr_diversify(results)
-        results = self._apply_boost(results, boost_rules)
-        return results[:top_k]
+        res = self._rrf_fuse(results)
+        res = self._mmr_diversify(res)
+        res = self._apply_boost(res, boost_rules)
+        return res[:top_k]
