@@ -22,7 +22,7 @@ export default function Navbar() {
   const isActive = (to) => location.pathname === to;
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-neutral-200 bg-white" aria-label="Main navigation">
+    <nav className="sticky top-0 z-40 border-b border-neutral-200 bg-white/95 backdrop-blur-sm shadow-sm" aria-label="Main navigation">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
         <Link
           to="/"
