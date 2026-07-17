@@ -2,12 +2,12 @@ export default function Toggle({ label, enabled, onChange, className = '' }) {
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {label && (
-        <span className="text-sm text-neutral-600">{label}</span>
+        <span className="select-none text-sm text-neutral-600">{label}</span>
       )}
-      <div
+      <button
+        type="button"
         role="switch"
         aria-checked={enabled}
-        tabIndex={0}
         onClick={() => onChange(!enabled)}
         onKeyDown={(e) => {
           if (e.key === ' ' || e.key === 'Enter') {
@@ -15,18 +15,16 @@ export default function Toggle({ label, enabled, onChange, className = '' }) {
             onChange(!enabled);
           }
         }}
-        className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full border transition-colors focus-visible:outline-2 focus-visible:outline-primary-600 focus-visible:outline-offset-2 ${
-          enabled
-            ? 'border-primary-600 bg-primary-600'
-            : 'border-neutral-300 bg-white'
+        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition-colors duration-200 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 ${
+          enabled ? 'bg-primary-600' : 'bg-neutral-200'
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            enabled ? 'translate-x-[5.5px]' : 'translate-x-[3px]'
+          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out ${
+            enabled ? 'translate-x-5' : 'translate-x-0'
           }`}
         />
-      </div>
+      </button>
     </div>
   );
 }

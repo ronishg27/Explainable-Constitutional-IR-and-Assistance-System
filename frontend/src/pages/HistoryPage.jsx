@@ -81,7 +81,7 @@ export default function HistoryPage() {
   const currentPage = pagination ? Math.floor(pagination.skip / LIMIT) + 1 : 1;
 
   return (
-    <main className="mx-auto mt-8 max-w-3xl px-4">
+    <main className="mx-auto mt-8 max-w-4xl px-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-lg font-semibold text-neutral-900">Chat History</h1>
         <div className="flex items-center gap-3">

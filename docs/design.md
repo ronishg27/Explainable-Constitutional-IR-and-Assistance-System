@@ -181,7 +181,7 @@ Query → [BM25 Processor]  ──→ bm25_tokens (lemmatized, no stopwords)
                             (e.g., "arrest/detention/custody")
                                        │
                                        ▼
-                            Candidate Generation (recall_k=30)
+                            Candidate Generation (recall_k=50)
                             (union of doc IDs containing any bm25 token)
                                        │
                                        ▼

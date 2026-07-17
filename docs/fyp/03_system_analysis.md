@@ -58,7 +58,7 @@ The system has two primary actors:
 User → React Frontend → HTTP POST /api/v1/ask (JWT Bearer)
   → Flask API (validate JSON, query length, auth)
   → QAService (orchestration)
-  → SearchEngine (recall_k=30 hybrid scoring)
+  → SearchEngine (recall_k=50 hybrid scoring)
   → Reranker (RRF + MMR + rule boost → top_k=8)
   → RAGRepository (article promotion, context truncation)
   → RAGWorkflow (format prompt, call Ollama with 3× retry)

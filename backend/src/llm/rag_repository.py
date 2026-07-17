@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import time
 from typing import Any, Optional
 
@@ -8,6 +9,21 @@ from ollama import Client
 from ..workflows.retrieval_workflow import RetrievalWorkflow
 
 logger = logging.getLogger(__name__)
+
+_ENRICHED_RE = re.compile(
+    r'^Part \d+ Article \d+\n*(?:Clause \d+|Subclause [\w]+)?\n*',
+    re.IGNORECASE
+)
+
+
+def _clean_body(text: str, title: Optional[str] = None) -> str:
+    """Strip the enriched-text header prefix, keeping any ``---`` clause separators."""
+    if not text:
+        return ''
+    cleaned = _ENRICHED_RE.sub('', text)
+    if title:
+        cleaned = re.sub(f'^{re.escape(title)}\\n*', '', cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
 
 DEFAULT_MODEL = "qwen3:8b"
 RETRY_ATTEMPTS = 3
@@ -86,10 +102,20 @@ class RAGRepository:
         for article_no, data in groups.items():
             if data["article_doc"] is not None:
                 text = data["article_doc"].text
+                raw = (data["article_doc"].raw_text or "").strip()
+                content = raw or _clean_body(text, data.get("title"))
                 citation = data["citation"]
             else:
                 texts = [d.text for d in data["clause_docs"]]
                 text = "\n---\n".join(texts)
+                sorted_docs = sorted(data["clause_docs"], key=lambda d: d.clause_no or 0)
+                numbered = []
+                for d in sorted_docs:
+                    raw = (d.raw_text or "").strip()
+                    c = raw or _clean_body(d.text, data.get("title"))
+                    if c:
+                        numbered.append(f"({d.clause_no}) {c}" if d.clause_no else c)
+                content = "\n".join(numbered)
                 citation = f"Part {data['part_no']}, Article {article_no}"
 
             self._article_lookup[article_no] = {
@@ -98,6 +124,7 @@ class RAGRepository:
                 "title": data["title"],
                 "citation": citation,
                 "text": text,
+                "content": content,
             }
 
             if data["clause_docs"]:
@@ -141,7 +168,24 @@ class RAGRepository:
 
             article = self._article_lookup.get(article_no)
             if article is None:
-                promoted.append(result)
+                promoted.append({
+                    "doc_id": str(result.get("article_no", "")),
+                    "part_no": result.get("part_no"),
+                    "article_no": result.get("article_no"),
+                    "title": result.get("title", ""),
+                    "content": _clean_body(result.get("text", ""), result.get("title")),
+                    "text": result.get("text", ""),
+                    "citation": result.get("citation", ""),
+                    "level": "article",
+                    "score": result.get("score", 0.0),
+                    "bm25_score": result.get("bm25_score", 0.0),
+                    "proximity_score": result.get("proximity_score", 0.0),
+                    "title_match_count": result.get("title_match_count", 0),
+                    "matched_terms": result.get("matched_terms", []),
+                    "exact_matched_terms": result.get("exact_matched_terms", []),
+                    "boost_multiplier": result.get("boost_multiplier", 1.0),
+                    "matched_clauses": sorted(matched_clauses_per_article.get(article_no, set())),
+                })
                 continue
 
             promoted.append({
@@ -149,6 +193,7 @@ class RAGRepository:
                 "part_no": article["part_no"],
                 "article_no": article["article_no"],
                 "title": article["title"],
+                "content": article.get("content", ""),
                 "text": article["text"],
                 "citation": article["citation"],
                 "level": "article",

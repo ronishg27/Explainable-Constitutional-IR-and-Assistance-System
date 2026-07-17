@@ -240,7 +240,7 @@ backend/
 │   │
 │   └── workflows/
 │       ├── ingestion_workflow.py   # IngestionWorkflow (load → build → save indexes)
-│       └── retrieval_workflow.py   # RetrievalWorkflow (SearchEngine.search(recall_k=30) → Reranker.rerank(top_k=8))
+│       └── retrieval_workflow.py   # RetrievalWorkflow (SearchEngine.search(recall_k=50) → Reranker.rerank(top_k=8))
 │
 ├── preprocessing_scripts/
 │   ├── run_ingestion.py            # Full pipeline orchestration

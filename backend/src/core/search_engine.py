@@ -121,7 +121,7 @@ class SearchEngine:
             )
             if result[0] > 0:
                 scored.append(result)
-        print("Testing scored results:", scored[0])
+
         # 4. Sort descending and cut top‑k
         scored.sort(key=lambda x: x[0], reverse=True)
         return self._format_results(scored[:top_k])

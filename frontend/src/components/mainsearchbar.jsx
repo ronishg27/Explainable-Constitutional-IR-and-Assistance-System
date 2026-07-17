@@ -23,7 +23,7 @@ export default function MainSearchBar() {
   };
 
   return (
-    <div className="mx-auto mt-10 max-w-5xl px-4">
+    <div className="mx-auto mt-8 max-w-4xl px-4">
       <div className="text-center mb-8">
         <h1 className="text-2xl font-semibold text-neutral-900">
           Search the Constitution
