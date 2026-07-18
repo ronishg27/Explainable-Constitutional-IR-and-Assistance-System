@@ -11,10 +11,10 @@ export const HighlightText = ({ text, terms, exactTerms }) => {
   return parts.map((part, i) => {
     const lower = part.toLowerCase();
     if (exactSet.has(lower)) {
-      return <mark key={i} className="bg-yellow-300 rounded px-0.5">{part}</mark>;
+      return <mark key={i} className="bg-primary-200 text-primary-800 rounded px-0.5">{part}</mark>;
     }
     if (allSet.has(lower)) {
-      return <mark key={i} className="bg-yellow-100 rounded px-0.5">{part}</mark>;
+      return <mark key={i} className="bg-primary-100 text-primary-700 rounded px-0.5">{part}</mark>;
     }
     return part;
   });
