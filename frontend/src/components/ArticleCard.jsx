@@ -16,7 +16,7 @@ const ScoreBreakdown = ({ score, maxScore }) => {
   }
 
   return (
-    <div className="flex items-center gap-1.5 text-xs">
+    <div className="flex items-center gap-1.5 text-sm">
       <span className={`inline-block w-1.5 h-1.5 rounded-full ${dotColor}`} />
       <span className={`font-semibold ${textColor}`}>{label}</span>
       <span className="font-medium text-neutral-400">{pct}%</span>
@@ -39,8 +39,8 @@ const FullScoreBreakdown = ({ score, bm25, proximity, titleMatchCount, boostMult
   }
 
   return (
-    <div className="mt-3 space-y-1 border-t border-neutral-100 pt-3 text-xs">
-      <p className="text-xs font-medium text-neutral-500 mb-1.5">Scoring  breakdown</p>
+    <div className="mt-3 space-y-1 border-t border-neutral-100 pt-3 text-sm">
+      <p className="text-sm font-medium text-neutral-500 mb-1.5">Scoring  breakdown</p>
       {rows.map(
         (row) =>
           row.value !== undefined && (
@@ -68,22 +68,21 @@ const FullScoreBreakdown = ({ score, bm25, proximity, titleMatchCount, boostMult
 export default function ArticleCard({ article, maxScore }) {
   const [expanded, setExpanded] = useState(false);
 
-  const hasFullText = article.full_text && article.full_text !== article.text;
-
+  const displayText = article.content || article.text || article.full_text || '';
 
   return (
     <article
       id={`article-${article.article_no}`}
-      className="rounded-9xl border  border-neutral-200 bg-white shadow-soft transition-all duration-200 hover:-translate-y-[3px] hover:shadow-lg hover:border-neutral-300"
+      className="rounded-9xl border  border-neutral-200 bg-white shadow-soft transition-all duration-200 hover:-translate-y-0.75 hover:shadow-lg hover:border-neutral-300"
     >
       <div className="p-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-sm font-semibold text-neutral-900 leading-snug">
+            <h3 className="text-base font-semibold text-neutral-900 leading-snug">
               {article.title}
             </h3>
             {article.citation && (
-              <p className="mt-0.5 text-xs text-neutral-500">{article.citation}</p>
+              <p className="mt-0.5 text-sm text-neutral-500">{article.citation}</p>
             )}
           </div>
           {article.score != null && (
@@ -94,21 +93,11 @@ export default function ArticleCard({ article, maxScore }) {
           )}
         </div>
 
-        <div className="mt-3">
-          <p className="text-xs text-neutral-600  leading-relaxed whitespace-pre-line line-clamp-2">
-            <HighlightText
-              text={article.text}
-              terms={article.matched_terms}
-              exactTerms={article.exact_matched_terms}
-            />
-          </p>
-        </div>
-
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           {(article.matched_terms || []).slice(0, 4).map((term, i) => (
             <span
               key={i}
-              className="inline-flex items-center rounded-lg bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-600"
+              className="inline-flex items-center rounded-lg bg-primary-50 px-2 py-0.5 text-xs font-medium text-primary-600"
             >
               {term}
             </span>
@@ -118,7 +107,7 @@ export default function ArticleCard({ article, maxScore }) {
         <div className="mt-3.5 flex items-center gap-3">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors bg-transparent border-none cursor-pointer hover:bg-primary-50 px-2 py-1 rounded-lg"
+            className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors bg-transparent border-none cursor-pointer hover:bg-primary-50 px-2 py-1 rounded-lg"
           >
             <span>{expanded ? 'Show  less' : 'View details'}</span>
             <svg
@@ -139,7 +128,7 @@ export default function ArticleCard({ article, maxScore }) {
           </button>
 
           {article.article_no && (
-            <span className="text-[10px] text-neutral-400 ml-auto">
+            <span className="text-xs text-neutral-400 ml-auto">
               Article {article.article_no}
               {article.clause_no && `, clause ${article.clause_no}`}
             </span>
@@ -148,19 +137,17 @@ export default function ArticleCard({ article, maxScore }) {
 
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            expanded ? 'max-h-[800px] opacity-100 mt-4' : 'max-h-0 opacity-0'
+            expanded ? 'max-h-200 opacity-100 mt-4' : 'max-h-0 opacity-0'
           }`}
         >
           <div className="border-t border-neutral-100 pt-4 space-y-3">
-            {hasFullText && (
-              <p className="text-xs text-neutral-600 leading-relaxed whitespace-pre-line">
-                <HighlightText
-                  text={article.full_text}
-                  terms={article.matched_terms}
-                  exactTerms={article.exact_matched_terms}
-                />
-              </p>
-            )}
+            <p className="text-sm text-neutral-600 leading-relaxed whitespace-pre-line">
+              <HighlightText
+                text={displayText}
+                terms={article.matched_terms}
+                exactTerms={article.exact_matched_terms}
+              />
+            </p>
 
             {article.score != null && (
               <FullScoreBreakdown
