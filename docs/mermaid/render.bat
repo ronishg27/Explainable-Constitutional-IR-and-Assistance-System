@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 
 set "SCRIPT_DIR=%~dp0"
-set "INPUT_DIR=%SCRIPT_DIR%codes"
+set "INPUT_DIR=%SCRIPT_DIR%inputs"
 set "OUTPUT_DIR=%SCRIPT_DIR%outputs"
 set "SVG_DIR=%OUTPUT_DIR%\svg"
 set "PNG_DIR=%OUTPUT_DIR%\png"

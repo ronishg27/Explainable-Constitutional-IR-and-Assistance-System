@@ -43,6 +43,14 @@ class RAGWorkflow:
         """Return a filtered dict with only the fields the frontend needs."""
         return {k: article.get(k) for k in _ARTICLE_FIELDS}
 
+    def _prepare_articles(self, query: str) -> list[dict]:
+        retrieved = self.repo.retrieve(query, top_k=self.max_context_articles)
+        promoted = self.repo.promote_to_articles(retrieved)
+        for art in promoted:
+            art["full_text"] = art["text"]
+            art["text"] = self.repo.build_truncated_text(art)
+        return promoted
+
     def ask(
         self,
         query: str,
@@ -53,12 +61,7 @@ class RAGWorkflow:
         Returns:
             dict with 'query', 'retrieved_articles', 'answer' (optional), 'citations' (optional).
         """
-        retrieved_articles = self.repo.retrieve(query, top_k=self.max_context_articles)
-        promoted_articles = self.repo.promote_to_articles(retrieved_articles)
-
-        for art in promoted_articles:
-            art["full_text"] = art["text"]
-            art["text"] = self.repo.build_truncated_text(art)
+        promoted_articles = self._prepare_articles(query)
 
         result = {
             "query": query,
@@ -103,12 +106,7 @@ class RAGWorkflow:
             # or on error:
             {"type": "error",     "content": "..."}
         """
-        retrieved_articles = self.repo.retrieve(query, top_k=self.max_context_articles)
-        promoted_articles = self.repo.promote_to_articles(retrieved_articles)
-
-        for art in promoted_articles:
-            art["full_text"] = art["text"]
-            art["text"] = self.repo.build_truncated_text(art)
+        promoted_articles = self._prepare_articles(query)
 
         articles_data = [self._build_article_dict(art) for art in promoted_articles]
 
