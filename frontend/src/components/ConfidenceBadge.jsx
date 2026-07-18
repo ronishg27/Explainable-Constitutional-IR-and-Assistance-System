@@ -21,9 +21,9 @@ export default function ConfidenceBadge({ score }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full ${bgColor} px-2.5 py-1 ${textColor} text-xs font-medium`}
+      className={`inline-flex items-center gap-1.5 rounded-full ${bgColor} px-2.5 py-1 ${textColor} text-xs font-semibold`}
     >
-      <span className={`inline-block w-1.5 h-1.5 rounded-full ${dotColor}`} />
+      <span className={`inline-block w-2 h-2 rounded-full ${dotColor}`} />
       {label} ({score}%)
     </span>
   );

@@ -40,7 +40,7 @@ const FullScoreBreakdown = ({ score, bm25, proximity, titleMatchCount, boostMult
 
   return (
     <div className="mt-3 space-y-1 border-t border-neutral-100 pt-3 text-xs">
-      <p className="text-xs font-medium text-neutral-500 mb-1.5">Scoring breakdown</p>
+      <p className="text-xs font-medium text-neutral-500 mb-1.5">Scoring  breakdown</p>
       {rows.map(
         (row) =>
           row.value !== undefined && (
@@ -55,7 +55,7 @@ const FullScoreBreakdown = ({ score, bm25, proximity, titleMatchCount, boostMult
             </div>
           ),
       )}
-      <div className="flex items-center justify-between border-t border-neutral-100 pt-1.5 font-medium">
+      <div className="flex items-center  justify-between border-t border-neutral-100 pt-1.5 font-medium">
         <span className="text-neutral-500">Total</span>
         <span className="text-neutral-800 tabular-nums">
           {score != null ? Number(score).toFixed(2) : '-'}
@@ -70,12 +70,13 @@ export default function ArticleCard({ article, maxScore }) {
 
   const hasFullText = article.full_text && article.full_text !== article.text;
 
+
   return (
     <article
       id={`article-${article.article_no}`}
-      className="rounded-xl border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+      className="rounded-9xl border  border-neutral-200 bg-white shadow-soft transition-all duration-200 hover:-translate-y-[3px] hover:shadow-lg hover:border-neutral-300"
     >
-      <div className="p-4">
+      <div className="p-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <h3 className="text-sm font-semibold text-neutral-900 leading-snug">
@@ -94,7 +95,7 @@ export default function ArticleCard({ article, maxScore }) {
         </div>
 
         <div className="mt-3">
-          <p className="text-xs text-neutral-700 leading-relaxed whitespace-pre-line line-clamp-2">
+          <p className="text-xs text-neutral-600  leading-relaxed whitespace-pre-line line-clamp-2">
             <HighlightText
               text={article.text}
               terms={article.matched_terms}
@@ -103,29 +104,29 @@ export default function ArticleCard({ article, maxScore }) {
           </p>
         </div>
 
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
           {(article.matched_terms || []).slice(0, 4).map((term, i) => (
             <span
               key={i}
-              className="inline-flex items-center rounded-full bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-700"
+              className="inline-flex items-center rounded-lg bg-primary-50 px-2 py-0.5 text-[10px] font-medium text-primary-600"
             >
               {term}
             </span>
           ))}
         </div>
 
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3.5 flex items-center gap-3">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors bg-transparent border-none cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors bg-transparent border-none cursor-pointer hover:bg-primary-50 px-2 py-1 rounded-lg"
           >
-            <span>{expanded ? 'Show less' : 'View details'}</span>
+            <span>{expanded ? 'Show  less' : 'View details'}</span>
             <svg
               width="12"
               height="12"
               viewBox="0 0 12 12"
               fill="none"
-              className={`transition-transform ${expanded ? 'rotate-180' : ''}`}
+              className={`transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
             >
               <path
                 d="M3 4.5L6 7.5L9 4.5"
@@ -138,7 +139,7 @@ export default function ArticleCard({ article, maxScore }) {
           </button>
 
           {article.article_no && (
-            <span className="text-[10px] text-neutral-400">
+            <span className="text-[10px] text-neutral-400 ml-auto">
               Article {article.article_no}
               {article.clause_no && `, clause ${article.clause_no}`}
             </span>
@@ -147,12 +148,12 @@ export default function ArticleCard({ article, maxScore }) {
 
         <div
           className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            expanded ? 'max-h-[800px] opacity-100 mt-3' : 'max-h-0 opacity-0'
+            expanded ? 'max-h-[800px] opacity-100 mt-4' : 'max-h-0 opacity-0'
           }`}
         >
-          <div className="border-t border-neutral-100 pt-3 space-y-3">
+          <div className="border-t border-neutral-100 pt-4 space-y-3">
             {hasFullText && (
-              <p className="text-xs text-neutral-700 leading-relaxed whitespace-pre-line">
+              <p className="text-xs text-neutral-600 leading-relaxed whitespace-pre-line">
                 <HighlightText
                   text={article.full_text}
                   terms={article.matched_terms}
