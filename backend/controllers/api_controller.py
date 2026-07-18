@@ -37,29 +37,37 @@ def health() -> Response:
     return jsonify({"status": "healthy"})
 
 
-def ask() -> Response:
-    """POST /api/v1/ask — answer a question (synchronous)."""
-    start = time.time()
+def _parse_ask_request():
+    """Validate and parse POST body for /ask and /ask-stream. Returns (data, error_response)."""
     if not request.is_json:
-        return jsonify({"error": "Invalid content type. Expected application/json."}), 400
+        return None, ({"error": "Invalid content type. Expected application/json."}, 400)
 
     data = request.get_json(silent=True)
     if not data:
-        return jsonify({"error": "Invalid JSON payload."}), 400
+        return None, ({"error": "Invalid JSON payload."}, 400)
 
     query = data.get("query")
-    use_llm = data.get("use_llm", False)
-
     if not query:
-        return jsonify({"error": "Query is required."}), 400
+        return None, ({"error": "Query is required."}, 400)
 
     if not isinstance(query, str):
-        return jsonify({"error": "Query must be a string."}), 400
+        return None, ({"error": "Query must be a string."}, 400)
 
     if len(query) > 500:
-        return jsonify(
-            {"error": "Query is too long. Maximum length is 500 characters."}
-        ), 400
+        return None, ({"error": "Query is too long. Maximum length is 500 characters."}, 400)
+
+    return data, None
+
+
+def ask() -> Response:
+    """POST /api/v1/ask — answer a question (synchronous)."""
+    start = time.time()
+    data, err = _parse_ask_request()
+    if err:
+        return jsonify(err[0]), err[1]
+
+    query = data["query"]
+    use_llm = data.get("use_llm", False)
 
     try:
         payload, status_code = QAService.answer_query(query, use_llm=use_llm)
@@ -107,26 +115,12 @@ def _stream_events(user_id: str, query: str, use_llm: bool, events) -> Generator
 
 def ask_stream() -> Response:
     """POST /api/v1/ask-stream — answer a question (SSE stream)."""
-    if not request.is_json:
-        return jsonify({"error": "Invalid content type. Expected application/json."}), 400
+    data, err = _parse_ask_request()
+    if err:
+        return jsonify(err[0]), err[1]
 
-    data = request.get_json(silent=True)
-    if not data:
-        return jsonify({"error": "Invalid JSON payload."}), 400
-
-    query = data.get("query")
+    query = data["query"]
     use_llm = data.get("use_llm", True)
-
-    if not query:
-        return jsonify({"error": "Query is required."}), 400
-
-    if not isinstance(query, str):
-        return jsonify({"error": "Query must be a string."}), 400
-
-    if len(query) > 500:
-        return jsonify(
-            {"error": "Query is too long. Maximum length is 500 characters."}
-        ), 400
 
     try:
         user_id = request.user.get("user_id")

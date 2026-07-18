@@ -27,6 +27,18 @@ class EngineFactory:
     """Constructs a ready‑to‑use SearchEngine from saved indexes."""
 
     @staticmethod
+    def _load_json(path, label="file"):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            logger.error("%s not found: %s", label, path)
+            raise
+        except json.JSONDecodeError:
+            logger.error("%s is not valid JSON: %s", label, path)
+            raise
+
+    @staticmethod
     def from_artifacts(
         documents_path: str,
         index_dir: str,
@@ -51,16 +63,7 @@ class EngineFactory:
             FileNotFoundError: If any required artifact is missing.
             json.JSONDecodeError: If any artifact is malformed.
         """
-        try:
-            with open(documents_path, "r", encoding="utf-8") as f:
-                raw_docs = json.load(f)
-        except FileNotFoundError:
-            logger.error("Documents file not found: %s", documents_path)
-            raise
-        except json.JSONDecodeError:
-            logger.error("Documents file is not valid JSON: %s", documents_path)
-            raise
-
+        raw_docs = EngineFactory._load_json(documents_path, "Documents file")
         documents = [Document(**item) for item in raw_docs]
 
         base = Path(index_dir)
@@ -71,15 +74,7 @@ class EngineFactory:
         }
         for name in index_files:
             path = base / name
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    index_files[name] = json.load(f)
-            except FileNotFoundError:
-                logger.error("Index file not found: %s", path)
-                raise
-            except json.JSONDecodeError:
-                logger.error("Index file is not valid JSON: %s", path)
-                raise
+            index_files[name] = EngineFactory._load_json(str(path), f"Index file {name}")
 
         tf_index = index_files["tf_index.json"]
         pos_index = index_files["pos_index.json"]

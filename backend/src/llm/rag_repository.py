@@ -142,6 +142,36 @@ class RAGRepository:
                         "clauses": clauses,
                     }
 
+    @staticmethod
+    def _build_promoted_item(result: dict, article: Optional[dict], matched_clauses: list) -> dict:
+        item = {
+            "doc_id": str(result.get("article_no", "")),
+            "part_no": result.get("part_no"),
+            "article_no": result.get("article_no"),
+            "title": result.get("title", ""),
+            "content": _clean_body(result.get("text", ""), result.get("title")),
+            "text": result.get("text", ""),
+            "citation": result.get("citation", ""),
+            "level": "article",
+            "score": result.get("score", 0.0),
+            "bm25_score": result.get("bm25_score", 0.0),
+            "proximity_score": result.get("proximity_score", 0.0),
+            "title_match_count": result.get("title_match_count", 0),
+            "matched_terms": result.get("matched_terms", []),
+            "exact_matched_terms": result.get("exact_matched_terms", []),
+            "boost_multiplier": result.get("boost_multiplier", 1.0),
+            "matched_clauses": matched_clauses,
+        }
+        if article is not None:
+            item["doc_id"] = str(article["article_no"])
+            item["part_no"] = article["part_no"]
+            item["article_no"] = article["article_no"]
+            item["title"] = article["title"]
+            item["content"] = article.get("content", "")
+            item["text"] = article["text"]
+            item["citation"] = article["citation"]
+        return item
+
     def promote_to_articles(self, results: list[dict]) -> list[dict]:
         """Convert clause/sub-clause results to full article results, deduplicating by article_no.
 
@@ -170,45 +200,10 @@ class RAGRepository:
             seen.add(article_no)
 
             article = self._article_lookup.get(article_no)
-            if article is None:
-                promoted.append({
-                    "doc_id": str(result.get("article_no", "")),
-                    "part_no": result.get("part_no"),
-                    "article_no": result.get("article_no"),
-                    "title": result.get("title", ""),
-                    "content": _clean_body(result.get("text", ""), result.get("title")),
-                    "text": result.get("text", ""),
-                    "citation": result.get("citation", ""),
-                    "level": "article",
-                    "score": result.get("score", 0.0),
-                    "bm25_score": result.get("bm25_score", 0.0),
-                    "proximity_score": result.get("proximity_score", 0.0),
-                    "title_match_count": result.get("title_match_count", 0),
-                    "matched_terms": result.get("matched_terms", []),
-                    "exact_matched_terms": result.get("exact_matched_terms", []),
-                    "boost_multiplier": result.get("boost_multiplier", 1.0),
-                    "matched_clauses": sorted(matched_clauses_per_article.get(article_no, set())),
-                })
-                continue
-
-            promoted.append({
-                "doc_id": str(article["article_no"]),
-                "part_no": article["part_no"],
-                "article_no": article["article_no"],
-                "title": article["title"],
-                "content": article.get("content", ""),
-                "text": article["text"],
-                "citation": article["citation"],
-                "level": "article",
-                "score": result.get("score", 0.0),
-                "bm25_score": result.get("bm25_score", 0.0),
-                "proximity_score": result.get("proximity_score", 0.0),
-                "title_match_count": result.get("title_match_count", 0),
-                "matched_terms": result.get("matched_terms", []),
-                "exact_matched_terms": result.get("exact_matched_terms", []),
-                "boost_multiplier": result.get("boost_multiplier", 1.0),
-                "matched_clauses": sorted(matched_clauses_per_article.get(article_no, set())),
-            })
+            promoted.append(self._build_promoted_item(
+                result, article,
+                sorted(matched_clauses_per_article.get(article_no, set())),
+            ))
 
         return promoted
 
@@ -294,8 +289,8 @@ class RAGRepository:
             )
 
     def _ensure_ollama_checked(self) -> None:
-        if self._ollama_available is None:
-            logger.info("Performing initial Ollama connectivity check...")
+        if self._ollama_available is None or not self._ollama_available:
+            logger.info("Checking Ollama connectivity...")
             self._ollama_available, self._connection_status = self._perform_ollama_check()
             if self._ollama_available:
                 logger.info(self._connection_status)
@@ -327,13 +322,10 @@ class RAGRepository:
         last_exc = None
         for attempt in range(1, RETRY_ATTEMPTS + 1):
             try:
-                if stream:
-                    return self.client.chat(self.model, messages=messages, stream=True,
-                                            keep_alive="30m", options={
-                                                "num_ctx": 4096,})
-                else:
-                    return self.client.chat(self.model, messages=messages, stream=False, keep_alive="30m", options={
-                        "num_ctx": 4096,})
+                return self.client.chat(
+                    self.model, messages=messages, stream=stream,
+                    keep_alive="30m", options={"num_ctx": 4096},
+                )
             except Exception as exc:
                 last_exc = exc
                 logger.warning(
