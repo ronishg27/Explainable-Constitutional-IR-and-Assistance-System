@@ -83,6 +83,8 @@ export default function MessageDetailPage() {
       level: a.level,
       part_no: a.part_no,
       content: a.content,
+      text: a.content,
+      full_text: a.content,
       matched_terms: a.matched_terms,
       exact_matched_terms: a.exact_matched_terms,
       matched_clauses: a.matched_clauses,

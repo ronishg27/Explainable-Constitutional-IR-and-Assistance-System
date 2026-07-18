@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import ArticleCard from './ArticleCard';
-import ConfidenceBadge from './ConfidenceBadge';
 import Spinner from './ui/Spinner';
 
 const CITATION_RE = /\(Article\s+(\d+(?:[–-]\d+)?)\)/g;
@@ -37,34 +36,34 @@ function CitationLink({ href, children, ...props }) {
   );
 }
 
-const PhasedLoading = ({ hasArticles, phase }) => {
-  const phases = [
-    { label: 'Searching the constitution...', show: !hasArticles },
-    { label: 'Analyzing relevant articles...', show: hasArticles && phase < 2 },
-    { label: 'Generating answer...', show: hasArticles && phase >= 2 },
-  ];
+const PhasedLoading = ({ useLlm, hasArticles }) => {
+  if (!useLlm) {
+    return (
+      <div className="flex items-center gap-2.5 text-sm text-neutral-400">
+        <Spinner size="sm" />
+        <span className="animate-pulse">Analyzing relevant articles...</span>
+      </div>
+    );
+  }
 
-  const active = phases.find((p) => p.show) || phases[0];
+  if (!hasArticles) {
+    return (
+      <div className="flex items-center gap-2.5 text-sm text-neutral-400">
+        <Spinner size="sm" />
+        <span className="animate-pulse">Searching the constitution...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2.5 text-sm text-neutral-400">
       <Spinner size="sm" />
-      <span className="animate-pulse">{active.label}</span>
+      <span className="animate-pulse">Generating answer...</span>
     </div>
   );
 };
 
-const ConfidenceScore = ({ articles }) => {
-  if (!articles || articles.length === 0) return null;
-
-  const avgScore = articles.reduce((sum, a) => sum + (a.score ?? 0), 0) / articles.length;
-  const maxScore = Math.max(...articles.map(a => a.score ?? 0));
-  const normalized = maxScore > 0 ? Math.round((avgScore / maxScore) * 100) : 0;
-
-  return <ConfidenceBadge score={normalized} />;
-};
-
-const ResultDisplay = ({ data, loading, streamedResponse }) => {
+const ResultDisplay = ({ data, loading, streamedResponse, useLlm }) => {
   const displayResponse = streamedResponse || data?.response || '';
 
   const articles = (data?.articles || []).sort(
@@ -95,37 +94,35 @@ const ResultDisplay = ({ data, loading, streamedResponse }) => {
 
       <div className=" bg-red-0 ">
         <div className="min-w-1">
-          {displayResponse && (
+          {(displayResponse || loading) && (
             <div className="bg-white rounded-3xl border border-neutral-200 shadow-soft p-8 mb-8">
-              <div className="flex items-center gap-3 mb-6 flex-wrap">
-                <h2 className="text-sm font-semibold text-neutral-900 uppercase tracking-widest">
-                  Answer
-                </h2>
-                <ConfidenceScore articles={articles} />
-                <span className="text-xs text-neutral-400">
-                  Based on {articles.length} relevant article{articles.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-
-              <div className="prose max-w-none text-neutral-700">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={{
-                    a: CitationLink,
-                  }}
-                >
-                  {processedAnswer}
-                </ReactMarkdown>
-              </div>
-            </div>
-          )}
-
-          {loading && (
-            <div className="bg-white rounded-3xl border border-neutral-200 shadow-soft p-8 mb-8">
-              <PhasedLoading
-                hasArticles={articles.length > 0}
-                phase={displayResponse ? 2 : 1}
-              />
+              {displayResponse ? (
+                <>
+                  <div className="flex items-center gap-3 mb-6 flex-wrap">
+                    <h2 className="text-sm font-semibold text-neutral-900 uppercase tracking-widest">
+                      Answer
+                    </h2>
+                    <span className="text-xs text-neutral-400">
+                      Based on {articles.length} relevant article{articles.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <div className="prose max-w-none text-neutral-700">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: CitationLink,
+                      }}
+                    >
+                      {processedAnswer}
+                    </ReactMarkdown>
+                  </div>
+                </>
+              ) : (
+                <PhasedLoading
+                  useLlm={useLlm}
+                  hasArticles={articles.length > 0}
+                />
+              )}
             </div>
           )}
         </div>
