@@ -81,7 +81,7 @@
 | Database  | MongoDB 8 (mongoengine ODM) | Users, messages, article refs                           |
 | IR Engine | Custom Python               | BM25 + term proximity + title boost + RRF/MMR reranking |
 | NLP       | spaCy (`en_core_web_sm`)    | Lemmatization, tokenization                             |
-| LLM       | Ollama (local)              | Default: `qwen2.5:7b`                                   |
+| LLM       | Ollama (local)              | Default: `qwen3:8b`                                   |
 | Auth      | JWT (HS256, 12h expiry)     | Bearer header + httpOnly cookie fallback                |
 | Tooling   | Prettier, ESLint, Vite HMR  |                                                         |
 
@@ -101,7 +101,7 @@ app.py → routes/ (Blueprints) → controllers/ (validation) → services/ (orc
 
 - **Routes** (`routes/api_routes.py`, `routes/auth_routes.py`): Flask Blueprints that define URL mappings.
 - **Controllers** (`controllers/api_controller.py`, `controllers/auth_controller.py`): Input validation, request parsing, response formatting.
-- **Services** (`services/qa_service.py`, `services/user_service.py`, etc.): Business logic orchestration. `QAService` implements a lazy singleton pattern (double-checked locking) for `RAGWorkflow` initialization.
+- **Services** (`services/qa_service.py`, `services/user_service.py`, etc.): Business logic orchestration. `QAService` holds a module-level `_workflow` initialized eagerly at startup via `init_workflow()`.
 - **Core** (`src/core/`): Pure retrieval logic with no Flask dependency. Testable in isolation.
 - **LLM** (`src/llm/`): RAG orchestration, prompt building, Ollama client.
 - **Decorators** (`controllers/decorators.py`): `@token_required` — extracts JWT from `Authorization: Bearer` header (primary) or `token` cookie (fallback), decodes with HS256, checks `token_version` against the user document for token invalidation.
@@ -181,7 +181,7 @@ Query → [BM25 Processor]  ──→ bm25_tokens (lemmatized, no stopwords)
                             (e.g., "arrest/detention/custody")
                                        │
                                        ▼
-                            Candidate Generation (recall_k=30)
+                            Candidate Generation (recall_k=50)
                             (union of doc IDs containing any bm25 token)
                                        │
                                        ▼
@@ -297,7 +297,7 @@ After reranking, clause/sub-clause results are promoted to article level:
 ### 6.1 LLM Integration
 
 - **Client**: `RAGRepository` owns the `ollama.Client` (Python SDK)
-- **Default model**: `qwen2.5:7b` (configurable via `OLLAMA_MODEL` env var)
+- **Default model**: `qwen3:8b` (configurable via `OLLAMA_MODEL` env var)
 - **Connectivity**: Cached per process lifetime, first request initiates check
 - **Retry**: 3 attempts with 0.5s delay, 4096 context window, `keep_alive=30m`
 - **Fallback**: unreachable → 503; model missing → retrieval-only with status info
@@ -328,16 +328,11 @@ IngestionWorkflow (index_builder.py)
   ├── build_tf_index()        → tf_index.json   (term → {doc_id: tf})
   ├── build_positional_index()→ pos_index.json   (term → {doc_id: [positions]})
   └── compute_doc_stats()     → doc_stats.json   (doc_lengths + avgdl)
-        │
-        ▼
-generate_safe_lemma_dict.py ──→ lemma_dict_v3.json (rule-based corpus lemmas,
-                                no spaCy dependency: -ies, -es, -s, -ing, -ed,
-                                -er, -est + irregular forms)
 ```
 
 ### 7.2 Running the Pipeline
 
-- `python app.py --rebuild-data` — full rebuild on server start
+- `python -m preprocessing_scripts.run_ingestion` — full rebuild
 - `python -m preprocessing_scripts.run_ingestion` — manual pipeline
 - `python -m preprocessing_scripts.build_index` — indexes only from existing flattened JSON
 
@@ -437,7 +432,7 @@ Environment variables (from `backend/.env`):
 | ---------------- | --------------------------- | ------------------------- |
 | `OLLAMA_HOST`    | `http://127.0.0.1:11434`    | Ollama server             |
 | `OLLAMA_API_KEY` | (empty)                     | Bearer token for Ollama   |
-| `OLLAMA_MODEL`   | `qwen2.5:7b`                | LLM model name            |
+| `OLLAMA_MODEL`   | `qwen3:8b`                | LLM model name            |
 | `MONGO_URI`      | `mongodb://localhost:27017` | MongoDB connection string |
 | `MONGO_DB_NAME`  | `ECIRAS`                    | Database name             |
 | `JWT_SECRET`     | _(required)_                | HS256 signing key         |
@@ -456,9 +451,9 @@ Separate processors for BM25 (lemmatized, no stopwords) and proximity (raw, stop
 
 Short queries (≤5 tokens) use all unordered pairs for full cross-term proximity; longer queries use adjacent pairs only to avoid O(n²) explosion.
 
-### 12.4 Lazy Singleton Initialization
+### 12.4 Eager Initialization
 
-`QAService._get_workflow()` uses double-checked locking to build the `SearchEngine` (three loaded index files) only on the first API request. Keeps server startup fast.
+`init_workflow()` in `services/qa_service.py` builds the full pipeline (EngineFactory → Reranker → RetrievalWorkflow → RAGRepository → RAGWorkflow) once at startup before the server listens. Every request gets predictable latency — no slow first request.
 
 ### 12.5 Strict RAG Grounding
 
@@ -482,4 +477,3 @@ All generated in `backend/data/output/`:
 | `tf_index.json`                     | Term → {doc_id: term frequency} for BM25                   |
 | `pos_index.json`                    | Term → {doc_id: [positions]} for proximity scoring         |
 | `doc_stats.json`                    | Document lengths + average document length                 |
-| `lemma_dict_v3.json`                | Custom rule-based lemma map for corpus-specific vocabulary |

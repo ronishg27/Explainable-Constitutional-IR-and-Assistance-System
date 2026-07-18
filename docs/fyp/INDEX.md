@@ -48,7 +48,7 @@ type docs\fyp\0*.md > fyp_report.md
 | MMR lambda | 0.5 |
 | Recall k (Phase 1) | 30 |
 | Top k (final) | 8 |
-| LLM model | qwen2.5:7b |
+| LLM model | qwen3:8b |
 | LLM retries | 3 (0.5s delay) |
 | LLM context window | 4096 |
 | Query max length | 500 chars |

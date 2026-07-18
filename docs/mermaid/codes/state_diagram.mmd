@@ -1,0 +1,45 @@
+stateDiagram-v2
+    [*] --> Idle
+
+    state Idle {
+        [*] --> Guest
+        Guest --> LoggedIn : login success
+        LoggedIn --> Guest : logout / token expired
+    }
+
+    Idle --> Validating : POST /api/v1/ask
+
+    Validating --> Retrieval : useLLM=false
+    Validating --> CheckingLLM : useLLM=true
+
+    state Retrieval {
+        [*] --> Search
+        Search --> Score
+        Score --> Rerank
+        Rerank --> Promote
+        Promote --> [*]
+    }
+
+    state CheckingLLM {
+        [*] --> OllamaCheck
+        OllamaCheck --> Unreachable
+        OllamaCheck --> ModelCheck
+        ModelCheck --> Missing
+        ModelCheck --> Available
+    }
+
+    CheckingLLM --> Retrieval : Model Missing
+    CheckingLLM --> Generate : Model Available
+    CheckingLLM --> Idle : Unreachable
+
+    state Generate {
+        [*] --> FormatContext
+        FormatContext --> LLMCall
+        LLMCall --> Retry
+        Retry --> LLMCall : retries < 3
+        Retry --> Error : retries >= 3
+        LLMCall --> Success
+    }
+
+    Retrieval --> Idle : return articles
+    Generate --> Idle : return answer

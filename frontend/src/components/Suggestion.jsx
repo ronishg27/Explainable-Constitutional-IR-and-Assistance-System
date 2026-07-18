@@ -10,7 +10,7 @@ export default function Suggestion({ setQuery }) {
 
   return (
     <div className="mt-3">
-      <p className="text-[11px] uppercase tracking-wider text-neutral-400 mb-2">
+      <p className="text-xs uppercase tracking-wider text-neutral-400 mb-2">
         Suggested questions
       </p>
       <div className="flex flex-wrap gap-1.5">
@@ -19,7 +19,7 @@ export default function Suggestion({ setQuery }) {
             key={index}
             type="button"
             onClick={() => setQuery(text)}
-            className="rounded-lg border border-neutral-200 bg-white px-2.5 py-1 text-[11px] text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100 hover:text-neutral-700 transition-colors cursor-pointer"
+            className="rounded-lg border border-neutral-200 bg-white px-2.5 py-1 text-xs text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100 hover:text-neutral-700 transition-colors cursor-pointer"
           >
             {text}
           </button>

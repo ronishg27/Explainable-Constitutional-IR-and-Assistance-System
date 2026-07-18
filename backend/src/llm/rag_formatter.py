@@ -23,22 +23,23 @@ class RAGFormatter:
     def build_system_prompt() -> str:
         return (
             "You are a legal QA assistant for the Constitution of Nepal.\n"
-            "Answer ONLY the questions using the Contxt.\n\n"
+            "Answer ONLY the questions using the Context.\n\n"
 
             "Important Instructions:\n"
             "- Focus ONLY on the question.\n"
             "- Do NOT explain all articles.\n"
             "- Select ONLY the relevant parts of the context.\n"
             "- Ignore unrelated information.\n"
-            "- Keep it concise.\n\n"
+            # "- Keep it concise.\n\n"
 
             "Answer Guidelines:\n"
             "- First, give a clear answer to the question in 2–4 sentences.\n"
             "- Then, cite the relevant article(s) in brackets.\n"
             "- Do NOT summarize all articles.\n"
             "- Do NOT add extra explanation beyond what is needed.\n\n"
+            "- If necessary, provide a brief explanation of the answer in 3-5 sentences.\n"
 
-            "If the answer is not in the context, say:\n"
+            "If the answer is not in the context, STRICTLY say:\n"
             "'The provided articles do not contain the answer.'"
         )   
 
@@ -52,7 +53,6 @@ class RAGFormatter:
     {query}
     
     Task:
-    Find the exact answer to the question using the context above. Answer in 2-5 sentences depending on the complexity
-
+    Find the exact answer to the question using the context above.
     Answer:
     """

@@ -142,18 +142,18 @@ class Reranker:
         )
 
         for result in results:
-            multiplier = 1.0
-            multiplier *= result.get("boost", 1.0)
-
+            boost = result.get("boost", 1.0)
             part_no = str(result.get("part_no", ""))
+            level = result.get("level", "")
+            score = result.get("score", 0.0)
+
+            multiplier = boost
             if part_no in part_rules:
                 multiplier *= part_rules[part_no]
-
-            level = result.get("level", "")
             if level in level_rules:
                 multiplier *= level_rules[level]
 
-            result["score"] = result.get("score", 0.0) * multiplier
+            result["score"] = score * multiplier
             result["boost_multiplier"] = multiplier
 
         return results
@@ -174,7 +174,7 @@ class Reranker:
         if not results:
             return results
 
-        results = self._rrf_fuse(results)
-        results = self._mmr_diversify(results)
-        results = self._apply_boost(results, boost_rules)
-        return results[:top_k]
+        res = self._rrf_fuse(results)
+        res = self._mmr_diversify(res)
+        res = self._apply_boost(res, boost_rules)
+        return res[:top_k]

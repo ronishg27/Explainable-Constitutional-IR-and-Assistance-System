@@ -43,7 +43,7 @@ cp .env.sample .env
 |----------|---------|:--------:|-------------|
 | `OLLAMA_HOST` | `http://127.0.0.1:11434` | No | Ollama server URL |
 | `OLLAMA_API_KEY` | (empty) | No | Bearer token for Ollama |
-| `OLLAMA_MODEL` | `qwen2.5:7b` | No | LLM model name |
+| `OLLAMA_MODEL` | `qwen3:8b` | No | LLM model name |
 | `MONGO_URI` | `mongodb://localhost:27017` | No | MongoDB connection string |
 | `MONGO_DB_NAME` | `ECIRAS` | No | Database name |
 | `JWT_SECRET` | (must set) | Yes | HS256 signing key |
@@ -63,13 +63,12 @@ The system uses database `ECIRAS` and creates collections `users`, `messages`, a
 
 ```powershell
 # From backend directory with venv activated
-python app.py --rebuild-data
+python -m preprocessing_scripts.run_ingestion
 ```
 
 This runs the complete ingestion pipeline:
 1. Flattens `data/nepal_constitution_new.json` → `data/output/flattened_nepal_constitution.json`
 2. Builds `tf_index.json`, `pos_index.json`, `doc_stats.json`
-3. Generates `lemma_dict_v3.json`
 
 ### 7.2.4 Frontend Setup
 
@@ -93,7 +92,7 @@ Frontend starts on `http://localhost:5173`.
 ollama serve
 
 # Pull the default model
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 ```
 
 ## 7.3 Running the System
@@ -241,15 +240,13 @@ All generated in `backend/data/output/`:
 | `tf_index.json` | Term → {doc_id: term frequency} for BM25 | `build_index.py` |
 | `pos_index.json` | Term → {doc_id: [positions]} for proximity | `build_index.py` |
 | `doc_stats.json` | Document lengths + average document length | `build_index.py` |
-| `lemma_dict_v3.json` | Rule-based lemma dictionary | `generate_safe_lemma_dict.py` |
 
 ## 7.7 Useful Commands
 
 ```powershell
 # Backend
 python app.py                          # Start server
-python app.py --rebuild-data           # Rebuild indexes + start
-python -m preprocessing_scripts.run_ingestion  # Manual full pipeline
+python -m preprocessing_scripts.run_ingestion  # Full pipeline (flatten → index → lemma)
 python -m preprocessing_scripts.build_index     # Indexes only
 python -m src.llm.rag_workflow         # CLI RAG demo
 pytest backend/temp/tests/             # Run tests

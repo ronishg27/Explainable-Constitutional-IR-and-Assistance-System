@@ -1,0 +1,20 @@
+@startuml
+left to right direction
+actor "User" as U
+
+rectangle "Constitution Assistant" {
+  usecase "Ask question" as UC1
+  usecase "Retrieve articles" as UC2
+  usecase "Generate LLM answer" as UC3
+  usecase "View query history" as UC4
+  usecase "Register" as UC5
+  usecase "Log in" as UC6
+}
+
+U --> UC1
+U --> UC4
+U --> UC5
+U --> UC6
+UC1 ..> UC2 : <<include>>
+UC1 ..> UC3 : <<extend>>
+@enduml
