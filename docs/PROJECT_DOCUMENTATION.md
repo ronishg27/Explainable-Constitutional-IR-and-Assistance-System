@@ -30,7 +30,7 @@
 **Constitution Assistant** is a Retrieval-Augmented Generation (RAG) system that answers natural-language questions about the **Constitution of Nepal (2072 / 2015)**. Users ask legal questions in plain English and receive:
 
 1. **Ranked constitutional provisions** from a custom hybrid search engine (BM25 + term proximity + title boost + RRF/MMR reranking).
-2. **Optionally, an LLM-generated answer** grounded strictly in the retrieved provisions (using Ollama + `qwen2.5:7b` by default).
+2. **Optionally, an LLM-generated answer** grounded strictly in the retrieved provisions (using Ollama + `qwen3:8b` by default).
 
 ### 1.2 Core Features
 
@@ -73,7 +73,7 @@
 │                                                                  │
 │  ┌──────────┐  ┌────────────┐  ┌────────────────────────────┐  │
 │  │  Routes   │  │Controllers │  │      Services               │  │
-│  │(Blueprints)│  │(validation)│  │  QAService (lazy singleton)│  │
+│  │(Blueprints)│  │(validation)│  │  QAService (orchestration)│  │
 │  └──────────┘  └────────────┘  └──────────┬─────────────────┘  │
 │                                            │                    │
 │              ┌─────────────────────────────┼──────────────┐    │
@@ -98,7 +98,7 @@
 │              │                            │              │    │
 │              │  ┌──────────────────────┐  │              │    │
 │              │  │ Ollama LLM           │  │              │    │
-│              │  │ (qwen2.5:7b default) │  │              │    │
+│              │  │ (qwen3:8b default) │  │              │    │
 │              │  └──────────────────────┘  │              │    │
 │              └────────────────────────────┘              │    │
 │                                                                  │
@@ -123,7 +123,7 @@
 
 1. User submits query via React frontend (JWT stored in `localStorage`, sent as `Authorization: Bearer` header).
 2. Flask API validates: JSON content-type, parseable JSON, `query` is a non-empty string ≤ 500 chars, valid JWT.
-3. `QAService.answer_query()` (lazy singleton) delegates to `RAGWorkflow.ask()`.
+3. `QAService.answer_query()` delegates to `RAGWorkflow.ask()`.
 4. `RAGWorkflow` → `RAGRepository.retrieve()` → `RetrievalWorkflow.retrieve()`:
    - **Phase 1 (SearchEngine):** Tokenize with two processors, optionally expand synonyms, generate candidate set from BM25 tf_index, score each: `BM25(k1=1.5, b=1.0) + title_boost(5.0 × title matches) + proximity(1.0 × avg pair score)`, return top 30.
    - **Phase 2 (Reranker):** RRF fusion (k=60), MMR diversity (λ=0.5), rule-based boost (part/level multipliers), return top 8.
@@ -143,7 +143,7 @@
    - `tf_index.json` (term → {doc_id: tf}) using BM25 processor
    - `pos_index.json` (term → {doc_id: [positions]}) using proximity processor
    - `doc_stats.json` (doc_lengths + avgdl)
-3. `generate_safe_lemma_dict.py` builds rule-based lemma dictionary (no spaCy dependency).
+
 
 ### 2.4 Tech Stack
 
@@ -154,7 +154,7 @@
 | Database       | MongoDB 8 (mongoengine ODM)         | 3 collections in `ECIRAS`            |
 | IR Engine      | Custom Python                       | BM25 + term proximity + title boost + RRF/MMR reranking |
 | NLP            | spaCy (`en_core_web_sm`)            | Lemmatization, tokenization          |
-| LLM            | Ollama (local)                      | Default: `qwen2.5:7b`                |
+| LLM            | Ollama (local)                      | Default: `qwen3:8b`                |
 | Auth           | JWT (HS256, 12h expiry)             | Bearer header + httpOnly cookie fallback, token versioning |
 
 ---
@@ -186,7 +186,7 @@ Constitution_assistant/
 
 ```
 backend/
-├── app.py                          # Flask factory, --rebuild-data flag, main()
+├── app.py                          # Flask factory, main()
 ├── requirements.txt                # UTF-16 encoded dependencies
 ├── .env.sample                     # Environment variable template
 ├── README.md                       # Backend-specific docs
@@ -227,7 +227,6 @@ backend/
 │   │   ├── reranker.py             # Reranker (RRF fusion + MMR diversity + rule-based boost)
 │   │   ├── engine_factory.py       # EngineFactory (loads artifacts from disk, optional synonym expander)
 │   │   ├── query_expander.py       # QueryExpander (44 synonym groups from data/synonyms.json)
-│   │   └── app_bootstrap.py        # rebuild_document_artifacts(), preload_spacy(), connect_database()
 │   │
 │   ├── llm/
 │   │   ├── ollama_llm.py           # createOllamaClient() factory
@@ -241,13 +240,12 @@ backend/
 │   │
 │   └── workflows/
 │       ├── ingestion_workflow.py   # IngestionWorkflow (load → build → save indexes)
-│       └── retrieval_workflow.py   # RetrievalWorkflow (SearchEngine.search(recall_k=30) → Reranker.rerank(top_k=8))
+│       └── retrieval_workflow.py   # RetrievalWorkflow (SearchEngine.search(recall_k=50) → Reranker.rerank(top_k=8))
 │
 ├── preprocessing_scripts/
 │   ├── run_ingestion.py            # Full pipeline orchestration
 │   ├── flatten_constitution.py     # Nested JSON → flat document list
 │   ├── build_index.py              # Flat docs → indexes
-│   └── generate_safe_lemma_dict.py # Rule-based lemma dictionary
 │
 ├── data/
 │   ├── nepal_constitution_new.json # Nested format input (parts → articles → clauses)
@@ -257,8 +255,7 @@ backend/
 │       ├── flattened_nepal_constitution.json
 │       ├── tf_index.json
 │       ├── pos_index.json
-│       ├── doc_stats.json
-│       └── lemma_dict_v3.json
+│       └── doc_stats.json
 │
 ├── json_builder_tools/             # Browser-based JSON editing tools
 │   ├── constitution_schema.md
@@ -339,7 +336,6 @@ frontend/
 | Entry Point | Command | Purpose |
 |-------------|---------|---------|
 | Flask Server | `python backend/app.py` | Starts API server on `http://127.0.0.1:5000` |
-| Rebuild + Start | `python backend/app.py --rebuild-data` | Rebuilds indexes then starts server |
 | Frontend Dev | `cd frontend && npm run dev` | Vite dev server on `http://localhost:5173` |
 | Manual Ingestion | `python -m preprocessing_scripts.run_ingestion` | Full pipeline (flatten → index → lemma) |
 | Build Indexes | `python -m preprocessing_scripts.build_index` | Indexes only from existing flattened JSON |
@@ -639,7 +635,7 @@ Two processor configurations:
 **LLM Integration** (`src/llm/rag_repository.py`):
 
 - **Client:** `ollama.Client` constructed from `OLLAMA_HOST`/`OLLAMA_API_KEY` env vars
-- **Default model:** `qwen2.5:7b` (override via `OLLAMA_MODEL`)
+- **Default model:** `qwen3:8b` (override via `OLLAMA_MODEL`)
 - **Connectivity check:** Cached per process lifetime, first request kicks it off
 - **Retry:** 3 attempts, 0.5s delay, 4096 context window, `keep_alive=30m`
 - **Prompt style:** Strict grounding — "Answer ONLY using the Context"; cite precisely; decline if not in constitution
@@ -714,7 +710,7 @@ Persistence failures are **logged but never break the response** (fire-and-forge
 |-----|-------|
 | Admin API routes | `UserService.list_users()` / `delete_user()` exist but no admin blueprint exposed |
 | CORS hardening | `CORS(app)` with no restrictions in `app.py:19` |
-| Multi-model LLM fallback | No automatic fallback if `qwen2.5:7b` is missing |
+| Multi-model LLM fallback | No automatic fallback if `qwen3:8b` is missing |
 | Retrieval-only dedicated endpoint | No separate `/api/v1/search` — uses `/ask?use_llm=false` |
 
 ---
@@ -737,7 +733,7 @@ cd backend
 pip install -r requirements.txt
 cp .env.sample .env
 # Edit .env with your values
-python app.py --rebuild-data    # First time only (builds indexes)
+python -m preprocessing_scripts.run_ingestion  # First time only (builds indexes)
 python app.py                   # Starts on http://127.0.0.1:5000
 ```
 
@@ -751,7 +747,7 @@ npm run dev                     # Starts on http://localhost:5173
 **Ollama (optional):**
 ```powershell
 ollama serve
-ollama pull qwen2.5:7b
+ollama pull qwen3:8b
 ```
 
 ### 8.3 Environment Variables
@@ -762,7 +758,7 @@ From `backend/.env`:
 |----------|---------|:--------:|-------------|
 | `OLLAMA_HOST` | `http://127.0.0.1:11434` | No | Ollama server URL |
 | `OLLAMA_API_KEY` | (empty) | No | Bearer token for Ollama |
-| `OLLAMA_MODEL` | `qwen2.5:7b` | No | Default LLM model |
+| `OLLAMA_MODEL` | `qwen3:8b` | No | Default LLM model |
 | `MONGO_URI` | `mongodb://localhost:27017` | No | MongoDB connection |
 | `MONGO_DB_NAME` | `ECIRAS` | No | Database name |
 | `JWT_SECRET` | (must set) | Yes | HS256 signing key |
@@ -808,8 +804,7 @@ From `frontend/package.json`:
 ```powershell
 # Backend
 python app.py                          # Start server
-python app.py --rebuild-data           # Rebuild indexes + start
-python -m preprocessing_scripts.run_ingestion  # Manual full pipeline
+python -m preprocessing_scripts.run_ingestion  # Full pipeline (flatten → index → lemma)
 python -m preprocessing_scripts.build_index     # Indexes only
 python -m src.llm.rag_workflow         # CLI RAG demo
 pytest backend/temp/tests/             # Run tests
@@ -871,12 +866,12 @@ Legal question-answering demands factual grounding. A pure LLM can hallucinate p
 
 Short queries (≤5 tokens) benefit from full cross-term proximity. Longer queries (>5 tokens) use adjacent pairs only to avoid O(n²) blowup — distant term pairs contribute negligible signal.
 
-### 10.5 Why lazy singleton for QAService?
+### 10.5 Why eager initialization for QAService?
 
-- spaCy takes ~1–2s to load
-- Index files (tf_index, pos_index, doc_stats) are ~5 MB combined
-- The full pipeline (SearchEngine → Reranker → RetrievalWorkflow → RAGRepository → RAGWorkflow) is assembled on first request
-- Double-checked locking ensures thread safety without locking every request
+- The pipeline (SearchEngine → Reranker → RetrievalWorkflow → RAGRepository → RAGWorkflow) is assembled once at startup in `init_workflow()`
+- Startup latency is ~1s (loads 4 JSON indexes + spaCy model)
+- Every HTTP request gets predictable response times — no slow first request
+- Simpler code: no locks, no module-level `None` checks, no singleton pattern
 
 ### 10.6 Why token version invalidation?
 

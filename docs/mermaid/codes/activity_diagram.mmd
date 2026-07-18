@@ -1,0 +1,60 @@
+%% flowchart TD
+%%     Start(["User Query"]) --> Validate{"Valid & ≤500 chars?"}
+%%     Validate -->|No| Bad(["400: Bad Request"])
+%%     Validate -->|Yes| Auth{"JWT valid?"}
+%%     Auth -->|No| UnAuth(["401: Unauthorized"])
+%%     Auth -->|Yes| LLM{"use_llm?"}
+
+%%     LLM -->|No| Search["SearchEngine.search(recall_k=30)"]
+%%     LLM -->|Yes| Check["Check Ollama Availability"]
+
+%%     Check -->|Down| Down(["503: Unavailable"])
+%%     Check -->|Up| Model{"Model exists?"}
+%%     Model -->|No| Search
+%%     Model -->|Yes| Full["RAGWorkflow.ask()"]
+
+%%     Search --> Score["Multi-strategy Scoring<br/>BM25 + Proximity + Title"]
+%%     Score --> Top["Top-30 → Rerank → Top-8"]
+%%     Top --> Promote["Article Promotion<br/>(clause→article, dedup)"]
+%%     Promote --> Persist["Persist to MongoDB"]
+
+%%     Full --> FullSearch["Search + Rerank + Promote"]
+%%     FullSearch --> Format["Build context & prompt"]
+%%     Format --> LLMCall["Ollama.chat (3× retry)"]
+%%     LLMCall --> OK{"Success?"}
+%%     OK -->|Yes| Return(["200: Answer + Articles"])
+%%     OK -->|No| Err(["200: Error + Articles"])
+
+%%     Persist --> RetOnly(["200: Articles Only"])
+
+flowchart LR
+    subgraph OFFLINE["Offline — Data Ingestion"]
+        direction TB
+        O1["1. Constitution JSON"] --> O2["2. Flattened JSON documents"]
+        O2 --> O3["3. NLP Processing<br/>(two configs)"]
+        O3 --> O4["4. Lemma Dictionary"]
+        O3 --> O5["4. Compute Statistics<br/>(TF, doc length, avgdl)"]
+        O5 --> O6["5. Inverted Index<br/>tf_index.json"]
+        O5 --> O7["5. Positional Index<br/>pos_index.json"]
+    end
+
+    subgraph ONLINE["Online — Q&A Retrieval"]
+        direction TB
+        A["1. Receive user query"] --> B["2. NLP Processing<br/>(BM25 + Proximity)"]
+        B --> C["3. Query Expansion<br/>(44 synonym groups)"]
+        C --> D["4. Score: BM25 + Proximity + Title ×5"]
+        D --> E["5. Sort top-50"]
+        E --> F["6. Rerank top-8<br/>(RRF + MMR + Rule)"]
+        F --> G["7. Article Promotion<br/>(merge + dedup)"]
+        G --> H{"8. LLM mode?"}
+        H -->|No| I["9. Persist to MongoDB"]
+        H -->|Yes| J["8. Truncate → Format → Ollama"]
+        J --> K{"Success?"}
+        K -->|Yes| I
+        K -->|No| I
+        I --> L["10. Send response"]
+    end
+
+    O6 -.->|"read"| D
+    O7 -.->|"read"| D
+    O4 -.->|"used"| B

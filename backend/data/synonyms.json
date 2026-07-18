@@ -6,15 +6,31 @@
 		["speech", "expression", "opinion"],
 		["privacy", "personal information", "confidentiality"],
 		["right", "entitlement", "prerogative", "fundamental right"],
-		["equality", "equal treatment", "equal protection", "non-discrimination"],
+		[
+			"equality",
+			"equal treatment",
+			"equal protection",
+			"non-discrimination"
+		],
 		["discrimination", "prejudice", "unequal treatment", "untouchability"],
-		["torture", "cruel treatment", "inhuman treatment", "degrading treatment"],
+		[
+			"torture",
+			"cruel treatment",
+			"inhuman treatment",
+			"degrading treatment"
+		],
 		["remedy", "redress", "compensation", "reparation", "relief"],
 		["petition", "writ", "application", "appeal", "motion"],
 		["property", "land", "asset", "estate", "ownership"],
 		["religion", "faith", "worship", "creed", "belief"],
 		["education", "learning", "instruction", "literacy"],
-		["health", "healthcare", "medical service", "medical care", "public health"],
+		[
+			"health",
+			"healthcare",
+			"medical service",
+			"medical care",
+			"public health"
+		],
 		["employment", "work", "job", "occupation", "labour", "labor"],
 		["housing", "shelter", "dwelling", "residence", "accommodation"],
 		["food", "nutrition", "sustenance", "food security"],
@@ -52,7 +68,7 @@
 		["naturalization", "acquired citizenship", "naturalized"],
 		["alien", "foreigner", "non-citizen", "foreign national"],
 		["descent", "birthright", "jus sanguinis", "by descent"],
-		["tax", "levy", "duty", "excise", "tariff", "customs"],
+		["tax", "levy", "custom duty", "excise", "tariff", "customs"],
 		["revenue", "income", "receipts", "earnings", "government revenue"],
 		["budget", "appropriation", "financial statement", "annual budget"],
 		["fund", "treasury", "consolidated fund", "government fund"],

@@ -52,8 +52,7 @@ The system follows a three-tier architecture with a clear separation of concerns
 │  Database: ECIRAS              ├── flattened_nepal_constitution   │
 │  ├── users                     ├── tf_index.json                  │
 │  ├── messages                  ├── pos_index.json                 │
-│  └── referenced_articles       ├── doc_stats.json                 │
-│                                └── lemma_dict_v3.json             │
+│  └── referenced_articles       └── doc_stats.json                 │
 └──────────────────────────────────────────────────────────────────┘
 ```
 

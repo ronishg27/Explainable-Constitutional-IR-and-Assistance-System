@@ -1,111 +1,33 @@
 sequenceDiagram
     actor U as User
-    participant FE as React Frontend
-    participant API as Flask API
-    participant CTRL as ApiController
-    participant QAS as QAService
-    participant RAG as RAGWorkflow
-    participant REPO as RAGRepository
-    participant RV as RetrievalWorkflow
+    participant FE as Frontend
+    participant API as Backend API
     participant SE as SearchEngine
-    participant RK as Reranker
-    participant BM as BM25Scorer
-    participant PS as ProximityScorer
-    participant LLM as Ollama LLM
+    participant LLM as Ollama
     participant DB as MongoDB
 
-    U->>FE: types query & clicks "Analyze"
-    FE->>API: POST /api/v1/ask { query, use_llm }
-    API->>CTRL: ask()
-    CTRL->>CTRL: validate JWT (token_required)
+    U->>FE: Submit query
+    FE->>API: POST /ask { query, use_llm }
+    activate API
+    API->>API: Validate & init
 
-    alt Invalid JSON or missing query
-        CTRL-->>FE: 400 Bad Request
-        FE-->>U: Shows validation error
+    API->>SE: Search + score + rerank
+    activate SE
+    SE-->>API: Top articles
+    deactivate SE
+
+    opt LLM available
+        API->>API: Truncate + format prompt
+        API->>LLM: Generate answer
+        activate LLM
+        LLM-->>API: Answer
+        deactivate LLM
     end
 
-    CTRL->>QAS: answer_query(query, useLLM)
-    Note over QAS: Lazy singleton init on first call
-
-    alt useLLM = false
-        QAS->>RAG: ask(query, retrieve_only=True)
-        RAG->>REPO: retrieve(query, top_k=8)
-        REPO->>RV: retrieve(query, recall_k=30)
-        RV->>SE: search(query, top_k=30)
-        SE->>SE: synonym expansion (optional)
-        SE->>BM: score(query_tokens, doc_id) [BM25]
-        SE->>PS: score(doc_id, query_pairs) [proximity]
-        BM-->>SE: per-doc BM25 score
-        PS-->>SE: per-doc proximity score
-        SE-->>RV: top-30 scored docs
-        RV->>RK: rerank(results, top_k=8)
-        Note over RK: RRF Fusion → MMR Diversity → Rule Boost
-        RK-->>RV: top-8 ranked docs
-        RV-->>REPO: raw results
-        REPO->>REPO: promote_to_articles()
-        Note over REPO: clause→article merge, dedup
-        REPO-->>RAG: promoted articles
-        RAG-->>QAS: { query, retrieved_articles }
-        QAS-->>CTRL: { query, articles }
-        CTRL->>CTRL: _persist_message() → MongoDB
-        CTRL-->>FE: 200 JSON with articles
-        FE-->>U: displays ranked articles
-    end
-
-    alt useLLM = true
-        RAG->>REPO: check_ollama_connection()
-        REPO-->>RAG: (connected, status)
-
-        alt Ollama unreachable
-            QAS-->>CTRL: { error: "Ollama unavailable" }
-            CTRL-->>FE: 503 Service Unavailable
-            FE-->>U: Shows Ollama offline message
-        else Reachable
-            REPO->>REPO: check_model_availability()
-
-            alt Model not found
-                REPO->>RV: retrieve(query, top_k=8)
-                RV-->>REPO: articles
-                REPO-->>RAG: promoted articles
-                RAG-->>QAS: { articles, ollama_status }
-                QAS-->>CTRL: articles + model_available=false
-                CTRL->>CTRL: _persist_message() → MongoDB
-                CTRL-->>FE: 200 articles + status
-                FE-->>U: Articles + "LLM model missing"
-            else Model available
-                RAG->>REPO: retrieve(query, top_k=8)
-                REPO->>RV: retrieve(query, recall_k=30)
-                RV->>SE: search(query, top_k=30)
-                SE->>BM: score BM25
-                SE->>PS: score proximity
-                BM-->>SE: scores
-                PS-->>SE: scores
-                SE-->>RV: top-30
-                RV->>RK: rerank(top_k=8)
-                RK-->>RV: top-8
-                RV-->>REPO: results
-                REPO->>REPO: promote_to_articles()
-                REPO->>REPO: build_truncated_text()
-                REPO-->>RAG: promoted + truncated
-                RAG->>RAG: build_prompt(query, context)
-                RAG->>LLM: chat(model, messages)
-                Note over LLM: Up to 3 retries with 0.5s delay, 4096 ctx
-
-                alt LLM success
-                    LLM-->>RAG: generated answer
-                    RAG-->>QAS: { answer, articles, citations }
-                    QAS-->>CTRL: full payload
-                    CTRL->>CTRL: _persist_message() → MongoDB
-                    CTRL-->>FE: 200 JSON with answer + articles
-                    FE-->>U: displays answer & citations
-                else LLM fails after retries
-                    LLM-->>RAG: error
-                    RAG-->>QAS: { error, articles }
-                    QAS-->>CTRL: partial payload
-                    CTRL->>CTRL: _persist_message() → MongoDB
-                    CTRL-->>FE: 200 JSON with error text
-                    FE-->>U: Articles + error message
-                end
-            end
-        end
-    end
+    API->>DB: Persist
+    activate DB
+    DB-->>API: Done
+    deactivate DB
+    API-->>FE: 200 + results
+    deactivate API
+    FE-->>U: Display results

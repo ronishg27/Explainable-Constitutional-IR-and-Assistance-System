@@ -1,5 +1,22 @@
-from mongoengine import Document, ListField, StringField, DateTimeField, FloatField, IntField
+import re
 from datetime import datetime, timezone
+
+from mongoengine import (Document, ListField, StringField, DateTimeField,
+                         FloatField, IntField)
+
+_ENRICHED_RE = re.compile(
+    r'^Part \d+ Article \d+\n*(?:Clause \d+|Subclause [\w]+)?\n*',
+    re.IGNORECASE
+)
+
+
+def _clean_body(text: str, title: str = None) -> str:
+    if not text:
+        return ''
+    cleaned = _ENRICHED_RE.sub('', text)
+    if title:
+        cleaned = re.sub(r'^{}\n*'.format(re.escape(title)), '', cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
 
 
 class ReferencedArticle(Document):
@@ -15,6 +32,7 @@ class ReferencedArticle(Document):
     subclause_id = StringField()
     level = StringField()
     part_no = IntField()
+    content = StringField()
     text = StringField()
     full_text = StringField()
     matched_terms = ListField(StringField(), default=list)
@@ -48,6 +66,7 @@ class ReferencedArticle(Document):
             'subclause_id': self.subclause_id,
             'level': self.level,
             'part_no': self.part_no,
+            'content': self.content or _clean_body(self.text, self.title) or '',
             'text': self.text,
             'full_text': self.full_text,
             'matched_terms': self.matched_terms,

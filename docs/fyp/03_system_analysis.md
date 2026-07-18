@@ -57,8 +57,8 @@ The system has two primary actors:
 ```
 User → React Frontend → HTTP POST /api/v1/ask (JWT Bearer)
   → Flask API (validate JSON, query length, auth)
-  → QAService (lazy singleton RAGWorkflow init)
-  → SearchEngine (recall_k=30 hybrid scoring)
+  → QAService (orchestration)
+  → SearchEngine (recall_k=50 hybrid scoring)
   → Reranker (RRF + MMR + rule boost → top_k=8)
   → RAGRepository (article promotion, context truncation)
   → RAGWorkflow (format prompt, call Ollama with 3× retry)
@@ -75,7 +75,6 @@ Raw Constitution JSON (data/nepal_constitution_new.json)
       → build_tf_index() → tf_index.json
       → build_positional_index() → pos_index.json
       → compute_doc_stats() → doc_stats.json
-  → generate_safe_lemma_dict.py → lemma_dict_v3.json
 ```
 
 ## 3.4 Feasibility Analysis

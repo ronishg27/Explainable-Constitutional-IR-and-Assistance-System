@@ -1,0 +1,37 @@
+flowchart TD
+
+    subgraph OFFLINE["Offline Ingestion"]
+        A["Raw Constitution JSON"] --> B["Flatten & Process Documents"]
+        B --> C["Build TF Index"]
+        B --> D["Build Positional Index"]
+        B --> E["Compute Doc Stats"]
+        C --> F["tf_index.json"]
+        D --> G["pos_index.json"]
+        E --> H["doc_stats.json"]
+    end
+
+    subgraph ONLINE["Online Q&A Pipeline"]
+        M["User Query"] --> N["ApiController.ask()"]
+        N --> O{"use_llm?"}
+        O -->|No| P["Search & Score<br/>BM25 + Proximity + Title"]
+        O -->|Yes| R["Check Ollama"]
+        R -->|unreachable| S["503 Error"]
+        R -->|reachable| T{"Model available?"}
+        T -->|No| P
+        T -->|Yes| V["RAG Workflow"]
+
+        P --> W["Top-30 Candidates"]
+        W --> X["Rerank<br/>RRF Fusion + MMR + Rule"]
+        X --> Y["Top-8 Results"]
+        Y --> Z{"RAG mode?"}
+        Z -->|No| AA["Return articles<br/>+ persist"]
+        Z -->|Yes| AB["Format context & prompt"]
+        AB --> AC["Ollama.chat<br/>(3× retry)"]
+        AC --> AD{"Success?"}
+        AD -->|Yes| AE["Return answer + articles"]
+        AD -->|No| AF["Return error + articles"]
+    end
+
+    F -.-> W
+    G -.-> W
+    H -.-> W

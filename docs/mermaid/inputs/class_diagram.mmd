@@ -1,229 +1,52 @@
 classDiagram
     class Document {
-        +doc_id: String
-        +part_no: String
-        +article_no: String
-        +title: String
-        +text: String
-        +citation: String
-        +level: String
-        +clause_no: String
-        +subclause_id: String
-        +is_primary: Boolean
-        +parent_id: String
-        +title_tokens: List
-        +body_tokens: List
-        +boost: Float
-    }
-
-    class TextProcessor {
-        -use_lemmatization: Boolean
-        -remove_stopwords: Boolean
-        -_nlp: Language
-        +normalize_text(text) String
-        +lemmatize_tokens(tokens) List
-        +process_text(text) List
-        -_filter_stopwords(tokens) List
-    }
-
-    class IndexBuilder {
-        -bm25_processor: TextProcessor
-        -proximity_processor: TextProcessor
-        +build_tf_index(documents) Dict
-        +build_positional_index(documents) Dict
-        +compute_doc_stats(documents) Tuple
-        +run(documents, output_dir)
-    }
-
-    class BM25Scorer {
-        -tf_index: Dict
-        -doc_lengths: Dict
-        -avgdl: Float
-        -k1: Float = 1.5
-        -b: Float = 1.0
-        -N: Int
-        +idf(term) Float
-        +score(query_tokens, doc_id) Float
-        +matched_terms(query_tokens, doc_id) List
-    }
-
-    class ProximityScorer {
-        -index: Dict
-        +generate_query_pairs(tokens) List
-        +score(doc_id, pairs, max_window, ordered) Float
-    }
-
-    class QueryExpander {
-        -groups: List
-        -lookup: Dict
-        +expand(tokens, raw_query) List
+        +doc_id: str
+        +part_no: str
+        +article_no: str
+        +title: str
+        +text: str
+        +citation: str
+        +level: str
+        +clause_no: str
+        +is_primary: bool
+        +boost: float
     }
 
     class SearchEngine {
-        -bm25_scorer: BM25Scorer
-        -proximity_scorer: ProximityScorer
-        -bm25_processor: TextProcessor
-        -proximity_processor: TextProcessor
-        -documents: List~Document~
-        -proximity_weight: Float = 1.0
-        -title_boost: Float = 5.0
-        -default_top_k: Int
-        -max_window: Int = 30
-        -synonym_expander: QueryExpander
-        +search(query, top_k) List
-    }
-
-    class Reranker {
-        -tf_index: Dict
-        -rrf_k: Int = 60
-        -mmr_lambda: Float = 0.5
-        +rerank(results, top_k, boost_rules) List
-        -_rrf_fuse(results) List
-        -_mmr_diversify(results) List
-        -_apply_boost(results, boost_rules) List
-    }
-
-    class RetrievalWorkflow {
-        -engine: SearchEngine
-        -reranker: Reranker
-        +retrieve(query, top_k, boost_rules) List
-    }
-
-    class EngineFactory {
-        +from_artifacts(documents_path, index_dir, synonyms_path) SearchEngine
-    }
-
-    class RAGFormatter {
-        +format_context(articles) String
-        +build_system_prompt() String
-        +build_user_prompt(query, context) String
-    }
-
-    class RAGRepository {
-        -retrieval: RetrievalWorkflow
-        -model: String
-        -client: Client
-        -_article_lookup: Dict
-        -_clause_structure: Dict
-        -_ollama_available: Boolean
-        -_available_models: List
-        +check_ollama_connection() Tuple
-        +check_model_availability() Tuple
-        +retrieve(query, top_k) List
-        +promote_to_articles(results) List
-        +build_truncated_text(article) String
-        +call_llm(messages, stream) Response
+        +search(query, top_k) list
     }
 
     class RAGWorkflow {
-        -repo: RAGRepository
-        -formatter: RAGFormatter
-        -max_context_articles: Int = 8
-        +ask(query, retrieve_only) Dict
+        +ask(query, retrieve_only) dict
         +ask_streaming(query) Generator
     }
 
     class QAService {
-        +answer_query(query, useLLM) Tuple~Dict, Int~
-        +answer_query_streaming(query) Generator
-        +_get_workflow() RAGWorkflow
-    }
-
-    class UserService {
-        +create_user(fullname, email, password, role) Dict
-        +authenticate_user(email, password) Dict
-        +get_user(user_id) Dict
-        +list_users() Dict
-        +delete_user(user_id) Dict
-    }
-
-    class MessageService {
-        +create_message(user_id, query, answer, articles) Dict
-        +get_user_messages(user_id, limit, skip) Dict
-        +get_message(message_id) Dict
-        +update_message_answer(message_id, answer) Dict
-        +search_messages(user_id, search_term) Dict
-        +delete_message(message_id) Dict
-        +delete_user_messages(user_id) Dict
-    }
-
-    class ArticleService {
-        +create_article(...) Dict
-        +get_article(article_id) Dict
-        +list_articles() Dict
-        +delete_article(article_id) Dict
-    }
-
-    class IngestionWorkflow {
-        +load_documents(path) List~Document~
-        +build_indexes(documents, bm25_proc, prox_proc) Tuple
-        +save_indexes(indexes, output_dir)
+        +answer_query(query, useLLM) tuple
     }
 
     class User {
-        +fullname: String
-        +email: String
-        +password_hash: String
-        +role: RoleEnum
-        +token_version: Int = 0
-        +created_at: DateTime
-        +updated_at: DateTime
-        +set_password(password)
-        +check_password(password) bool
-        +to_json() Dict
+        +fullname: str
+        +email: str
+        +role: str
     }
 
     class Message {
-        +query: String
-        +answer: String
-        +user: Reference~User~
-        +articles: List~Reference~ReferencedArticle~~
-        +created_at: DateTime
-        +updated_at: DateTime
-        +to_json() Dict
+        +query: str
+        +answer: str
     }
 
     class ReferencedArticle {
-        +title: String
-        +citation: String
-        +doc_id: String
-        +relevance_score: Float
-        +bm25_score: Float
-        +proximity_score: Float
-        +title_match_count: Int
-        +article_no: Int
-        +clause_no: String
-        +subclause_id: String
-        +level: String
-        +part_no: Int
-        +text: String
-        +full_text: String
-        +matched_terms: List~String~
-        +exact_matched_terms: List~String~
-        +created_at: DateTime
-        +updated_at: DateTime
-        +to_json() Dict
+        +title: str
+        +citation: str
+        +doc_id: str
+        +relevance_score: float
+        +text: str
     }
 
-    class Database {
-        +connect(db_name, host) bool
-        +disconnect() bool
-    }
-
-    User "1" --> "0..*" Message : creates
-    Message "0..*" --> "0..*" ReferencedArticle : references
-    QAService --> RAGWorkflow : uses
-    RAGWorkflow --> RAGRepository : uses
-    RAGWorkflow --> RAGFormatter : uses
-    RAGRepository --> RetrievalWorkflow : uses
-    RetrievalWorkflow --> SearchEngine : uses
-    RetrievalWorkflow --> Reranker : uses
-    SearchEngine --> BM25Scorer : uses
-    SearchEngine --> ProximityScorer : uses
-    SearchEngine --> TextProcessor : uses 2x
-    SearchEngine --> QueryExpander : optional
-    EngineFactory --> SearchEngine : builds
-    IndexBuilder --> TextProcessor : uses 2x
-    IngestionWorkflow --> TextProcessor : uses 2x
-    IngestionWorkflow --> Document : produces
-    IndexBuilder --> Document : consumes
+    User "1" --> "*" Message
+    Message "*" --> "*" ReferencedArticle
+    QAService --> RAGWorkflow
+    RAGWorkflow --> SearchEngine
+    SearchEngine --> Document : retrieves
+    RAGWorkflow --> ReferencedArticle : produces
