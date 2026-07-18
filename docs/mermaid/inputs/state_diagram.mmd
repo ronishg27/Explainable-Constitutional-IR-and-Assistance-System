@@ -1,72 +1,31 @@
 stateDiagram-v2
+    direction LR
     [*] --> Idle
 
     state Idle {
         [*] --> Guest
-        Guest --> LoggedIn : login() / JWT issued
-        Guest --> Guest : login failed / invalid credentials
-        LoggedIn --> Guest : logout() / token_version incremented
-        LoggedIn --> Guest : 401 / token expired or invalidated
+        Guest --> LoggedIn : login
+        LoggedIn --> Guest : logout / expired
     }
 
-    Idle --> Processing : POST /api/v1/ask (JWT auth)
-
-    state Processing {
-        [*] --> Validating
-        Validating --> Retrieving : useLLM=false
-        Validating --> CheckingLLM : useLLM=true
-    }
+    Idle --> Validating : POST /ask
+    Validating --> Retrieving : valid
+    Validating --> Idle : invalid
 
     state Retrieving {
         [*] --> Searching
-        Searching --> ScoringBM25
-        Searching --> ScoringProximity
-        ScoringBM25 --> TitleBoost
-        ScoringProximity --> TitleBoost
-        TitleBoost --> Combining
-        Combining --> ([*]) : Top-30 candidates
+        Searching --> Reranking
+        Reranking --> Promoting
+        Promoting --> [*]
     }
 
-    state Reranking {
-        [*] --> RRFFusion
-        RRFFusion --> MMRDiversity
-        MMRDiversity --> RuleBoost
-        RuleBoost --> ([*]) : Top-8 results
-    }
-
-    state CheckingLLM {
-        [*] --> OllamaCheck
-        OllamaCheck --> Reachable
-        OllamaCheck --> Unreachable
-        Reachable --> ModelCheck
-        ModelCheck --> ModelAvailable
-        ModelCheck --> ModelMissing
-    }
-
-    state ArticlePromotion {
-        [*] --> MergeClauses
-        MergeClauses --> Deduplicate
-        Deduplicate --> TruncateContext
-        TruncateContext --> ([*]) : Article-level results
-    }
-
-    CheckingLLM --> Retrieving : ModelMissing → retrieval-only
-    CheckingLLM --> Generating : ModelAvailable
+    Retrieving --> Idle : articles returned
+    Retrieving --> Generating : RAG mode
 
     state Generating {
-        [*] --> FormattingContext
-        FormattingContext --> BuildingPrompt
-        BuildingPrompt --> LLMCall
-        LLMCall --> Retry
-        Retry --> LLMCall : retries < 3
-        Retry --> Error : retries ≥ 3
-        LLMCall --> Success
+        [*] --> CallingLLM
+        CallingLLM --> Answered
+        CallingLLM --> Failed
     }
 
-    Retrieving --> Reranking
-    Reranking --> ArticlePromotion
-    ArticlePromotion --> Idle : return articles + persist to MongoDB
-    ArticlePromotion --> Generating : RAG mode
-    Generating --> Idle : return answer + articles + persist
-    CheckingLLM --> Idle : 503 Ollama unreachable
-    Idle --> [*]
+    Generating --> Idle : answer returned

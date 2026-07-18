@@ -1,0 +1,32 @@
+architecture-beta
+    group client(cloud)[Client]
+    service browser(cloud) in client
+
+    group backend(cloud)[Backend]
+    service flask-api(server) in backend
+    service qa-service(server) in backend
+    service rag-workflow(server) in backend
+    service rag-repo(server) in backend
+    service retrieval(server) in backend
+    service search-engine(server) in backend
+    service reranker(server) in backend
+    service persist(server) in backend
+
+    group data(cloud)[Data]
+    service mongodb(disk) in data
+    service index-files(disk) in data
+
+    group llm(cloud)[LLM]
+    service ollama(server) in llm
+
+    browser:R -- L:flask-api
+    flask-api:L -- R:qa-service
+    flask-api:T -- B:persist
+    qa-service:B -- T:rag-workflow
+    rag-workflow:B -- T:rag-repo
+    rag-repo:B -- T:retrieval
+    retrieval:L -- R:search-engine
+    retrieval:R -- L:reranker
+    rag-repo:R -- L:ollama
+    search-engine:T -- B:index-files
+    persist:B -- T:mongodb

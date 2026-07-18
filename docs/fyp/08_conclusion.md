@@ -28,7 +28,7 @@ The key accomplishments are:
 
 | Limitation | Impact |
 |------------|--------|
-| **Single model support** | No automatic fallback if `qwen2.5:7b` is unavailable |
+| **Single model support** | No automatic fallback if `qwen3:8b` is unavailable |
 | **No dedicated retrieval endpoint** | `/ask?use_llm=false` works but no `/api/v1/search` |
 | **Permissive CORS** | `CORS(app)` with no restrictions |
 | **No admin API routes** | `UserService.list_users()` and `delete_user()` exist but no admin blueprint |

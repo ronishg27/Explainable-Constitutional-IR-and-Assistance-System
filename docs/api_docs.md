@@ -241,7 +241,7 @@ Submit a question and get a JSON response with retrieved articles and (optionall
   ],
   "ollama_status": {
     "connected": true,
-    "model": "qwen2.5:7b",
+    "model": "qwen3:8b",
     "model_available": true
   }
 }
@@ -254,9 +254,9 @@ Submit a question and get a JSON response with retrieved articles and (optionall
   "articles": [...],
   "ollama_status": {
     "connected": true,
-    "model": "qwen2.5:7b",
+    "model": "qwen3:8b",
     "model_available": false,
-    "message": "Model 'qwen2.5:7b' is unavailable.",
+    "message": "Model 'qwen3:8b' is unavailable.",
     "available_models": ["llama3.2:3b", "nomic-embed-text"]
   }
 }

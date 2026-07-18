@@ -1,38 +1,39 @@
+%% Requires Mermaid v10.6+ (architecture-beta diagram type)
 architecture-beta
     group client(cloud)[Client Layer]
-    service browser(cloud)[Browser] in client
-    service vite(server)[Vite Dev Server] in client
+    service browser(cloud) in client
+    service vite-dev-server(server) in client
 
     group backend(cloud)[Backend Layer]
-    service flask(server)[Flask API<br/>Python 3.13] in backend
-    service qa(server)[QAService<br/>Lazy Singleton] in backend
-    service ragwf(server)[RAGWorkflow] in backend
-    service ragrepo(server)[RAGRepository<br/>+ Article Promotion] in backend
-    service ret(server)[RetrievalWorkflow] in backend
-    service search(server)[SearchEngine<br/>BM25 + Proximity + Title] in backend
-    service rerank(server)[Reranker<br/>RRF + MMR + Boost] in backend
-    service persist(server)[_persist_message<br/>→ MongoDB] in backend
+    service flask-api(server) in backend
+    service qa-service(server) in backend
+    service rag-workflow(server) in backend
+    service rag-repo(server) in backend
+    service retrieval-workflow(server) in backend
+    service search-engine(server) in backend
+    service reranker(server) in backend
+    service persist-message(server) in backend
 
     group data(cloud)[Data Layer]
-    service mongo(database)[MongoDB 8<br/>ECIRAS] in data
-    service indexes(disk)[File Indexes<br/>tf/pos/doc_stats] in data
-    service flat(disk)[Flattened<br/>Constitution JSON] in data
-    service syn(disk)[Synonyms<br/>44 groups] in data
+    service mongodb(disk) in data
+    service file-indexes(disk) in data
+    service flattened-json(disk) in data
+    service synonyms(disk) in data
 
     group llm(cloud)[LLM Layer]
-    service ollama(server)[Ollama<br/>qwen2.5:7b] in llm
+    service ollama(server) in llm
 
-    browser:R -- L:flask
-    vite:R -- L:flask
-    flask:L -- R:qa
-    flask:T -- B:persist
-    qa:B -- T:ragwf
-    ragwf:B -- T:ragrepo
-    ragrepo:B -- T:ret
-    ret:L -- R:search
-    ret:R -- L:rerank
-    ragrepo:R -- L:ollama
-    search:T -- B:indexes
-    search:B -- T:syn
-    persist:B -- T:mongo
-    flat:R -- L:indexes
+    browser:R -- L:flask-api
+    vite-dev-server:R -- L:flask-api
+    flask-api:L -- R:qa-service
+    flask-api:T -- B:persist-message
+    qa-service:B -- T:rag-workflow
+    rag-workflow:B -- T:rag-repo
+    rag-repo:B -- T:retrieval-workflow
+    retrieval-workflow:L -- R:search-engine
+    retrieval-workflow:R -- L:reranker
+    rag-repo:R -- L:ollama
+    search-engine:T -- B:file-indexes
+    search-engine:B -- T:synonyms
+    persist-message:B -- T:mongodb
+    flattened-json:R -- L:file-indexes

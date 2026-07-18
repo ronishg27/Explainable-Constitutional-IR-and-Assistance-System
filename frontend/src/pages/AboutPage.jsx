@@ -2,7 +2,7 @@ import Card from '../components/ui/Card';
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto mt-12 max-w-2xl px-4">
+    <main className="mx-auto mt-8 max-w-4xl px-4">
       <h1 className="text-lg font-semibold text-neutral-900 mb-6">About</h1>
       <Card>
         <div className="prose text-sm">

@@ -82,10 +82,10 @@ export default function MessageDetailPage() {
       subclause_id: a.subclause_id,
       level: a.level,
       part_no: a.part_no,
-      text: a.text,
-      full_text: a.full_text,
+      content: a.content,
       matched_terms: a.matched_terms,
       exact_matched_terms: a.exact_matched_terms,
+      matched_clauses: a.matched_clauses,
     })),
   };
 

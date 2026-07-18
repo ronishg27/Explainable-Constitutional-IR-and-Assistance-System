@@ -36,6 +36,7 @@ class QueryExpander:
                 self.multi_word_entries[group_idx] = multi_terms
 
     def expand(self, tokens: list[str], raw_query: str = "") -> list[str]:
+        """Expand a list of tokens with their synonyms, preserving order and uniqueness."""
         if not tokens:
             return tokens
 

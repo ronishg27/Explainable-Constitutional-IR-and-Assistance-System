@@ -12,7 +12,7 @@ class RetrievalWorkflow:
         self,
         search_engine: SearchEngine,
         reranker: Reranker,
-        default_recall_k: int = 30,
+        default_recall_k: int = 50,
         default_top_k: int = 8,
     ):
         self.engine = search_engine
