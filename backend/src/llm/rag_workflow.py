@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import Optional
 
 from .rag_repository import RAGRepository
@@ -8,10 +7,11 @@ from .rag_formatter import RAGFormatter
 logger = logging.getLogger(__name__)
 
 _ARTICLE_FIELDS = [
-    "doc_id", "part_no", "article_no", "title", "text", "full_text", "citation",
+    "doc_id", "part_no", "article_no", "title", "content", "citation",
     "level", "clause_no", "subclause_id", "score",
     "bm25_score", "proximity_score", "title_match_count",
     "matched_terms", "exact_matched_terms", "boost_multiplier",
+    "matched_clauses",
 ]
 DEFAULT_RECALL_K = 30
 DEFAULT_MAX_CONTEXT = 8
@@ -43,6 +43,14 @@ class RAGWorkflow:
         """Return a filtered dict with only the fields the frontend needs."""
         return {k: article.get(k) for k in _ARTICLE_FIELDS}
 
+    def _prepare_articles(self, query: str) -> list[dict]:
+        retrieved = self.repo.retrieve(query, top_k=self.max_context_articles)
+        promoted = self.repo.promote_to_articles(retrieved)
+        for art in promoted:
+            art["full_text"] = art["text"]
+            art["text"] = self.repo.build_truncated_text(art)
+        return promoted
+
     def ask(
         self,
         query: str,
@@ -53,12 +61,7 @@ class RAGWorkflow:
         Returns:
             dict with 'query', 'retrieved_articles', 'answer' (optional), 'citations' (optional).
         """
-        retrieved_articles = self.repo.retrieve(query, top_k=self.max_context_articles)
-        promoted_articles = self.repo.promote_to_articles(retrieved_articles)
-
-        for art in promoted_articles:
-            art["full_text"] = art["text"]
-            art["text"] = self.repo.build_truncated_text(art)
+        promoted_articles = self._prepare_articles(query)
 
         result = {
             "query": query,
@@ -103,12 +106,7 @@ class RAGWorkflow:
             # or on error:
             {"type": "error",     "content": "..."}
         """
-        retrieved_articles = self.repo.retrieve(query, top_k=self.max_context_articles)
-        promoted_articles = self.repo.promote_to_articles(retrieved_articles)
-
-        for art in promoted_articles:
-            art["full_text"] = art["text"]
-            art["text"] = self.repo.build_truncated_text(art)
+        promoted_articles = self._prepare_articles(query)
 
         articles_data = [self._build_article_dict(art) for art in promoted_articles]
 
@@ -131,20 +129,6 @@ class RAGWorkflow:
         except Exception as exc:
             logger.exception("LLM streaming call failed")
             yield {"type": "error", "content": str(exc)}
-
-    # ------------------------------------------------------------------
-    # Convenience proxies for QAService
-    # ------------------------------------------------------------------
-    @property
-    def model(self) -> str:
-        return self.repo.model
-
-    def check_ollama_connection(self) -> tuple[bool, str]:
-        return self.repo.check_ollama_connection()
-
-    def check_model_availability(self, model_name: Optional[str] = None) -> tuple[bool, str, list[str]]:
-        return self.repo.check_model_availability(model_name)
-
 
 # Standalone demo
 def main():

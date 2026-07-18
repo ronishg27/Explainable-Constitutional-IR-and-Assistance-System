@@ -1,0 +1,60 @@
+graph TD
+    subgraph Client
+        React["React 19 SPA<br/>(SearchBar, Results,<br/>History, About)"]
+    end
+
+    subgraph API["Flask API"]
+        Routes["Routes"]
+        Controllers["Controllers<br/>(JWT auth)"]
+        Services["Services<br/>(QA, User, Message)"]
+    end
+
+    subgraph Retrieval["Search & Retrieval"]
+        TextProc["TextProcessor"]
+        Indexer["IndexBuilder"]
+        Scorers["BM25Scorer + ProximityScorer"]
+        SearchEngine["SearchEngine<br/>(BM25 + Proximity + Title)"]
+        Reranker["Reranker<br/>(RRF + MMR + Rule)"]
+        RetrievalWF["RetrievalWorkflow"]
+    end
+
+    subgraph RAG["LLM / RAG"]
+        RAGRepo["RAGRepository"]
+        RAGFormatter["RAGFormatter"]
+        RAGWorkflow["RAGWorkflow"]
+    end
+
+    subgraph Pipeline["Offline Pipeline"]
+        Flatten["Flatten Constitution JSON"]
+        Ingestion["IngestionWorkflow<br/>(build indexes)"]
+        LemmaDict["Lemma Dictionary Gen"]
+    end
+
+    subgraph Storage
+        MongoDB[("MongoDB 8")]
+        IndexFiles["File Indexes<br/>(tf, pos, doc_stats)"]
+    end
+
+    subgraph External
+        Ollama["Ollama LLM<br/>(qwen3:8b)"]
+    end
+
+    React -->|POST /api/v1/ask<br/>Bearer JWT| Routes
+    Routes --> Controllers
+    Controllers --> Services
+    Services --> MongoDB
+    Services --> RAGWorkflow
+    RAGWorkflow --> RAGRepo
+    RAGWorkflow --> RAGFormatter
+    RAGRepo --> RetrievalWF
+    RAGRepo --> Ollama
+    RetrievalWF --> SearchEngine
+    RetrievalWF --> Reranker
+    SearchEngine --> Scorers
+    SearchEngine --> TextProc
+    SearchEngine --> IndexFiles
+    Flatten --> Ingestion
+    Ingestion --> Indexer
+    Indexer --> IndexFiles
+    Indexer --> TextProc
+    LemmaDict --> IndexFiles

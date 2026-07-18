@@ -1,0 +1,114 @@
+classDiagram
+    class Document {
+        +doc_id: String
+        +part_no: String
+        +article_no: String
+        +title: String
+        +text: String
+        +citation: String
+        +level: String
+        +boost: Float
+    }
+
+    class TextProcessor {
+        -use_lemmatization: Boolean
+        -remove_stopwords: Boolean
+        +process_text(text) List
+    }
+
+    class IndexBuilder {
+        +build_tf_index(documents) Dict
+        +build_positional_index(documents) Dict
+        +compute_doc_stats(documents) Tuple
+    }
+
+    class BM25Scorer {
+        -k1: Float = 1.5
+        -b: Float = 1.0
+        +score(query_tokens, doc_id) Float
+    }
+
+    class ProximityScorer {
+        +generate_query_pairs(tokens) List
+        +score(doc_id, pairs, max_window) Float
+    }
+
+    class SearchEngine {
+        -bm25_scorer: BM25Scorer
+        -proximity_scorer: ProximityScorer
+        -proximity_weight: Float
+        -title_boost: Float
+        +search(query, top_k) List
+    }
+
+    class Reranker {
+        -rrf_k: Int = 60
+        -mmr_lambda: Float = 0.5
+        +rerank(results, top_k) List
+    }
+
+    class RetrievalWorkflow {
+        +retrieve(query, top_k) List
+    }
+
+    class RAGFormatter {
+        +format_context(articles) String
+        +build_system_prompt() String
+        +build_user_prompt(query, context) String
+    }
+
+    class RAGRepository {
+        -model: String
+        -ollama_available: Boolean
+        +check_ollama_connection()
+        +retrieve(query, top_k) List
+        +promote_to_articles(results) List
+        +build_truncated_text(article) String
+    }
+
+    class RAGWorkflow {
+        +ask(query, retrieve_only) Dict
+    }
+
+    class QAService {
+        +answer_query(query, useLLM) Tuple
+    }
+
+    class User {
+        +fullname: String
+        +email: String
+        +role: String
+    }
+
+    class Message {
+        +query: String
+        +answer: String
+        +created_at: DateTime
+    }
+
+    class ReferencedArticle {
+        +title: String
+        +citation: String
+        +doc_id: String
+        +relevance_score: Float
+        +text: String
+        +full_text: String
+    }
+
+    class Database {
+        +connect(db_name, host) bool
+    }
+
+    User "1" --> "0..*" Message
+    Message "0..*" --> "0..*" ReferencedArticle
+    QAService --> RAGWorkflow
+    RAGWorkflow --> RAGRepository
+    RAGWorkflow --> RAGFormatter
+    RAGRepository --> RetrievalWorkflow
+    RetrievalWorkflow --> SearchEngine
+    RetrievalWorkflow --> Reranker
+    SearchEngine --> BM25Scorer
+    SearchEngine --> ProximityScorer
+    SearchEngine --> TextProcessor
+    IndexBuilder --> TextProcessor
+    IndexBuilder --> Document

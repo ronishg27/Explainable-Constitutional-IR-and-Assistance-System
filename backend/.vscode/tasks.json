@@ -10,14 +10,6 @@
       "problemMatcher": []
     },
     {
-      "label": "Run API with data rebuild",
-      "type": "shell",
-      "command": "python",
-      "args": ["app.py", "--rebuild-data"],
-      "group": "build",
-      "problemMatcher": []
-    },
-    {
       "label": "Run full ingestion pipeline",
       "type": "shell",
       "command": "python",
