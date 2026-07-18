@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import ArticleCard from './ArticleCard';
+import ConfidenceBadge from './ConfidenceBadge';
 import Spinner from './ui/Spinner';
 
 const CITATION_RE = /\(Article\s+(\d+(?:[–-]\d+)?)\)/g;
@@ -36,14 +37,14 @@ function CitationLink({ href, children, ...props }) {
   );
 }
 
-const PhasedLoading = ({ hasArticles, useLlm }) => {
+const PhasedLoading = ({ hasArticles, phase }) => {
   const phases = [
     { label: 'Searching the constitution...', show: !hasArticles },
-    { label: 'Generating answer...', show: hasArticles && useLlm },
+    { label: 'Analyzing relevant articles...', show: hasArticles && phase < 2 },
+    { label: 'Generating answer...', show: hasArticles && phase >= 2 },
   ];
 
-  const active = phases.find((p) => p.show);
-  if (!active) return null;
+  const active = phases.find((p) => p.show) || phases[0];
 
   return (
     <div className="flex items-center gap-2.5 text-sm text-neutral-400">
@@ -53,7 +54,17 @@ const PhasedLoading = ({ hasArticles, useLlm }) => {
   );
 };
 
-const ResultDisplay = ({ data, loading, streamedResponse, useLlm }) => {
+const ConfidenceScore = ({ articles }) => {
+  if (!articles || articles.length === 0) return null;
+
+  const avgScore = articles.reduce((sum, a) => sum + (a.score ?? 0), 0) / articles.length;
+  const maxScore = Math.max(...articles.map(a => a.score ?? 0));
+  const normalized = maxScore > 0 ? Math.round((avgScore / maxScore) * 100) : 0;
+
+  return <ConfidenceBadge score={normalized} />;
+};
+
+const ResultDisplay = ({ data, loading, streamedResponse }) => {
   const displayResponse = streamedResponse || data?.response || '';
 
   const articles = (data?.articles || []).sort(
@@ -70,27 +81,33 @@ const ResultDisplay = ({ data, loading, streamedResponse, useLlm }) => {
   );
 
   return (
-    <div className="mt-8 mb-16">
+    <div className="mt-10 mb-20">
       {data?.query && (
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-wider text-neutral-400 mb-1">
+        <div className="mb-8 pb-6 border-b border-neutral-200">
+          <p className="text-xs uppercase tracking-widest text-neutral-400 mb-1.5 font-medium">
             Query
           </p>
-          <p className="text-base font-medium text-neutral-900">
+          <p className="text-lg font-semibold text-neutral-900 leading-snug">
             {data.query}
           </p>
         </div>
       )}
 
-      <div>
-        <div className="mb-8">
+      <div className=" bg-red-0 ">
+        <div className="min-w-1">
           {displayResponse && (
-            <>
-              <h2 className="text-sm font-semibold text-neutral-900 mb-4">
-                Answer
-              </h2>
-              <div className="border-l-2 border-primary-200 pl-4">
-              <div className="prose prose-sm max-w-none text-neutral-700">
+            <div className="bg-white rounded-3xl border border-neutral-200 shadow-soft p-8 mb-8">
+              <div className="flex items-center gap-3 mb-6 flex-wrap">
+                <h2 className="text-sm font-semibold text-neutral-900 uppercase tracking-widest">
+                  Answer
+                </h2>
+                <ConfidenceScore articles={articles} />
+                <span className="text-xs text-neutral-400">
+                  Based on {articles.length} relevant article{articles.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+
+              <div className="prose max-w-none text-neutral-700">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
@@ -101,25 +118,25 @@ const ResultDisplay = ({ data, loading, streamedResponse, useLlm }) => {
                 </ReactMarkdown>
               </div>
             </div>
-          </>
           )}
 
-          {loading && !displayResponse && (
-            <div className="flex items-center gap-2 text-sm text-neutral-400">
-              <PhasedLoading hasArticles={articles.length > 0} useLlm={useLlm} />
+          {loading && (
+            <div className="bg-white rounded-3xl border border-neutral-200 shadow-soft p-8 mb-8">
+              <PhasedLoading
+                hasArticles={articles.length > 0}
+                phase={displayResponse ? 2 : 1}
+              />
             </div>
           )}
         </div>
 
         {articles.length > 0 && (
-          <div>
-            <h2 className="text-sm font-semibold text-neutral-900 mb-3">
+          <div className="md:sticky md:top-20 md:self-start">
+            <h2 className="text-xs uppercase tracking-widest text-neutral-400 font-semibold mb-4">
               Referenced Articles
-              <span className="ml-1.5 text-sm font-normal text-neutral-400">
-                ({articles.length})
-              </span>
+              <span className="ml-1.5 font-normal">({articles.length})</span>
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {articles.map((article, index) => (
                 <ArticleCard
                   key={article.doc_id || index}
