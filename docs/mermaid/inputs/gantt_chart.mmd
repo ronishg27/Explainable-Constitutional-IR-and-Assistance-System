@@ -1,0 +1,29 @@
+gantt
+    todayMarker off
+    title Project Timeline
+    dateFormat YYYY-MM-DD
+    axisFormat %d%b
+
+    section Requirements
+    Requirements                  :req, 2026-03-22, 20d
+
+    section Data Preparation
+    Prepare JSON for Constitution :json, 2026-04-11, 21d
+
+    section Design
+    Design                        :des, after req, 20d
+
+    section Implementation
+    Implementation                :imp, after des, 35d
+
+    section Testing
+    Testing                       :tes, after imp, 20d
+
+    section Deployment
+    Deployment                    :dep, after tes, 10d
+
+    section Maintenance
+    Maintenance                   :mnt, after dep, 17d
+
+    section Documentation
+    Documentation                 :doc, 2026-03-22, 122d
