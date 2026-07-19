@@ -30,7 +30,8 @@ class RAGFormatter:
             "- Do NOT explain all articles.\n"
             "- Select ONLY the relevant parts of the context.\n"
             "- Ignore unrelated information.\n"
-            # "- Keep it concise.\n\n"
+            "- Ensure the user understands the answer.\n"
+            "- Explain the answer to the question using simple language.\n\n"
 
             "Answer Guidelines:\n"
             "- First, give a clear answer to the question in 2–4 sentences.\n"
