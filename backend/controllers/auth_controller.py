@@ -98,7 +98,6 @@ def logout() -> Response:
 def get_current_user() -> Response:
     """GET /api/v1/auth/me — return profile of the authenticated user."""
     user_id = (request.user or {}).get('user_id')
-    logger.debug("Getting current user with ID: %s", user_id)
     user = UserService.get_user(user_id)
     if user:
         return jsonify(user), 200
