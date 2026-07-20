@@ -1,11 +1,15 @@
-PY = backend\.venv\Scripts\python.exe
+.DEFAULT_GOAL := run
+
+.PHONY: backend frontend run
+
+PY := backend\.venv\Scripts\python.exe
 
 backend:
-	$(PY) ./backend/app.py
+	cd backend && .venv\Scripts\python.exe app.py
 
 frontend:
 	cd frontend && npm run dev
 
 run:
-	powershell -Command "Start-Process cmd -ArgumentList '/k \"$(PY) ./backend/app.py\"' -WindowStyle Normal"
-	powershell -Command "Start-Process cmd -ArgumentList '/k cd frontend && npm run dev' -WindowStyle Normal"
+	powershell -Command "Start-Process cmd -ArgumentList '/k ""cd backend && .venv\Scripts\python.exe app.py""'"
+	powershell -Command "Start-Process cmd -ArgumentList '/k ""cd frontend && npm run dev""'"
