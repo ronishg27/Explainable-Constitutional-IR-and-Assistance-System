@@ -17,6 +17,11 @@ DEFAULT_RECALL_K = 30
 DEFAULT_MAX_CONTEXT = 8
 
 
+def _build_article_dict(article: dict) -> dict:
+    """Return a filtered dict with only the fields the frontend needs."""
+    return {k: article.get(k) for k in _ARTICLE_FIELDS}
+
+
 class RAGWorkflow:
     """Thin Q&A orchestrator: repository → formatter → response assembly."""
 
@@ -38,11 +43,6 @@ class RAGWorkflow:
         raw = self.repo.retrieve(query, top_k=top_k)
         return self.repo.promote_to_articles(raw)
 
-    @staticmethod
-    def _build_article_dict(article: dict) -> dict:
-        """Return a filtered dict with only the fields the frontend needs."""
-        return {k: article.get(k) for k in _ARTICLE_FIELDS}
-
     def _prepare_articles(self, query: str) -> list[dict]:
         retrieved = self.repo.retrieve(query, top_k=self.max_context_articles)
         promoted = self.repo.promote_to_articles(retrieved)
@@ -54,23 +54,42 @@ class RAGWorkflow:
     def ask(
         self,
         query: str,
-        retrieve_only: bool = False,
+        use_llm: bool = False,
     ) -> dict:
         """Answer a question using RAG.
 
         Returns:
-            dict with 'query', 'retrieved_articles', 'answer' (optional), 'citations' (optional).
+            dict with 'query', 'articles', 'response' (optional),
+            'ollama_status' (optional), 'citations' (optional), 'error' (optional).
         """
         promoted_articles = self._prepare_articles(query)
 
-        result = {
-            "query": query,
-            "retrieved_articles": [
-                self._build_article_dict(art) for art in promoted_articles
-            ],
-        }
+        articles = [_build_article_dict(art) for art in promoted_articles]
 
-        if retrieve_only:
+        result = {"query": query, "articles": articles}
+
+        if not use_llm:
+            return result
+
+        is_connected, status_message = self.repo.check_ollama_connection()
+        if not is_connected:
+            logger.warning("Ollama unavailable: %s", status_message)
+            result["ollama_status"] = {
+                "connected": False,
+                "message": "Ollama service is unavailable.",
+            }
+            return result
+
+        is_model_available, model_status, available_models = self.repo.check_model_availability()
+        if not is_model_available:
+            logger.warning("Model unavailable: %s", model_status)
+            result["ollama_status"] = {
+                "connected": True,
+                "model": self.repo.model,
+                "model_available": False,
+                "message": model_status,
+                "available_models": available_models,
+            }
             return result
 
         context = self.formatter.format_context(promoted_articles)
@@ -83,7 +102,7 @@ class RAGWorkflow:
 
         try:
             response = self.repo.call_llm(messages, stream=False)
-            result["answer"] = response.message.content
+            result["response"] = response.message.content
 
             result["citations"] = [
                 {"article": art["citation"], "title": art["title"], "doc_id": art["doc_id"]}
@@ -91,12 +110,17 @@ class RAGWorkflow:
             ]
         except Exception as exc:
             logger.exception("LLM call failed after retries")
-            result["answer"] = f"Error querying LLM: {str(exc)}"
+            result["response"] = f"Error querying LLM: {str(exc)}"
             result["error"] = str(exc)
 
+        result["ollama_status"] = {
+            "connected": True,
+            "model": self.repo.model,
+            "model_available": True,
+        }
         return result
 
-    def ask_streaming(self, query: str):
+    def ask_streaming(self, query: str, use_llm: bool = True):
         """Answer with streaming response (generator yielding events dicts).
 
         Yields:
@@ -108,9 +132,34 @@ class RAGWorkflow:
         """
         promoted_articles = self._prepare_articles(query)
 
-        articles_data = [self._build_article_dict(art) for art in promoted_articles]
+        articles_data = [_build_article_dict(art) for art in promoted_articles]
 
         yield {"type": "articles", "articles": articles_data}
+
+        if not use_llm:
+            yield {"type": "done"}
+            return
+
+        is_connected, status_message = self.repo.check_ollama_connection()
+        if not is_connected:
+            logger.warning("Ollama unavailable: %s", status_message)
+            yield {"type": "error", "content": "Ollama service is unavailable."}
+            yield {"type": "done"}
+            return
+
+        is_model_available, model_status, available_models = self.repo.check_model_availability()
+        if not is_model_available:
+            logger.warning("Model unavailable: %s", model_status)
+            yield {
+                "type": "status",
+                "connected": True,
+                "model": self.repo.model,
+                "model_available": False,
+                "message": model_status,
+                "available_models": available_models,
+            }
+            yield {"type": "done"}
+            return
 
         context = self.formatter.format_context(promoted_articles)
         system_prompt = self.formatter.build_system_prompt()
@@ -146,7 +195,7 @@ def main():
     repo = RAGRepository(retrieval)
     workflow = RAGWorkflow(repo)
 
-    is_connected, msg = workflow.check_ollama_connection()
+    is_connected, msg = workflow.repo.check_ollama_connection()
     print(msg)
     if not is_connected:
         return
@@ -158,10 +207,10 @@ def main():
     ]
     for q in questions:
         print(f"\nQ: {q}")
-        result = workflow.ask(q)
-        for art in result["retrieved_articles"]:
+        result = workflow.ask(q, use_llm=True)
+        for art in result["articles"]:
             print(f"  - {art['citation']}: {art['title']} (score={art['score']:.2f})")
-        print(f"\nAnswer:\n{result['answer']}")
+        print(f"\nAnswer:\n{result['response']}")
 
 
 if __name__ == "__main__":

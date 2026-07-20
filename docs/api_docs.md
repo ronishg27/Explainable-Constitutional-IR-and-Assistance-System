@@ -269,13 +269,13 @@ Submit a question and get a JSON response with retrieved articles and (optionall
 | `false` | — | 200 | `query` + `articles` |
 | `true` | Connected, model loaded | 200 | `query` + `articles` + `response` + `ollama_status` (all available) |
 | `true` | Connected, model missing | 200 | `query` + `articles` + `ollama_status` (model_available=false) |
-| `true` | Unreachable | 503 | `error`: "Ollama service is unavailable." |
+| `true` | Unreachable | 200 | `query` + `articles` + `ollama_status` (connected=false) |
 | `true` | LLM call fails after 3 retries | 200 | `query` + `articles` + `response` (error text) + `error` field |
 
 **Errors:**
 - `400` — Missing/empty query, query too long, invalid JSON, wrong content type
 - `401` — Missing or invalid token
-- `503` — Ollama service unavailable (when `use_llm: true`)
+
 
 ---
 
@@ -318,7 +318,7 @@ data: {"type": "done"}
 | `articles` | `articles: [...]` | Immediately — retrieved documents |
 | `token` | `content: string` | Each partial LLM response chunk |
 | `done` | *(none)* | Stream complete |
-| `error` | `content: string` | Ollama unavailable or generation error (no more events follow) |
+| `error` | `content: string` | Ollama unavailable or generation error (articles are yielded before this event) |
 | `status` | `connected`, `model`, `model_available`, `message`, `available_models` | Model not found on the server |
 
 **Notes:**
@@ -473,7 +473,7 @@ All error responses follow this shape:
 | `403` | Forbidden (resource doesn't belong to the user) |
 | `404` | Resource not found |
 | `500` | Internal server error |
-| `503` | Ollama service unavailable |
+| `503` | — |
 
 ---
 

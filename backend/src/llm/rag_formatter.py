@@ -8,10 +8,6 @@ class RAGFormatter:
 
         context_lines = []
         for index, article in enumerate(articles, 1):
-            # context_lines.append(f"[Article {index}]")
-            # context_lines.append(f"Citation: {article['citation']}")
-            # context_lines.append(f"Title: {article['title']}")
-            # context_lines.append(f"Content:\n{article['text']}")
             context_lines.append(f"{article['citation']}: {article['title']}\n{article['text']}")
             if "score" in article:
                 context_lines.append(f"(Relevance Score: {article['score']:.2f})")

@@ -84,81 +84,9 @@ class QAService:
     def answer_query(query: str, use_llm: bool = False) -> tuple[dict, int]:
         """Return API response payload and HTTP status for a user query."""
         workflow = QAService._get_workflow()
-
-        if not use_llm:
-            retrieve_only_result = workflow.ask(query, retrieve_only=True)
-            return {
-                "query": query,
-                "articles": retrieve_only_result.get("retrieved_articles", []),
-            }, 200
-
-        is_connected, status_message = workflow.repo.check_ollama_connection()
-        if not is_connected:
-            logger.warning("Ollama unavailable: %s", status_message)
-            return {"error": "Ollama service is unavailable."}, 503
-
-        is_model_available, model_status, available_models = workflow.repo.check_model_availability()
-        if not is_model_available:
-            logger.warning("Model unavailable: %s", model_status)
-            retrieve_only_result = workflow.ask(query, retrieve_only=True)
-            return {
-                "query": query,
-                "articles": retrieve_only_result.get("retrieved_articles", []),
-                "ollama_status": {
-                    "connected": True,
-                    "model": workflow.repo.model,
-                    "model_available": False,
-                    "message": model_status,
-                    "available_models": available_models,
-                },
-            }, 200
-
-        result = workflow.ask(query, retrieve_only=False)
-        return {
-            "query": query,
-            "response": result.get("answer"),
-            "articles": result.get("retrieved_articles", []),
-            "ollama_status": {
-                "connected": True,
-                "model": workflow.repo.model,
-                "model_available": True,
-            },
-        }, 200
+        return workflow.ask(query, use_llm=use_llm), 200
 
     @staticmethod
     def answer_query_streaming(query: str, use_llm: bool = True):
         workflow = QAService._get_workflow()
-
-        if not use_llm:
-            retrieve_only_result = workflow.ask(query, retrieve_only=True)
-            yield {
-                "type": "articles",
-                "articles": retrieve_only_result.get("retrieved_articles", []),
-            }
-            yield {"type": "done"}
-            return
-
-        is_connected, status_message = workflow.repo.check_ollama_connection()
-        if not is_connected:
-            yield {"type": "error", "content": "Ollama service is unavailable."}
-            return
-
-        is_model_available, model_status, available_models = workflow.repo.check_model_availability()
-        if not is_model_available:
-            retrieve_only_result = workflow.ask(query, retrieve_only=True)
-            yield {
-                "type": "articles",
-                "articles": retrieve_only_result.get("retrieved_articles", []),
-            }
-            yield {
-                "type": "status",
-                "connected": True,
-                "model": workflow.repo.model,
-                "model_available": False,
-                "message": model_status,
-                "available_models": available_models,
-            }
-            yield {"type": "done"}
-            return
-
-        yield from workflow.ask_streaming(query)
+        yield from workflow.ask_streaming(query, use_llm=use_llm)

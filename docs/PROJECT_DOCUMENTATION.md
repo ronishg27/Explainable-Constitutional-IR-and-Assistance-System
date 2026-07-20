@@ -39,7 +39,7 @@
 - **Algorithmic Reranking**: RRF fusion (reciprocal rank fusion of BM25 + proximity + title-boost signals) + MMR diversity (maximal marginal relevance via BM25 cosine similarity) + rule-based boost (per-document, part-level, and level multipliers).
 - **Article-Level Promotion**: Clause/sub-clause results are merged into full articles with matched-clause tracking and context truncation for LLM efficiency.
 - **RAG (Retrieval-Augmented Generation)**: Ollama-powered LLM answer generation with strict grounding and 3-attempt retry logic.
-- **Graceful Degradation**: If Ollama is unavailable → HTTP 503; if model is missing → retrieval-only with informative status.
+- **Graceful Degradation**: If Ollama is unavailable → HTTP 200 with articles + `ollama_status` (`connected=false`); if model is missing → retrieval-only with informative status.
 - **User Authentication**: JWT-based registration/login/logout with bcrypt password hashing and token version invalidation.
 - **Message Persistence**: Queries, LLM answers, and referenced articles are saved to MongoDB per user via `_persist_message()`.
 - **Chat History API**: Full CRUD for user Q&A history with pagination and ownership enforcement.
@@ -388,7 +388,7 @@ All errors follow: `{ "error": "description" }`
 | 403 | Forbidden (resource ownership) |
 | 404 | Not found |
 | 500 | Internal server error |
-| 503 | Ollama service unavailable |
+| 503 | — |
 
 ---
 
@@ -647,7 +647,7 @@ Two processor configurations:
 | `false` | — | 200 | `query` + `articles` |
 | `true` | Connected, model loaded | 200 | `query` + `articles` + `response` + `ollama_status` (all ok) |
 | `true` | Connected, model missing | 200 | `query` + `articles` + `ollama_status` (model_available=false) |
-| `true` | Unreachable | 503 | `error`: "Ollama service is unavailable." |
+| `true` | Unreachable | 200 | `query` + `articles` + `ollama_status` (connected=false) |
 | `true` | LLM fails after 3 retries | 200 | `query` + `articles` + `response` (error text) + `error` field |
 
 ### 6.9 JWT Authentication Flow
@@ -882,7 +882,7 @@ On logout, `User.token_version` is incremented. Every subsequent request checks 
 | Failure | Behavior | User Sees |
 |---------|----------|-----------|
 | MongoDB offline | Fail-fast on server start | Connection error |
-| Ollama not running, `use_llm=true` | Detection → HTTP 503 | `{"error": "Ollama service is unavailable."}` |
+| Ollama not running, `use_llm=true` | Detection → HTTP 200 | `query` + `articles` + `ollama_status` (`connected=false`) |
 | Ollama running, model missing | Detection → HTTP 200 + articles | `ollama_status.model_available=false` |
 | LLM call fails after 3 retries | Catches → HTTP 200 | Error text in `response` + `error` field |
 | Invalid JSON | Validation → HTTP 400 | `{"error": "Invalid JSON payload."}` |
