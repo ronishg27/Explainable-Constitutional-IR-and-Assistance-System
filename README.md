@@ -19,19 +19,19 @@ Users ask legal questions in plain English and receive ranked constitutional pro
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                   Frontend (React 19 + Vite 8)                   │
+│                   Frontend (React 19 + Vite 8)                  │
 │  Pages: Home, Login, Register, History, About, HowItWorks       │
 │  Streaming: SSE via ReadableStream.getReader()                  │
 └──────────────────────────┬──────────────────────────────────────┘
                            │ POST /api/v1/ask (JWT Bearer auth)
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                     Backend (Flask / Python 3.13)                 │
+│                     Backend (Flask / Python 3.13)               │
 │  Routes (Blueprints) → Controllers → Services                   │
-│    ↓                                                             │
+│    ↓                                                            │
 │  IR Engine (BM25 + Proximity + RRF/MMR Reranker)                │
 │  RAG Layer (Retrieval + Prompt Formatting + Ollama Client)      │
-└────────────┬──────────────────────────────────┬──────────────────┘
+└────────────┬──────────────────────────────────┬─────────────────┘
              │                                  │
         MongoDB 8                          Ollama (optional)
     (Users, Messages, Articles)         (qwen3:8b default)
@@ -57,15 +57,16 @@ This starts the backend (Flask on `http://localhost:5000`) and frontend (Vite de
 
 ### Makefile targets
 
-| Target | Command | Description |
-|--------|---------|-------------|
-| `run` | `make` or `make run` | Launch backend + frontend in separate cmd windows |
-| `backend` | `make backend` | Start Flask API only (port 5000) |
-| `frontend` | `make frontend` | Start Vite dev server only (port 5173) |
+| Target     | Command              | Description                                       |
+| ---------- | -------------------- | ------------------------------------------------- |
+| `run`      | `make` or `make run` | Launch backend + frontend in separate cmd windows |
+| `backend`  | `make backend`       | Start Flask API only (port 5000)                  |
+| `frontend` | `make frontend`      | Start Vite dev server only (port 5173)            |
 
 ### Manual start
 
 **Backend:**
+
 ```powershell
 cd backend
 .venv\Scripts\Activate.ps1
@@ -74,6 +75,7 @@ python app.py
 ```
 
 **Frontend:**
+
 ```powershell
 cd frontend
 npm install
@@ -81,6 +83,7 @@ npm run dev
 ```
 
 **Ingestion (first time or after data change):**
+
 ```powershell
 cd backend
 python -m preprocessing_scripts.run_ingestion
@@ -113,12 +116,12 @@ docs/                  Architecture, API docs, algorithm details, FYP report
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Flask, spaCy, custom BM25/MMR IR engine |
+| Layer    | Technology                                        |
+| -------- | ------------------------------------------------- |
+| Backend  | Flask, spaCy, custom BM25/MMR IR engine           |
 | Frontend | React 19, Vite 8, Tailwind CSS v4, React Router 7 |
-| Database | MongoDB 8 |
-| LLM | Ollama (qwen3:8b) — optional |
+| Database | MongoDB 8                                         |
+| LLM      | Ollama (qwen3:8b) — optional                      |
 
 ## Documentation
 
