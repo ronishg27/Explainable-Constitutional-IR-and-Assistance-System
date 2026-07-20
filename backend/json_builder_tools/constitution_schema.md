@@ -1,7 +1,7 @@
 # Constitution JSON Schema — Single Source of Truth
 
 ## JSON Structure
-<!-- C:\Users\Rons\OneDrive\Desktop\Constitution_assistant\backend\temp\data\nepal_constitution_extracted.json -->
+<!-- backend/temp/data/nepal_constitution_extracted.json -->
 ```json
 {
   "document": {

@@ -34,6 +34,30 @@ class IndexBuilder:
         avgdl = total / len(documents) if documents else 0.0
         return doc_lengths, avgdl
 
+    def build_all_indexes(self, documents: list[Document]) -> tuple[dict, dict, dict]:
+        tf_index = {}
+        pos_index = {}
+        doc_lengths = {}
+        total_length = 0
+
+        for doc in documents:
+            bm25_tokens = self.bm25_processor.process_text(doc.text)
+            doc_lengths[doc.doc_id] = len(bm25_tokens)
+            total_length += len(bm25_tokens)
+
+            for token in bm25_tokens:
+                tf_index.setdefault(token, {})
+                tf_index[token][doc.doc_id] = tf_index[token].get(doc.doc_id, 0) + 1
+
+            prox_tokens = self.proximity_processor.process_text(doc.text)
+            for pos, token in enumerate(prox_tokens):
+                pos_index.setdefault(token, {})
+                pos_index[token].setdefault(doc.doc_id, []).append(pos)
+
+        avgdl = total_length / len(documents) if documents else 0.0
+        doc_stats = {"doc_lengths": doc_lengths, "avgdl": avgdl}
+        return tf_index, pos_index, doc_stats
+
     def save_json(self, data, path: str):
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)

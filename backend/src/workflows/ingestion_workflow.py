@@ -44,18 +44,14 @@ class IngestionWorkflow:
     # -----------------------------------------------------------------
     def build_indexes(self) -> tuple[dict, dict, dict]:
         """
-        Build tf_index, positional_index, and doc_stats.
+        Build tf_index, positional_index, and doc_stats in a single pass.
 
         Returns:
             tf_index, pos_index, doc_stats (dict with 'doc_lengths' and 'avgdl')
         """
         docs = self.load_documents()
         builder = IndexBuilder(self.bm25_proc, self.prox_proc)
-        tf_index = builder.build_tf_index(docs)
-        pos_index = builder.build_positional_index(docs)
-        doc_lengths, avgdl = builder.compute_doc_stats(docs)
-        doc_stats = {"doc_lengths": doc_lengths, "avgdl": avgdl}
-        return tf_index, pos_index, doc_stats
+        return builder.build_all_indexes(docs)
 
     def save_indexes(self, output_dir: str = "data/output") -> None:
         """Build indexes and persist them to JSON files."""
@@ -64,9 +60,9 @@ class IngestionWorkflow:
         out.mkdir(parents=True, exist_ok=True)
 
         with open(out / "tf_index.json", "w", encoding="utf-8") as f:
-            json.dump(tf_index, f, ensure_ascii=False, indent=2)
+            json.dump(tf_index, f, ensure_ascii=False)
         with open(out / "pos_index.json", "w", encoding="utf-8") as f:
-            json.dump(pos_index, f, ensure_ascii=False, indent=2)
+            json.dump(pos_index, f, ensure_ascii=False)
         with open(out / "doc_stats.json", "w", encoding="utf-8") as f:
-            json.dump(doc_stats, f, ensure_ascii=False, indent=2)
+            json.dump(doc_stats, f, ensure_ascii=False)
 

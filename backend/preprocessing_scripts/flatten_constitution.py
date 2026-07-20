@@ -1,11 +1,8 @@
 import json
 import logging
 from pathlib import Path
-from src.core.text_processor import TextProcessor
 
 logger = logging.getLogger(__name__)
-
-_tokenizer = TextProcessor(use_lemmatization=True, remove_stopwords=True)
 
 def _label_key(key):
     return key.replace("_", " ").strip().capitalize()
@@ -133,9 +130,6 @@ def _make_document(doc_id, part_no, article_no, title, text, citation, level, cl
         "text": enriched_text.strip(),
         "raw_text": base_text,
 
-        "title_tokens": _tokenizer.process_text(title),
-        "body_tokens": _tokenizer.process_text(enriched_text.strip()),
-
         "citation": citation,
         "citation_normalized": citation_normalized,
 
@@ -144,8 +138,10 @@ def _make_document(doc_id, part_no, article_no, title, text, citation, level, cl
 
 
 def _flatten_clauses(clauses, article_no, part_no, title):
-    """Process numbered clauses under an article. Returns list of clause documents."""
-    docs = []
+    """Process numbered clauses under an article. Returns (clause_docs, article_doc_or_None)."""
+    clause_docs = []
+    combined_parts = []
+
     for clause in clauses:
         clause_number = clause.get("clause_no", "?")
         clause_segments = []
@@ -176,7 +172,7 @@ def _flatten_clauses(clauses, article_no, part_no, title):
 
         clause_body = "\n".join(segment for segment in clause_segments if segment)
         if clause_body:
-            docs.append(
+            clause_docs.append(
                 _make_document(
                     doc_id=f"{article_no}.{clause_number}",
                     part_no=part_no,
@@ -189,7 +185,24 @@ def _flatten_clauses(clauses, article_no, part_no, title):
                     level="clause",
                 )
             )
-    return docs
+            combined_parts.append(f"({clause_number}) {clause_body}")
+
+    article_doc = None
+    if combined_parts:
+        article_text = "\n".join(combined_parts)
+        article_doc = _make_document(
+            doc_id=str(article_no),
+            part_no=part_no,
+            article_no=article_no,
+            clause_no=None,
+            subclause_id=None,
+            title=title,
+            text=article_text,
+            citation=f"Part {part_no}, Article {article_no}",
+            level="article",
+        )
+
+    return clause_docs, article_doc
 
 
 def flatten_constitution(data):
@@ -245,9 +258,10 @@ def flatten_constitution(data):
                 continue
 
             if clauses:
-                documents.extend(
-                    _flatten_clauses(clauses, article_no, part_no, title)
-                )
+                clause_docs, article_doc = _flatten_clauses(clauses, article_no, part_no, title)
+                documents.extend(clause_docs)
+                if article_doc:
+                    documents.append(article_doc)
                 continue
 
             article_body = "\n".join(segment for segment in article_segments if segment)
@@ -346,22 +360,21 @@ def flatten_flat_constitution(data):
 
 
         has_clauses = any(item.get("type") == "clause" for item in content)
-        if not has_clauses:
-            body_text = "\n".join(segment for segment in article_segments if segment)
-            if body_text:
-                documents.append(
-                    _make_document(
-                        doc_id=f"{article_no}",
-                        part_no=part_no,
-                        article_no=article_no,
-                        clause_no=None,
-                        subclause_id=None,
-                        title=title,
-                        text=body_text,
-                        citation=f"Part {part_no}, Article {article_no}",
-                        level="article",
-                    )
+        body_text = "\n".join(segment for segment in article_segments if segment)
+        if body_text:
+            documents.append(
+                _make_document(
+                    doc_id=f"{article_no}",
+                    part_no=part_no,
+                    article_no=article_no,
+                    clause_no=None,
+                    subclause_id=None,
+                    title=title,
+                    text=body_text,
+                    citation=f"Part {part_no}, Article {article_no}",
+                    level="article",
                 )
+            )
 
     return documents
 

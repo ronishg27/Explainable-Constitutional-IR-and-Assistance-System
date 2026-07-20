@@ -55,7 +55,7 @@
 		["law", "act", "legislation", "statute", "enactment"],
 		["bill", "draft law", "proposed legislation"],
 		["ordinance", "executive order", "decree"],
-		["amendment", "revision", "reform", "change", "modification"],
+		["amendment", "amend", "revision", "reform", "change", "modification"],
 		["treaty", "accord", "convention", "agreement", "pact", "covenant"],
 		["referendum", "public vote", "plebiscite"],
 		["duty", "obligation", "responsibility", "civic duty"],
