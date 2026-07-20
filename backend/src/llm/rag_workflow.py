@@ -17,11 +17,6 @@ DEFAULT_RECALL_K = 30
 DEFAULT_MAX_CONTEXT = 8
 
 
-def _build_article_dict(article: dict) -> dict:
-    """Return a filtered dict with only the fields the frontend needs."""
-    return {k: article.get(k) for k in _ARTICLE_FIELDS}
-
-
 class RAGWorkflow:
     """Thin Q&A orchestrator: repository → formatter → response assembly."""
 
@@ -43,12 +38,16 @@ class RAGWorkflow:
         raw = self.repo.retrieve(query, top_k=top_k)
         return self.repo.promote_to_articles(raw)
 
+    def _build_article_dict(self, article: dict) -> dict:
+        """Return a filtered dict with only the fields the frontend needs."""
+        return {k: article.get(k) for k in _ARTICLE_FIELDS}
+
     def _prepare_articles(self, query: str) -> list[dict]:
         retrieved = self.repo.retrieve(query, top_k=self.max_context_articles)
         promoted = self.repo.promote_to_articles(retrieved)
         for art in promoted:
             art["full_text"] = art["text"]
-            art["text"] = self.repo.build_truncated_text(art)
+            art["text"] = art["full_text"]
         return promoted
 
     def ask(
@@ -64,7 +63,7 @@ class RAGWorkflow:
         """
         promoted_articles = self._prepare_articles(query)
 
-        articles = [_build_article_dict(art) for art in promoted_articles]
+        articles = [self._build_article_dict(art) for art in promoted_articles]
 
         result = {"query": query, "articles": articles}
 
@@ -132,7 +131,7 @@ class RAGWorkflow:
         """
         promoted_articles = self._prepare_articles(query)
 
-        articles_data = [_build_article_dict(art) for art in promoted_articles]
+        articles_data = [self._build_article_dict(art) for art in promoted_articles]
 
         yield {"type": "articles", "articles": articles_data}
 

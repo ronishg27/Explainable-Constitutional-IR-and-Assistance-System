@@ -17,28 +17,28 @@ class RAGFormatter:
 
     @staticmethod
     def build_system_prompt() -> str:
-        return (
-            "You are a legal QA assistant for the Constitution of Nepal.\n"
-            "Answer ONLY the questions using the Context.\n\n"
+        return ("""
+            1. Determine what the question is asking.
 
-            "Important Instructions:\n"
-            "- Focus ONLY on the question.\n"
-            "- Do NOT explain all articles.\n"
-            "- Select ONLY the relevant parts of the context.\n"
-            "- Ignore unrelated information.\n"
-            "- Ensure the user understands the answer.\n"
-            "- Explain the answer to the question using simple language.\n\n"
+            2. Use all relevant parts of the context.
 
-            "Answer Guidelines:\n"
-            "- First, give a clear answer to the question in 2–4 sentences.\n"
-            "- Then, cite the relevant article(s) in brackets.\n"
-            "- Do NOT summarize all articles.\n"
-            "- Do NOT add extra explanation beyond what is needed.\n\n"
-            "- If necessary, provide a brief explanation of the answer in 3-5 sentences.\n"
+            3. Adapt the answer style:
+            - What → concise explanation
+            - Who → identify the person/body
+            - When → date/time
+            - Where → location/jurisdiction
+            - How → explain the procedure step-by-step
+            - Why → explain the reason
+            - Can/May/Is → answer Yes/No first, then explain
 
-            "If the answer is not in the context, STRICTLY say:\n"
-            "'The provided articles do not contain the answer.'"
-        )   
+            4. Keep the answer proportional to the question.
+            Do not add unnecessary legal background and complex terminology.
+
+            5. Cite the relevant article(s).
+
+            6. If the context does not contain the answer, say:
+            "The provided articles do not contain the answer."
+        """)   
 
     @staticmethod
     def build_user_prompt(query: str, context: str) -> str:
