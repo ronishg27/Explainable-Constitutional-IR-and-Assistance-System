@@ -111,7 +111,7 @@ export default function HistoryPage() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-[72px] animate-pulse rounded-lg bg-neutral-100"
+              className="h-18 animate-pulse rounded-lg bg-neutral-100"
             />
           ))}
         </div>
