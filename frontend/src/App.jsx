@@ -11,20 +11,11 @@ import AboutPage from './pages/AboutPage';
 import HowItWorksPage from './pages/HowItWorksPage';
 import NotFoundPage from './pages/NotFoundPage';
 
-const SkipLink = () => (
-  <a
-    href="#main-content"
-    className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-600 focus:shadow-modal focus:outline-2 focus:outline-primary-600"
-  >
-    Skip to main content
-  </a>
-);
 
 const App = () => {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <SkipLink />
         <Navbar />
         <div id="main-content">
           <Routes>
